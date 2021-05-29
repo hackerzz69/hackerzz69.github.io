@@ -1,1372 +1,1493 @@
 [
-{"Rank":1,"Name":"TM Pui-SQL","PlayerID":"16284673","Score":"1594240000"},
-{"Rank":"2","Name":"?ny G�n","PlayerID":"26359484","Score":"1448285758"}
+{"rank":"1","name":"TM Pui-SQL","id":"16284673","score":"1594240000"},
+{"rank":"2","name":"Дny Gün","id":"26359484","score":"1448285758"}
 ,
-{"Rank":"3","Name":"AMOY ACHILES","PlayerID":"58901","Score":"1398433191"},
-{"Rank":"4","Name":"TFL ?ildThai","PlayerID":"19425646","Score":"1384433459"},
-{"Rank":"5","Name":"?GL kiss SQL","PlayerID":"9754785","Score":"1060707739"},
-{"Rank":"6","Name":"DESPACITO","PlayerID":"2683936","Score":"520780958"},
-{"Rank":"7","Name":"NOOB SHOAIB","PlayerID":"4911718","Score":"515654057"},
-{"Rank":"8","Name":"?ea?-M�SQL","PlayerID":"30402829","Score":"479684120"}
+{"rank":"3","name":"AMOY ACHILES","id":"58901","score":"1398433191"},
+{"rank":"4","name":"TFL мildThai","id":"19425646","score":"1384433459"}
 ,
-{"Rank":"9","Name":"�K_�V","PlayerID":"27222500","Score":"474506952"}
+{"rank":"5","name":"ЯGL kiss SQL","id":"9754785","score":"1060707739"}
 ,
-{"Rank":"10","Name":"Checkmate*","PlayerID":"4313240","Score":"469166609"},
-{"Rank":"11","Name":"Aliea","PlayerID":"33242050","Score":"459189673"},
-{"Rank":"12","Name":"juju-pvp","PlayerID":"19409791","Score":"447466131"},
-{"Rank":"13","Name":"No?thWind","PlayerID":"7646467","Score":"426861995"},
-{"Rank":"14","Name":"Bonnie___","PlayerID":"4163061","Score":"399063324"},
-{"Rank":"15","Name":"APS","PlayerID":"3062385","Score":"379055569"},
-{"Rank":"16","Name":"L?Lag�????","PlayerID":"1844688","Score":"369931575"}
+{"rank":"6","name":"DESPACITO","id":"2683936","score":"520780958"},
+{"rank":"7","name":"тeaм-MöSQL","id":"30402829","score":"479684120"}
 ,
-{"Rank":"17","Name":"Ouran�a_6iX","PlayerID":"26668705","Score":"344708051"}
+{"rank":"8","name":"ÂK_ÅV","id":"27222500","score":"474506952"}
 ,
-{"Rank":"18","Name":"W_�Rm�G�D�n","PlayerID":"7436677","Score":"341646609"}
+{"rank":"9","name":"Checkmate*","id":"4313240","score":"469166609"},
+{"rank":"10","name":"Aliea","id":"33242050","score":"459189673"},
+{"rank":"11","name":"juju-pvp","id":"19409791","score":"447466131"},
+{"rank":"12","name":"NOOB SHOAIB","id":"4911718","score":"440656806"},
+{"rank":"13","name":"No�?thWind","id":"7646467","score":"426861995"}
 ,
-{"Rank":"19","Name":"B���t� -6iX","PlayerID":"6118673","Score":"316451240"}
+{"rank":"14","name":"Bonnie___","id":"4163061","score":"399063324"},
+{"rank":"15","name":"APS","id":"3062385","score":"379968281"},
+{"rank":"16","name":"LГLagë�?тн�","id":"1844688","score":"369931575"}
 ,
-{"Rank":"20","Name":"Q Anon TRUE","PlayerID":"4579789","Score":"316207314"},
-{"Rank":"21","Name":"Que�nELS�6iX","PlayerID":"18167694","Score":"303283517"}
+{"rank":"17","name":"Ouranía_6iX","id":"26668705","score":"344708051"}
 ,
-{"Rank":"22","Name":"TURK_Somruk","PlayerID":"28626160","Score":"294743360"},
-{"Rank":"23","Name":"NOYPIAKO*JPT","PlayerID":"15652980","Score":"288907478"},
-{"Rank":"24","Name":"WAF","PlayerID":"27030380","Score":"288508697"},
-{"Rank":"25","Name":"NomNom","PlayerID":"17773148","Score":"285304209"},
-{"Rank":"26","Name":"�ry�","PlayerID":"5681754","Score":"282318652"}
+{"rank":"18","name":"W_ãRmÀGèDØn","id":"7436677","score":"341646609"}
 ,
-{"Rank":"27","Name":"Pink dream","PlayerID":"142482","Score":"269763620"},
-{"Rank":"28","Name":"�nk��wn","PlayerID":"5541068","Score":"269270659"}
+{"rank":"19","name":"Bøûñtÿ -6iX","id":"6118673","score":"316451240"}
 ,
-{"Rank":"29","Name":"gumby","PlayerID":"7470240","Score":"266045393"},
-{"Rank":"30","Name":"Yashu","PlayerID":"7295436","Score":"264373431"},
-{"Rank":"31","Name":"yeet","PlayerID":"4122664","Score":"260352835"},
-{"Rank":"32","Name":"Sup�ri�?","PlayerID":"18508875","Score":"254369341"}
+{"rank":"20","name":"Q Anon TRUE","id":"4579789","score":"316207314"},
+{"rank":"21","name":"SupêriõЯ","id":"18508875","score":"312472503"}
 ,
-{"Rank":"33","Name":"B�d�?_J�G�","PlayerID":"30189684","Score":"253787160"}
+{"rank":"22","name":"QueënELSÄ6iX","id":"18167694","score":"303283517"}
 ,
-{"Rank":"34","Name":"B O S S","PlayerID":"26586203","Score":"243607918"},
-{"Rank":"35","Name":"l *?? �k��*","PlayerID":"4663612","Score":"237588606"}
+{"rank":"23","name":"TURK_Somruk","id":"28626160","score":"294743360"},
+{"rank":"24","name":"NOYPIAKO*JPT","id":"15652980","score":"288907478"},
+{"rank":"25","name":"WAF","id":"27030380","score":"288508697"},
+{"rank":"26","name":"NomNom","id":"17773148","score":"285304209"},
+{"rank":"27","name":"Ãryä","id":"5681754","score":"282318652"}
 ,
-{"Rank":"36","Name":"W�R_V�l?�?","PlayerID":"27753832","Score":"237447254"}
+{"rank":"28","name":"ÛnkÑøwn","id":"5541068","score":"269270659"}
 ,
-{"Rank":"37","Name":"P��k�� W�?","PlayerID":"6776996","Score":"236757587"}
+{"rank":"29","name":"gumby","id":"7470240","score":"266045393"},
+{"rank":"30","name":"yeet","id":"4122664","score":"260352835"},
+{"rank":"31","name":"Bådë�?_JåGü","id":"30189684","score":"253787160"}
 ,
-{"Rank":"38","Name":"Ms L�T� ?�?","PlayerID":"15491948","Score":"229862670"}
+{"rank":"32","name":"Pink dream","id":"142482","score":"248145380"},
+{"rank":"33","name":"B O S S","id":"26586203","score":"243607918"},
+{"rank":"34","name":"l *д� ÆkøÑ*","id":"4663612","score":"237588606"}
 ,
-{"Rank":"39","Name":"�T�P��","PlayerID":"3080224","Score":"222744328"}
+{"rank":"35","name":"WãR_Vílкß�","id":"27753832","score":"237447254"}
 ,
-{"Rank":"40","Name":"Killer_Worm","PlayerID":"15588973","Score":"218645192"},
-{"Rank":"41","Name":"H�ll�nd","PlayerID":"25689686","Score":"218073255"}
+{"rank":"36","name":"Pøøkîë Wø�","id":"6776996","score":"236757587"}
 ,
-{"Rank":"42","Name":"Alsya","PlayerID":"25028372","Score":"214889277"},
-{"Rank":"43","Name":"hide0","PlayerID":"2141188","Score":"212614995"},
-{"Rank":"44","Name":"Vince","PlayerID":"2744400","Score":"211796059"},
-{"Rank":"45","Name":"???? ???","PlayerID":"30870848","Score":"208309676"},
-{"Rank":"46","Name":"H�ntr�ss","PlayerID":"19608000","Score":"206723913"}
+{"rank":"37","name":"Yashu","id":"7295436","score":"230009476"},
+{"rank":"38","name":"Ms LíTâ тè�","id":"15491948","score":"229862670"}
 ,
-{"Rank":"47","Name":"D�N�SH SY�H","PlayerID":"14797431","Score":"202019600"}
+{"rank":"39","name":"ÕTÕPßÃ","id":"3080224","score":"222744328"}
 ,
-{"Rank":"48","Name":"WorldRank_91","PlayerID":"145786","Score":"201491993"},
-{"Rank":"49","Name":"???_K���P","PlayerID":"27184716","Score":"199329130"}
+{"rank":"40","name":"Killer_Worm","id":"15588973","score":"218645192"},
+{"rank":"41","name":"Hâllând","id":"25689686","score":"218073255"}
 ,
-{"Rank":"50","Name":"PL���?4987?","PlayerID":"25428392","Score":"198771985"}
+{"rank":"42","name":"Alsya","id":"25028372","score":"214889277"},
+{"rank":"43","name":"hide0","id":"2141188","score":"212614995"},
+{"rank":"44","name":"Vince","id":"2744400","score":"211796059"},
+{"rank":"45","name":"Кинг Кон","id":"30870848","score":"208309676"}
 ,
-{"Rank":"51","Name":"EMKA-DENKO","PlayerID":"2401712","Score":"198242008"},
-{"Rank":"52","Name":"Rose*","PlayerID":"27569113","Score":"196109796"},
-{"Rank":"53","Name":"RLR*SCARLA","PlayerID":"3438136","Score":"192698847"},
-{"Rank":"54","Name":"nomad","PlayerID":"5073566","Score":"192635929"},
-{"Rank":"55","Name":"CirclePineYT","PlayerID":"6031431","Score":"190251467"},
-{"Rank":"56","Name":"? Q_MOTH?? ?","PlayerID":"366288","Score":"190191869"},
-{"Rank":"57","Name":"M���_?�??","PlayerID":"1125923","Score":"188525587"}
+{"rank":"46","name":"DÂNÎSH SYÂH","id":"14797431","score":"202019600"}
 ,
-{"Rank":"58","Name":"lilith","PlayerID":"20767674","Score":"186402732"},
-{"Rank":"59","Name":"Robel","PlayerID":"13927040","Score":"183185317"},
-{"Rank":"60","Name":"Bader","PlayerID":"30732579","Score":"179358823"},
-{"Rank":"61","Name":"PigsBAwsome*","PlayerID":"6150826","Score":"178326778"},
-{"Rank":"62","Name":"Jan�ferSpyro","PlayerID":"25579498","Score":"177666475"}
+{"rank":"47","name":"WorldRank_91","id":"145786","score":"201491993"},
+{"rank":"48","name":"ЯВЙ_KÈÇ�?P","id":"27184716","score":"199329130"}
 ,
-{"Rank":"63","Name":"??????_?","PlayerID":"3859037","Score":"174197369"},
-{"Rank":"64","Name":"Dargoniter","PlayerID":"25806414","Score":"173994322"},
-{"Rank":"65","Name":"P�TRI�K","PlayerID":"11980155","Score":"173377356"}
+{"rank":"49","name":"PLÅ�?ÊЯ4987�","id":"25428392","score":"198771985"}
 ,
-{"Rank":"66","Name":"C??_C??I?G","PlayerID":"12166425","Score":"173196518"},
-{"Rank":"67","Name":"JPS*__*ViV�","PlayerID":"28641308","Score":"172106418"}
+{"rank":"50","name":"EMKA-DENKO","id":"2401712","score":"198242008"},
+{"rank":"51","name":"Rose*","id":"27569113","score":"196109796"},
+{"rank":"52","name":"Hûntrëss","id":"19608000","score":"195017912"}
 ,
-{"Rank":"68","Name":"P�M�*?R","PlayerID":"6700089","Score":"171709689"}
+{"rank":"53","name":"RLR*SCARLA","id":"3438136","score":"192698847"},
+{"rank":"54","name":"nomad","id":"5073566","score":"192635929"},
+{"rank":"55","name":"CirclePineYT","id":"6031431","score":"190251467"},
+{"rank":"56","name":"ж Q_MOTHЗЯ �","id":"366288","score":"190191869"}
 ,
-{"Rank":"69","Name":"???_CAPTAIN","PlayerID":"29428334","Score":"171480692"},
-{"Rank":"70","Name":"ChantingHawk","PlayerID":"152198","Score":"169648441"},
-{"Rank":"71","Name":"S-�-R-K-�-N","PlayerID":"30596825","Score":"169594557"}
+{"rank":"57","name":"lilith","id":"20767674","score":"186402732"},
+{"rank":"58","name":"Robel","id":"13927040","score":"183185317"},
+{"rank":"59","name":"Bader","id":"30732579","score":"179358823"},
+{"rank":"60","name":"PigsBAwsome*","id":"6150826","score":"178326778"},
+{"rank":"61","name":"JanîferSpyro","id":"25579498","score":"177666475"}
 ,
-{"Rank":"72","Name":"�gR���R","PlayerID":"9437","Score":"168410324"}
+{"rank":"62","name":"�?ежный_Я","id":"3859037","score":"174197369"}
 ,
-{"Rank":"73","Name":"W E N","PlayerID":"16147357","Score":"168277775"},
-{"Rank":"74","Name":"nauri*H�CK","PlayerID":"23251247","Score":"167562892"}
-,
-{"Rank":"75","Name":"Wiktoria","PlayerID":"23701433","Score":"167405217"},
-{"Rank":"76","Name":"Silence*Nana","PlayerID":"20358401","Score":"166888808"},
-{"Rank":"77","Name":"IE_PHOENIX","PlayerID":"12634662","Score":"165582350"},
-{"Rank":"78","Name":"Butterfli","PlayerID":"3439079","Score":"165542116"},
-{"Rank":"79","Name":"AJdub","PlayerID":"2847963","Score":"163792843"},
-{"Rank":"80","Name":"IIIIIIII 6iX","PlayerID":"29349507","Score":"163622969"},
-{"Rank":"81","Name":"WASABI","PlayerID":"6162893","Score":"163388342"},
-{"Rank":"82","Name":"Rafaela","PlayerID":"25892125","Score":"162616527"},
-{"Rank":"83","Name":"B�RZ_��$��","PlayerID":"5136238","Score":"160945301"}
-,
-{"Rank":"84","Name":"�?ph��s","PlayerID":"20394432","Score":"160588507"}
-,
-{"Rank":"85","Name":"K�G _???�_","PlayerID":"21539003","Score":"160314800"}
-,
-{"Rank":"86","Name":"PAPI---CHULO","PlayerID":"1383192","Score":"159516873"},
-{"Rank":"87","Name":"LARI$A","PlayerID":"14733349","Score":"159413772"},
-{"Rank":"88","Name":"Ms Ning Team","PlayerID":"14282145","Score":"159377191"},
-{"Rank":"89","Name":"Mr HoW ?��?","PlayerID":"8011528","Score":"157736114"}
-,
-{"Rank":"90","Name":"type o negat","PlayerID":"19621257","Score":"156182201"},
-{"Rank":"91","Name":"Quick","PlayerID":"20226505","Score":"156050397"},
-{"Rank":"92","Name":"CirclePineYT","PlayerID":"26663598","Score":"155380133"},
-{"Rank":"93","Name":"M��n?�???","PlayerID":"23083027","Score":"154497590"}
-,
-{"Rank":"94","Name":"�MT_Q�m? l�y","PlayerID":"22251904","Score":"154456671"}
-,
-{"Rank":"95","Name":"J*O*M*B*E","PlayerID":"9603258","Score":"153315762"},
-{"Rank":"96","Name":"?? FATA M","PlayerID":"26811912","Score":"152595259"},
-{"Rank":"97","Name":"W�R-���S�G","PlayerID":"22549070","Score":"152437383"}
-,
-{"Rank":"98","Name":"Risk and Fun","PlayerID":"8778912","Score":"151755111"},
-{"Rank":"99","Name":"MATRIXhasYOU","PlayerID":"23203270","Score":"150677918"},
-{"Rank":"100","Name":"Johanna","PlayerID":"1538769","Score":"150211361"},
-{"Rank":"101","Name":"Albi","PlayerID":"3585013","Score":"150067798"},
-{"Rank":"102","Name":"GPS-Gondrong","PlayerID":"11379446","Score":"148996612"},
-{"Rank":"103","Name":"IMPOSIBBLE","PlayerID":"7160045","Score":"147071339"},
-{"Rank":"104","Name":"D����","PlayerID":"15877840","Score":"146968494"}
-,
-{"Rank":"105","Name":"MR_Chikaro","PlayerID":"13984249","Score":"146965756"},
-{"Rank":"106","Name":"MYSTERIO","PlayerID":"5008791","Score":"146734390"},
-{"Rank":"107","Name":"Pash","PlayerID":"20361195","Score":"146553538"},
-{"Rank":"108","Name":"NR_T3ROR_SQL","PlayerID":"11722597","Score":"146257182"},
-{"Rank":"109","Name":"??�_B�B**","PlayerID":"8906006","Score":"146181578"}
+{"rank":"63","name":"Dargoniter","id":"25806414","score":"173994322"},
+{"rank":"64","name":"PÂTRIÇK","id":"11980155","score":"173377356"}
 ,
-{"Rank":"110","Name":"Soyti-6iX","PlayerID":"17125985","Score":"145667341"},
-{"Rank":"111","Name":"R�_R�D��T_?","PlayerID":"22823694","Score":"144940892"}
+{"rank":"65","name":"CИЖ_CФЯIИG","id":"12166425","score":"173196518"}
 ,
-{"Rank":"112","Name":"TML-?A??DoYT","PlayerID":"3063347","Score":"144832579"},
-{"Rank":"113","Name":"Dark","PlayerID":"25280000","Score":"144679892"},
-{"Rank":"114","Name":"�??C?S M�?","PlayerID":"12147649","Score":"144122662"}
+{"rank":"66","name":"JPS*__*ViVÖ","id":"28641308","score":"172106418"}
 ,
-{"Rank":"115","Name":"�?V* Drag�N","PlayerID":"15648766","Score":"143885795"}
+{"rank":"67","name":"PÛMÄ*ЯR","id":"6700089","score":"171709689"}
 ,
-{"Rank":"116","Name":"�-?-�-?-�-","PlayerID":"6618418","Score":"142660861"}
+{"rank":"68","name":"ЯВЙ_CAPTAIN","id":"29428334","score":"171480692"}
 ,
-{"Rank":"117","Name":"Nisaa-OYUUUU","PlayerID":"8327613","Score":"142614125"},
-{"Rank":"118","Name":"Mr*x_H�R�$__","PlayerID":"6981734","Score":"140744574"}
+{"rank":"69","name":"ChantingHawk","id":"152198","score":"169648441"},
+{"rank":"70","name":"S-Ê-R-K-Â-N","id":"30596825","score":"169594557"}
 ,
-{"Rank":"119","Name":"M��L�*M�xX","PlayerID":"14804824","Score":"140253498"}
+{"rank":"71","name":"ÅgRèÇØR","id":"9437","score":"168410324"}
 ,
-{"Rank":"120","Name":"?��?�?k�","PlayerID":"4753519","Score":"140130195"}
+{"rank":"72","name":"W E N","id":"16147357","score":"168277775"},
+{"rank":"73","name":"nauri*H�?CK","id":"23251247","score":"167562892"}
 ,
-{"Rank":"121","Name":"M-A-R-U-F","PlayerID":"9816948","Score":"139153010"},
-{"Rank":"122","Name":"KAMAKAZI","PlayerID":"2543993","Score":"138787898"},
-{"Rank":"123","Name":"G_O_A_T*","PlayerID":"28181481","Score":"137847140"},
-{"Rank":"124","Name":"??????","PlayerID":"230816","Score":"137319992"},
-{"Rank":"125","Name":"SnakeyDevito","PlayerID":"2899877","Score":"136352071"},
-{"Rank":"126","Name":"L�L�l�???","PlayerID":"6132210","Score":"136247395"}
+{"rank":"74","name":"Wiktoria","id":"23701433","score":"167405217"},
+{"rank":"75","name":"IE_PHOENIX","id":"12634662","score":"165582350"},
+{"rank":"76","name":"Butterfli","id":"3439079","score":"165542116"},
+{"rank":"77","name":"Møøñ_БØГ�","id":"1125923","score":"165365334"}
 ,
-{"Rank":"127","Name":"KCG_Pysia","PlayerID":"18704143","Score":"135700724"},
-{"Rank":"128","Name":"�?VCa?losYB?","PlayerID":"712518","Score":"135554888"}
+{"rank":"78","name":"IIIIIIII 6iX","id":"29349507","score":"163622969"},
+{"rank":"79","name":"WASABI","id":"6162893","score":"163388342"},
+{"rank":"80","name":"Rafaela","id":"25892125","score":"162616527"},
+{"rank":"81","name":"BØRZ_�?È$ÎÞ","id":"5136238","score":"160945301"}
 ,
-{"Rank":"129","Name":"C??-Kill??*","PlayerID":"19911853","Score":"135546319"},
-{"Rank":"130","Name":"X_ViperYT","PlayerID":"16629953","Score":"135318931"},
-{"Rank":"131","Name":"Q?K*badfish","PlayerID":"30207120","Score":"135233593"},
-{"Rank":"132","Name":"K�G_????_B","PlayerID":"21603334","Score":"135152612"}
+{"rank":"82","name":"Óгphëús","id":"20394432","score":"160588507"}
 ,
-{"Rank":"133","Name":"SxyHt_Hnt6ix","PlayerID":"22974150","Score":"134657500"},
-{"Rank":"134","Name":"Firestar","PlayerID":"31254893","Score":"134473042"},
-{"Rank":"135","Name":"GG*Tiger$","PlayerID":"30813923","Score":"134388139"},
-{"Rank":"136","Name":"Rav??-F??","PlayerID":"1471564","Score":"133809516"},
-{"Rank":"137","Name":"?�_LyLac","PlayerID":"15855736","Score":"133513642"}
-,
-{"Rank":"138","Name":"PLU??_??","PlayerID":"20328302","Score":"133388706"},
-{"Rank":"139","Name":"Cashier ?�? ?","PlayerID":"25987423","Score":"133357831"}
-,
-{"Rank":"140","Name":"�?V*Michifuz","PlayerID":"18250008","Score":"131820129"}
-,
-{"Rank":"141","Name":"U_U","PlayerID":"19854261","Score":"131477652"},
-{"Rank":"142","Name":"A S T R A L","PlayerID":"4480827","Score":"131343519"},
-{"Rank":"143","Name":"sii","PlayerID":"26778680","Score":"131089765"},
-{"Rank":"144","Name":"TFL?ic?yThai","PlayerID":"26676256","Score":"130270197"},
-{"Rank":"145","Name":"�m-B�ll-l�","PlayerID":"18817725","Score":"129916503"}
-,
-{"Rank":"146","Name":"RAFA","PlayerID":"8791373","Score":"129869480"},
-{"Rank":"147","Name":"Listyanna","PlayerID":"19056601","Score":"129288316"},
-{"Rank":"148","Name":"Dear_Mama","PlayerID":"20482125","Score":"129002719"},
-{"Rank":"149","Name":"Magia","PlayerID":"5022377","Score":"128836944"},
-{"Rank":"150","Name":"Q�_TiTa�oBo�","PlayerID":"18083338","Score":"128644251"}
-,
-{"Rank":"151","Name":"K??_LI????","PlayerID":"13836611","Score":"128598940"},
-{"Rank":"152","Name":"Not You","PlayerID":"5589397","Score":"127524576"},
-{"Rank":"153","Name":"nanashi","PlayerID":"22836153","Score":"127436840"},
-{"Rank":"154","Name":"KUSTIK_PRO","PlayerID":"16238719","Score":"127221624"},
-{"Rank":"155","Name":"�MT_MiK�*ag","PlayerID":"13398616","Score":"127099813"}
-,
-{"Rank":"156","Name":"Gao*Duy*","PlayerID":"28625963","Score":"126858800"},
-{"Rank":"157","Name":"�s_Andrian","PlayerID":"17483773","Score":"126285203"}
-,
-{"Rank":"158","Name":"Mo?tyPytho?","PlayerID":"160141","Score":"125844223"},
-{"Rank":"159","Name":"Emma","PlayerID":"21491153","Score":"125344483"},
-{"Rank":"160","Name":"��D��NH�nT","PlayerID":"26832406","Score":"125144916"}
-,
-{"Rank":"161","Name":"T-TANJA-T","PlayerID":"25919520","Score":"124601649"},
-{"Rank":"162","Name":"DougZilla","PlayerID":"4639418","Score":"123983194"},
-{"Rank":"163","Name":"????? �T?","PlayerID":"4163046","Score":"123771296"}
-,
-{"Rank":"164","Name":"ILOVEU PUDOS","PlayerID":"16173079","Score":"123730094"},
-{"Rank":"165","Name":"T�rv�*MEXIK0","PlayerID":"22334880","Score":"123656793"}
-,
-{"Rank":"166","Name":"diih","PlayerID":"17199389","Score":"123498429"},
-{"Rank":"167","Name":"RAIN","PlayerID":"4378547","Score":"123322459"},
-{"Rank":"168","Name":"Alby King*MA","PlayerID":"26845070","Score":"122951870"},
-{"Rank":"169","Name":"M�NG�_NR","PlayerID":"16621390","Score":"122879365"}
-,
-{"Rank":"170","Name":"J�?�?�X*JP","PlayerID":"19712628","Score":"122108325"}
-,
-{"Rank":"171","Name":"TsM- TuEuSeL","PlayerID":"1859985","Score":"121910621"},
-{"Rank":"172","Name":"KIRITO*","PlayerID":"27836375","Score":"121818047"},
-{"Rank":"173","Name":"AboAli_*MA*","PlayerID":"25503530","Score":"121328044"},
-{"Rank":"174","Name":"M��LaN4Ever","PlayerID":"6296687","Score":"121168717"}
-,
-{"Rank":"175","Name":"maradona","PlayerID":"15124596","Score":"120634646"},
-{"Rank":"176","Name":"?�P_angeL_PH","PlayerID":"27633450","Score":"120503670"}
-,
-{"Rank":"177","Name":"Isipou","PlayerID":"14892009","Score":"120333568"},
-{"Rank":"178","Name":"Salah epx XI","PlayerID":"20820829","Score":"120316645"},
-{"Rank":"179","Name":"J�$T��_LimiT","PlayerID":"25040561","Score":"120273617"}
-,
-{"Rank":"180","Name":"�MT_KGm? l�y?","PlayerID":"20977018","Score":"120223899"}
-,
-{"Rank":"181","Name":"STOP THE ADS","PlayerID":"26218145","Score":"120146459"},
-{"Rank":"182","Name":"Nicholas","PlayerID":"15070085","Score":"120015678"},
-{"Rank":"183","Name":"SM�$T�R_P�R?","PlayerID":"5705873","Score":"119600730"}
-,
-{"Rank":"184","Name":"dushan*_*89","PlayerID":"18028703","Score":"118986724"},
-{"Rank":"185","Name":"RJ*TEMPUR***","PlayerID":"19093517","Score":"118941047"},
-{"Rank":"186","Name":"Dr�gon_K�ng*","PlayerID":"17801266","Score":"118324698"}
+{"rank":"83","name":"KÇG _МфЙÃ_","id":"21539003","score":"160314800"}
 ,
-{"Rank":"187","Name":"???-Tsel_y?","PlayerID":"25644732","Score":"117966651"},
-{"Rank":"188","Name":"?�sa PisT�la","PlayerID":"5198797","Score":"117822158"}
-,
-{"Rank":"189","Name":"zz_SupR�mE_z","PlayerID":"26948739","Score":"117720592"}
-,
-{"Rank":"190","Name":"?��d�m","PlayerID":"26670914","Score":"117394969"}
-,
-{"Rank":"191","Name":"Noxra","PlayerID":"8287479","Score":"117350302"},
-{"Rank":"192","Name":"DESPACITO","PlayerID":"8876210","Score":"116551461"},
-{"Rank":"193","Name":"SP��G�B�B","PlayerID":"27297663","Score":"116382486"}
-,
-{"Rank":"194","Name":"Muskellunge","PlayerID":"8781408","Score":"115338021"},
-{"Rank":"195","Name":"Ivy","PlayerID":"2076008","Score":"114908680"},
-{"Rank":"196","Name":"F U B A R","PlayerID":"9569447","Score":"114750169"},
-{"Rank":"197","Name":"LAG 42","PlayerID":"18648210","Score":"114608543"},
-{"Rank":"198","Name":"Kristela 6iX","PlayerID":"26549105","Score":"114523258"},
-{"Rank":"199","Name":"NR_PALESTINE","PlayerID":"16951596","Score":"114007958"},
-{"Rank":"200","Name":"mit","PlayerID":"26209905","Score":"113918651"},
-{"Rank":"201","Name":"War-Diem-VN","PlayerID":"14565939","Score":"113900296"},
-{"Rank":"202","Name":"�anzi?22GG","PlayerID":"22251200","Score":"113736529"}
-,
-{"Rank":"203","Name":"Nobel","PlayerID":"28983690","Score":"113632464"},
-{"Rank":"204","Name":"WasteOfTime","PlayerID":"29630590","Score":"113150804"},
-{"Rank":"205","Name":"Hi�l��_6iXR?","PlayerID":"26487501","Score":"113103596"}
+{"rank":"84","name":"PAPI---CHULO","id":"1383192","score":"159516873"},
+{"rank":"85","name":"LARI$A","id":"14733349","score":"159413772"},
+{"rank":"86","name":"Ms Ning Team","id":"14282145","score":"159377191"},
+{"rank":"87","name":"TML-тAкзDoYT","id":"3063347","score":"158138417"}
 ,
-{"Rank":"206","Name":"Jordan*","PlayerID":"1380012","Score":"112899982"},
-{"Rank":"207","Name":"k��?  b? l? p","PlayerID":"27288304","Score":"112896251"}
+{"rank":"88","name":"Mr HoW тèáм","id":"8011528","score":"157736114"}
 ,
-{"Rank":"208","Name":"ILOVEU KARO","PlayerID":"17471545","Score":"112843519"},
-{"Rank":"209","Name":"????????","PlayerID":"9825705","Score":"112179951"},
-{"Rank":"210","Name":"Tai Nguyen","PlayerID":"7131736","Score":"111757405"},
-{"Rank":"211","Name":"Marissa","PlayerID":"20972502","Score":"111283415"},
-{"Rank":"212","Name":"War_Galaxy","PlayerID":"14536508","Score":"111190812"},
-{"Rank":"213","Name":"KCG_BOSs_NR","PlayerID":"15282613","Score":"110855900"},
-{"Rank":"214","Name":"KEIL","PlayerID":"1318174","Score":"110596620"},
-{"Rank":"215","Name":"?-MONALISA","PlayerID":"18529180","Score":"110360226"},
-{"Rank":"216","Name":"A??-Ryota","PlayerID":"5112345","Score":"110304338"},
-{"Rank":"217","Name":"Inf�rn�","PlayerID":"15335883","Score":"110236981"}
+{"rank":"89","name":"type o negat","id":"19621257","score":"156182201"},
+{"rank":"90","name":"Quick","id":"20226505","score":"156050397"},
+{"rank":"91","name":"CirclePineYT","id":"26663598","score":"155380133"},
+{"rank":"92","name":"MØØnКØнь�","id":"23083027","score":"154497590"}
 ,
-{"Rank":"218","Name":"G T O","PlayerID":"27988017","Score":"109969126"},
-{"Rank":"219","Name":"GoKarliGo","PlayerID":"3826153","Score":"109853688"},
-{"Rank":"220","Name":"K�G_BOSs_NR","PlayerID":"27319836","Score":"109562700"}
+{"rank":"93","name":"ÎMT_QÑm� lây","id":"22251904","score":"154456671"}
 ,
-{"Rank":"221","Name":"Adinda_�D�L","PlayerID":"22939864","Score":"109527560"}
+{"rank":"94","name":"ÑнЙCЕS MÅ�","id":"12147649","score":"153732054"}
 ,
-{"Rank":"222","Name":"CHECHEN","PlayerID":"12638693","Score":"109432252"},
-{"Rank":"223","Name":"FreeHugz","PlayerID":"20878027","Score":"109272569"},
-{"Rank":"224","Name":"best","PlayerID":"1161897","Score":"108798033"},
-{"Rank":"225","Name":"PimplePopper","PlayerID":"20237209","Score":"108600960"},
-{"Rank":"226","Name":"mongorhead","PlayerID":"1047304","Score":"108066228"},
-{"Rank":"227","Name":"The ONE","PlayerID":"31089174","Score":"107547706"},
-{"Rank":"228","Name":"H�dRyK","PlayerID":"15682689","Score":"107306731"}
+{"rank":"95","name":"J*O*M*B*E","id":"9603258","score":"153315762"},
+{"rank":"96","name":"ЙЯ FATA M","id":"26811912","score":"152595259"}
 ,
-{"Rank":"229","Name":"DE Slayer","PlayerID":"17759447","Score":"107124399"},
-{"Rank":"230","Name":"�-J�n�_Tn�2","PlayerID":"18011779","Score":"106823189"}
+{"rank":"97","name":"WãR-ÑèøSëG","id":"22549070","score":"152437383"}
 ,
-{"Rank":"231","Name":"V�_B��_Gi�?","PlayerID":"18822602","Score":"106787436"}
+{"rank":"98","name":"Risk and Fun","id":"8778912","score":"151755111"},
+{"rank":"99","name":"Johanna","id":"1538769","score":"150211361"},
+{"rank":"100","name":"GPS-Gondrong","id":"11379446","score":"148996612"},
+{"rank":"101","name":"Silence*Nana","id":"20358401","score":"148154720"},
+{"rank":"102","name":"IMPOSIBBLE","id":"7160045","score":"147071339"},
+{"rank":"103","name":"D�?ÅÑÅ","id":"15877840","score":"146968494"}
 ,
-{"Rank":"232","Name":"Kearin","PlayerID":"6489983","Score":"106761395"},
-{"Rank":"233","Name":"Q-T","PlayerID":"1100045","Score":"106643298"},
-{"Rank":"234","Name":"PVPG�_�??b?","PlayerID":"26460998","Score":"106583997"}
+{"rank":"104","name":"MR_Chikaro","id":"13984249","score":"146965756"},
+{"rank":"105","name":"MYSTERIO","id":"5008791","score":"146734390"},
+{"rank":"106","name":"Pash","id":"20361195","score":"146553538"},
+{"rank":"107","name":"NR_T3ROR_SQL","id":"11722597","score":"146257182"},
+{"rank":"108","name":"ЯВÑ_BÓB**","id":"8906006","score":"146181578"}
 ,
-{"Rank":"235","Name":"?B?_josie","PlayerID":"26154773","Score":"106393594"},
-{"Rank":"236","Name":"Liga���S�N?","PlayerID":"6672531","Score":"106347079"}
+{"rank":"109","name":"Nisaa-OYUUUU","id":"8327613","score":"146130733"},
+{"rank":"110","name":"Soyti-6iX","id":"17125985","score":"145667341"},
+{"rank":"111","name":"ß�?V* DragØN","id":"15648766","score":"145369107"}
 ,
-{"Rank":"237","Name":"??? DUN?ILL","PlayerID":"8413545","Score":"106299443"},
-{"Rank":"238","Name":"Z�???_PH","PlayerID":"26465017","Score":"106259674"}
+{"rank":"112","name":"Rç_RÄD�?ËT_�","id":"22823694","score":"144940892"}
 ,
-{"Rank":"239","Name":"Dovile","PlayerID":"2935967","Score":"106168627"},
-{"Rank":"240","Name":"one_2_3_4U","PlayerID":"23649825","Score":"106154119"},
-{"Rank":"241","Name":"Q????S??L","PlayerID":"20430706","Score":"105800388"},
-{"Rank":"242","Name":"?�?_M�ST�?","PlayerID":"9824003","Score":"105601336"}
+{"rank":"113","name":"Dark","id":"25280000","score":"144679892"},
+{"rank":"114","name":"AJdub","id":"2847963","score":"144013890"},
+{"rank":"115","name":"Ã-П-Ø-ф-Ñ-","id":"6618418","score":"142660861"}
 ,
-{"Rank":"243","Name":"Slimy Eggy","PlayerID":"13681576","Score":"105335761"},
-{"Rank":"244","Name":"DJ_Franco $","PlayerID":"30938923","Score":"105074150"},
-{"Rank":"245","Name":"??? ?????","PlayerID":"17431420","Score":"104284574"},
-{"Rank":"246","Name":"SMasterSP","PlayerID":"6733421","Score":"104171256"},
-{"Rank":"247","Name":"JPS*-_-*K�??","PlayerID":"26181626","Score":"103966902"}
+{"rank":"116","name":"Mr*x_HÅRÎ$__","id":"6981734","score":"140744574"}
 ,
-{"Rank":"248","Name":"Ma$C??aD?B?","PlayerID":"339385","Score":"103891226"},
-{"Rank":"249","Name":"?????? ?","PlayerID":"3773927","Score":"103857003"},
-{"Rank":"250","Name":"PA$INDU","PlayerID":"29637543","Score":"103213355"},
-{"Rank":"251","Name":"?L�?*J�G*OY","PlayerID":"24300984","Score":"103094247"}
+{"rank":"117","name":"MØùLã*MÂxX","id":"14804824","score":"140253498"}
 ,
-{"Rank":"252","Name":"Dark AngeL01","PlayerID":"8987198","Score":"102887819"},
-{"Rank":"253","Name":"??_GodFather","PlayerID":"9646528","Score":"102723806"},
-{"Rank":"254","Name":"THE-LAGG","PlayerID":"4512725","Score":"102601892"},
-{"Rank":"255","Name":"ONE Point","PlayerID":"24803734","Score":"102187834"},
-{"Rank":"256","Name":"Vina*_z�??�","PlayerID":"9711919","Score":"102140300"}
+{"rank":"118","name":"M-A-R-U-F","id":"9816948","score":"139153010"},
+{"rank":"119","name":"KAMAKAZI","id":"2543993","score":"138787898"},
+{"rank":"120","name":"Albi","id":"3585013","score":"138724770"},
+{"rank":"121","name":"G_O_A_T*","id":"28181481","score":"137847140"},
+{"rank":"122","name":"мару�?�?","id":"230816","score":"137319992"}
 ,
-{"Rank":"257","Name":"??L_?��N?","PlayerID":"16433378","Score":"101787078"}
+{"rank":"123","name":"MATRIXhasYOU","id":"23203270","score":"136535286"},
+{"rank":"124","name":"SnakeyDevito","id":"2899877","score":"136352071"},
+{"rank":"125","name":"Úm-Bëll-lä","id":"18817725","score":"136333676"}
 ,
-{"Rank":"258","Name":"K�G_QnBos_NR","PlayerID":"20065281","Score":"101761524"}
+{"rank":"126","name":"LïLülÚъуз","id":"6132210","score":"136247395"}
 ,
-{"Rank":"259","Name":"D�RKQ����_","PlayerID":"14053959","Score":"101532336"}
+{"rank":"127","name":"KCG_Pysia","id":"18704143","score":"135700724"},
+{"rank":"128","name":"ß�?VCa�?losYB�","id":"712518","score":"135554888"}
 ,
-{"Rank":"260","Name":"?CG_?????","PlayerID":"14183701","Score":"101200360"},
-{"Rank":"261","Name":"X_B? BByTY? R�","PlayerID":"3305577","Score":"100627367"}
+{"rank":"129","name":"CИЖ-Kill�?�?*","id":"19911853","score":"135546319"}
 ,
-{"Rank":"262","Name":"prince Meso","PlayerID":"18577035","Score":"100551747"},
-{"Rank":"263","Name":"???? ???","PlayerID":"8311955","Score":"100538858"},
-{"Rank":"264","Name":"K?�W�L1","PlayerID":"227609","Score":"100050999"}
+{"rank":"130","name":"FreeHugz","id":"20878027","score":"135504708"},
+{"rank":"131","name":"QиK*badfish","id":"30207120","score":"135233593"}
 ,
-{"Rank":"265","Name":"SnakeGod","PlayerID":"204712","Score":"99576573"},
-{"Rank":"266","Name":"Exc MALBORO","PlayerID":"25206620","Score":"99389729"},
-{"Rank":"267","Name":"SULUCAN","PlayerID":"27690091","Score":"99334861"},
-{"Rank":"268","Name":"Venom","PlayerID":"23323317","Score":"99019785"},
-{"Rank":"269","Name":"Bob","PlayerID":"18736523","Score":"98955189"},
-{"Rank":"270","Name":"FR_BadGirl","PlayerID":"33378634","Score":"98556119"},
-{"Rank":"271","Name":"MISIA","PlayerID":"4617999","Score":"98468983"},
-{"Rank":"272","Name":"??_?????","PlayerID":"13047669","Score":"98054469"},
-{"Rank":"273","Name":"??L_QUEEN_�?","PlayerID":"8356314","Score":"97862322"}
+{"rank":"132","name":"SxyHt_Hnt6ix","id":"22974150","score":"134657500"},
+{"rank":"133","name":"Firestar","id":"31254893","score":"134473042"},
+{"rank":"134","name":"GG*Tiger$","id":"30813923","score":"134388139"},
+{"rank":"135","name":"Rav�?И-Fтш","id":"1471564","score":"133809516"}
 ,
-{"Rank":"274","Name":"?�m�t�Z","PlayerID":"8749801","Score":"97717537"}
+{"rank":"136","name":"нì_LyLac","id":"15855736","score":"133513642"}
 ,
-{"Rank":"275","Name":"cH?pEL3�??B","PlayerID":"16284258","Score":"97628919"}
+{"rank":"137","name":"PLUтф_чт","id":"20328302","score":"133388706"}
 ,
-{"Rank":"276","Name":"KCG p4p4 AL","PlayerID":"28582733","Score":"97357020"},
-{"Rank":"277","Name":"IM_Sup�r��?","PlayerID":"23520098","Score":"97236699"}
+{"rank":"138","name":"Cashier тê� �","id":"25987423","score":"133357831"}
 ,
-{"Rank":"278","Name":"�-m��n_Tn�1","PlayerID":"21973813","Score":"97158522"}
+{"rank":"139","name":"ß�?V*Michifuz","id":"18250008","score":"131986197"}
 ,
-{"Rank":"279","Name":"D��R_B?ST�R","PlayerID":"24402613","Score":"96723724"}
+{"rank":"140","name":"U_U","id":"19854261","score":"131477652"},
+{"rank":"141","name":"A S T R A L","id":"4480827","score":"131343519"},
+{"rank":"142","name":"sii","id":"26778680","score":"131089765"},
+{"rank":"143","name":"TFLмicкyThai","id":"26676256","score":"130270197"}
 ,
-{"Rank":"280","Name":"W�R-$�r�Jlk?","PlayerID":"5277715","Score":"96613692"}
+{"rank":"144","name":"Чéþтõвkã","id":"4753519","score":"130222619"}
 ,
-{"Rank":"281","Name":"A??_G?iss?","PlayerID":"15385965","Score":"96485375"},
-{"Rank":"282","Name":"Sharklord","PlayerID":"5719561","Score":"96466240"},
-{"Rank":"283","Name":"???? ???","PlayerID":"26677118","Score":"96406140"},
-{"Rank":"284","Name":"D�?d S?i�d?","PlayerID":"13760180","Score":"96336890"}
+{"rank":"145","name":"KСБ_LIЙбК�","id":"13836611","score":"129919673"}
 ,
-{"Rank":"285","Name":"cristian-_*","PlayerID":"8100559","Score":"96024284"},
-{"Rank":"286","Name":"Pari *MA*","PlayerID":"25709570","Score":"95664500"},
-{"Rank":"287","Name":"Y�? ?�?�P","PlayerID":"22837928","Score":"95150685"}
+{"rank":"146","name":"RAFA","id":"8791373","score":"129869480"},
+{"rank":"147","name":"X_ViperYT","id":"16629953","score":"129860858"},
+{"rank":"148","name":"Listyanna","id":"19056601","score":"129288316"},
+{"rank":"149","name":"Dear_Mama","id":"20482125","score":"129002719"},
+{"rank":"150","name":"Magia","id":"5022377","score":"128836944"},
+{"rank":"151","name":"QÑ_TiTaÑoBo�?","id":"18083338","score":"128644251"}
 ,
-{"Rank":"288","Name":"W�R T�M","PlayerID":"7998421","Score":"95110748"}
+{"rank":"152","name":"Not You","id":"5589397","score":"127524576"},
+{"rank":"153","name":"nanashi","id":"22836153","score":"127436840"},
+{"rank":"154","name":"KUSTIK_PRO","id":"16238719","score":"127221624"},
+{"rank":"155","name":"ÎMT_MiKá*ag","id":"13398616","score":"127099813"}
 ,
-{"Rank":"289","Name":"S???�?�?","PlayerID":"3732053","Score":"95064846"}
+{"rank":"156","name":"Gao*Duy*","id":"28625963","score":"126858800"},
+{"rank":"157","name":"Çs_Andrian","id":"17483773","score":"126285203"}
 ,
-{"Rank":"290","Name":"Q????_LI�","PlayerID":"16899725","Score":"94973215"}
+{"rank":"158","name":"MoЙtyPythoЙ","id":"160141","score":"125844223"}
 ,
-{"Rank":"291","Name":"Hackerzz 6iX","PlayerID":"7878561","Score":"94925301"},
-{"Rank":"292","Name":"War-Gao*MaB?","PlayerID":"1775926","Score":"94774835"},
-{"Rank":"293","Name":"S?_�HA?Y-SQL","PlayerID":"7981845","Score":"94568129"}
+{"rank":"159","name":"Emma","id":"21491153","score":"125344483"},
+{"rank":"160","name":"ÎÑDÎÀNHúnT","id":"26832406","score":"125144916"}
 ,
-{"Rank":"294","Name":"toto_6iX","PlayerID":"27356665","Score":"94399372"},
-{"Rank":"295","Name":"XxLIxX","PlayerID":"4124292","Score":"94361887"},
-{"Rank":"296","Name":"Fergus","PlayerID":"6032611","Score":"94278522"},
-{"Rank":"297","Name":"M150 TH","PlayerID":"16668649","Score":"94223376"},
-{"Rank":"298","Name":"TLR*_*DUY VN","PlayerID":"6544711","Score":"94167582"},
-{"Rank":"299","Name":"R?j?K?D??*","PlayerID":"8639810","Score":"94064029"},
-{"Rank":"300","Name":"?argasari_y?","PlayerID":"26637670","Score":"93914787"},
-{"Rank":"301","Name":"Sp�?�L K��","PlayerID":"18284742","Score":"93879626"}
+{"rank":"161","name":"T-TANJA-T","id":"25919520","score":"124601649"},
+{"rank":"162","name":"DougZilla","id":"4639418","score":"123983194"},
+{"rank":"163","name":"ЛЮБЛЮ ÕT�","id":"4163046","score":"123771296"}
 ,
-{"Rank":"302","Name":"M�JESTY","PlayerID":"16547748","Score":"93669157"}
+{"rank":"164","name":"ILOVEU PUDOS","id":"16173079","score":"123730094"},
+{"rank":"165","name":"Tûrvø*MEXIK0","id":"22334880","score":"123656793"}
 ,
-{"Rank":"303","Name":"Q????_?�L","PlayerID":"32559668","Score":"93453409"}
+{"rank":"166","name":"diih","id":"17199389","score":"123498429"},
+{"rank":"167","name":"RAIN","id":"4378547","score":"123322459"},
+{"rank":"168","name":"Alby King*MA","id":"26845070","score":"122951870"},
+{"rank":"169","name":"MÅNGØ_NR","id":"16621390","score":"122879365"}
 ,
-{"Rank":"304","Name":"INDONESIA","PlayerID":"16538379","Score":"93250167"},
-{"Rank":"305","Name":"TAHMID-GX","PlayerID":"25882180","Score":"93017847"},
-{"Rank":"306","Name":"Alam medan","PlayerID":"25415516","Score":"93000676"},
-{"Rank":"307","Name":"?�thinP?s�n","PlayerID":"1555300","Score":"92995817"}
+{"rank":"170","name":"JÜИßЯ�?X*JP","id":"19712628","score":"122108325"}
 ,
-{"Rank":"308","Name":"KCG_Radja Nr","PlayerID":"27798146","Score":"92752759"},
-{"Rank":"309","Name":"FH_�W��_G�?","PlayerID":"11803215","Score":"92694443"}
+{"rank":"171","name":"TsM- TuEuSeL","id":"1859985","score":"121910621"},
+{"rank":"172","name":"KIRITO*","id":"27836375","score":"121818047"},
+{"rank":"173","name":"AboAli_*MA*","id":"25503530","score":"121328044"},
+{"rank":"174","name":"VÑ_BÄÇ_GiÄ�","id":"18822602","score":"121202949"}
 ,
-{"Rank":"310","Name":"NIKE","PlayerID":"13042351","Score":"92483630"},
-{"Rank":"311","Name":"?????","PlayerID":"3354027","Score":"92465120"},
-{"Rank":"312","Name":"�MT_�m��","PlayerID":"21331467","Score":"92305894"}
+{"rank":"175","name":"MööLaN4Ever","id":"6296687","score":"121168717"}
 ,
-{"Rank":"313","Name":"JustTrying","PlayerID":"6079324","Score":"92226402"},
-{"Rank":"314","Name":"?_?y_L�v? M","PlayerID":"29002433","Score":"92178814"}
+{"rank":"176","name":"STOP THE ADS","id":"26218145","score":"120929913"},
+{"rank":"177","name":"maradona","id":"15124596","score":"120634646"},
+{"rank":"178","name":"Я�?P_angeL_PH","id":"27633450","score":"120503670"}
 ,
-{"Rank":"315","Name":"Corona-minus","PlayerID":"4766136","Score":"92167271"},
-{"Rank":"316","Name":"Motozou","PlayerID":"31402064","Score":"92161430"},
-{"Rank":"317","Name":"HEBI ICHIGO","PlayerID":"4974582","Score":"92061817"},
-{"Rank":"318","Name":"F? LL�??_y?","PlayerID":"18985496","Score":"92029156"}
+{"rank":"179","name":"Salah epx XI","id":"20820829","score":"120316645"},
+{"rank":"180","name":"JÛ$TÑØ_LimiT","id":"25040561","score":"120273617"}
 ,
-{"Rank":"319","Name":"???�?_??","PlayerID":"26684129","Score":"92021970"}
+{"rank":"181","name":"ÎMT_KGm� lây�","id":"20977018","score":"120223899"}
 ,
-{"Rank":"320","Name":"OLDWOMAN OWG","PlayerID":"16051905","Score":"91797114"},
-{"Rank":"321","Name":"Ms Aom ?��?","PlayerID":"29918648","Score":"91656951"}
+{"rank":"182","name":"Nicholas","id":"15070085","score":"120015678"},
+{"rank":"183","name":"SM�?$TÉR_PÉR�","id":"5705873","score":"119600730"}
 ,
-{"Rank":"322","Name":"Q�_M�SS VnE*","PlayerID":"28281137","Score":"91629088"}
+{"rank":"184","name":"sSi Bal*_*89","id":"18028703","score":"118986724"},
+{"rank":"185","name":"RJ*TEMPUR***","id":"19093517","score":"118941047"},
+{"rank":"186","name":"mit","id":"26209905","score":"118595340"},
+{"rank":"187","name":"G T O","id":"27988017","score":"118589737"},
+{"rank":"188","name":"Drâgon_KÎng*","id":"17801266","score":"118324698"}
 ,
-{"Rank":"323","Name":"morn�ng","PlayerID":"30078141","Score":"91537302"}
+{"rank":"189","name":"вøт_MÂSTË�","id":"9824003","score":"118079632"}
 ,
-{"Rank":"324","Name":"PA?GERA?_458","PlayerID":"26946197","Score":"91508492"},
-{"Rank":"325","Name":"THE-JOKER","PlayerID":"1073116","Score":"91415359"},
-{"Rank":"326","Name":"Bot_Ukui2","PlayerID":"25133633","Score":"91413650"},
-{"Rank":"327","Name":"VN_���Gi��","PlayerID":"11808010","Score":"91404159"}
+{"rank":"190","name":"МГД-Tsel_yн","id":"25644732","score":"117966651"}
 ,
-{"Rank":"328","Name":"Vince Lin","PlayerID":"25381422","Score":"90972811"},
-{"Rank":"329","Name":"Doctor *_* A","PlayerID":"21122182","Score":"90788622"},
-{"Rank":"330","Name":"THE OWL","PlayerID":"2972361","Score":"90519919"},
-{"Rank":"331","Name":"???�� H S2","PlayerID":"7431127","Score":"90473893"}
+{"rank":"191","name":"Яøsa PisTøla","id":"5198797","score":"117822158"}
 ,
-{"Rank":"332","Name":"M�mm�4","PlayerID":"6591161","Score":"90468899"}
+{"rank":"192","name":"zz_SupRèmE_z","id":"26948739","score":"117720592"}
 ,
-{"Rank":"333","Name":"???-????","PlayerID":"3614646","Score":"90215328"},
-{"Rank":"334","Name":"Nils�o Lenda","PlayerID":"15649843","Score":"90205823"}
+{"rank":"193","name":"Яåñdøm","id":"26670914","score":"117394969"}
 ,
-{"Rank":"335","Name":"THe_Eagle","PlayerID":"16734159","Score":"90146807"},
-{"Rank":"336","Name":"Artis$s","PlayerID":"22884913","Score":"90119424"},
-{"Rank":"337","Name":"????","PlayerID":"5923732","Score":"89973799"},
-{"Rank":"338","Name":"jdragon","PlayerID":"16794517","Score":"89919165"},
-{"Rank":"339","Name":"AnacMacapaAP","PlayerID":"19139002","Score":"89839268"},
-{"Rank":"340","Name":"??�?_P?�?","PlayerID":"24407974","Score":"89671807"}
+{"rank":"194","name":"Noxra","id":"8287479","score":"117350302"},
+{"rank":"195","name":"DESPACITO","id":"8876210","score":"116551461"},
+{"rank":"196","name":"SPØÑGÈBÓB","id":"27297663","score":"116382486"}
 ,
-{"Rank":"341","Name":"Fatma Sister","PlayerID":"25342916","Score":"89665846"},
-{"Rank":"342","Name":"????????","PlayerID":"4146114","Score":"89525970"},
-{"Rank":"343","Name":"???�?","PlayerID":"27277309","Score":"89286628"}
+{"rank":"197","name":"Muskellunge","id":"8781408","score":"115338021"},
+{"rank":"198","name":"WasteOfTime","id":"29630590","score":"115029261"},
+{"rank":"199","name":"Ivy","id":"2076008","score":"114908680"},
+{"rank":"200","name":"F U B A R","id":"9569447","score":"114750169"},
+{"rank":"201","name":"LAG 42","id":"18648210","score":"114608543"},
+{"rank":"202","name":"Kristela 6iX","id":"26549105","score":"114523258"},
+{"rank":"203","name":"NR_PALESTINE","id":"16951596","score":"114007958"},
+{"rank":"204","name":"War-Diem-VN","id":"14565939","score":"113900296"},
+{"rank":"205","name":"�?anziИ22GG","id":"22251200","score":"113736529"}
 ,
-{"Rank":"344","Name":"K�NgP�W_6iX","PlayerID":"23422377","Score":"89283981"}
+{"rank":"206","name":"Nobel","id":"28983690","score":"113632464"},
+{"rank":"207","name":"HiÇlåñ_6iXR�","id":"26487501","score":"113103596"}
 ,
-{"Rank":"345","Name":"I L�v� U","PlayerID":"10371996","Score":"88871251"}
+{"rank":"208","name":"Jordan*","id":"1380012","score":"112899982"},
+{"rank":"209","name":"kùý�  b� l� p","id":"27288304","score":"112896251"}
 ,
-{"Rank":"346","Name":"DeMoNcOgZ uk","PlayerID":"17658308","Score":"88850824"},
-{"Rank":"347","Name":"�?llyzi??a","PlayerID":"15850430","Score":"88726396"}
+{"rank":"210","name":"ILOVEU KARO","id":"17471545","score":"112843519"},
+{"rank":"211","name":"ГОСПОДИ�","id":"9825705","score":"112179951"}
 ,
-{"Rank":"348","Name":"l�� Yag�m�","PlayerID":"31659081","Score":"88700751"}
+{"rank":"212","name":"Tai Nguyen","id":"7131736","score":"111757405"},
+{"rank":"213","name":"KЯËWËL1","id":"227609","score":"111331655"}
 ,
-{"Rank":"349","Name":"Sh�d�26r�S","PlayerID":"18702189","Score":"88681730"}
+{"rank":"214","name":"Marissa","id":"20972502","score":"111283415"},
+{"rank":"215","name":"War_Galaxy","id":"14536508","score":"111190812"},
+{"rank":"216","name":"KCG_BOSs_NR","id":"15282613","score":"110855900"},
+{"rank":"217","name":"KEIL","id":"1318174","score":"110596620"},
+{"rank":"218","name":"Д-MONALISA","id":"18529180","score":"110360226"}
 ,
-{"Rank":"350","Name":"�?G_�GH�_$","PlayerID":"28670445","Score":"88532607"}
+{"rank":"219","name":"A�?�?-Ryota","id":"5112345","score":"110304338"}
 ,
-{"Rank":"351","Name":"SERPENTINE","PlayerID":"3696757","Score":"88512232"},
-{"Rank":"352","Name":"Q?K*GUS","PlayerID":"17735265","Score":"88258067"},
-{"Rank":"353","Name":"bon-bon","PlayerID":"6671872","Score":"88215125"},
-{"Rank":"354","Name":"??$??? $?","PlayerID":"9451907","Score":"88202914"},
-{"Rank":"355","Name":"BrunoBMF","PlayerID":"16269731","Score":"88137868"},
-{"Rank":"356","Name":"� R E A M","PlayerID":"17466965","Score":"87949545"}
+{"rank":"220","name":"InfêrnØ","id":"15335883","score":"110236981"}
 ,
-{"Rank":"357","Name":"M�N�_CHECHEN","PlayerID":"24829318","Score":"87892293"}
+{"rank":"221","name":"КCG_КЭПДИ","id":"14183701","score":"110037820"}
 ,
-{"Rank":"358","Name":"Cry Baby","PlayerID":"24785794","Score":"87744994"},
-{"Rank":"359","Name":"??_�_�_?_?","PlayerID":"21185150","Score":"87731344"}
+{"rank":"222","name":"GoKarliGo","id":"3826153","score":"109853688"},
+{"rank":"223","name":"KÇG_BOSs_NR","id":"27319836","score":"109562700"}
 ,
-{"Rank":"360","Name":"?L�?*�?�Z","PlayerID":"4559413","Score":"87697068"}
+{"rank":"224","name":"Adinda_øDøL","id":"22939864","score":"109527560"}
 ,
-{"Rank":"361","Name":"X_GODZILLA_X","PlayerID":"26415833","Score":"87637280"},
-{"Rank":"362","Name":"NR_3SC4N0R","PlayerID":"29660939","Score":"87619073"},
-{"Rank":"363","Name":"U-canT-SeeMe","PlayerID":"23816795","Score":"87542712"},
-{"Rank":"364","Name":"I__SILVER__I","PlayerID":"22700358","Score":"87491470"},
-{"Rank":"365","Name":"Icewiz","PlayerID":"7698984","Score":"87456554"},
-{"Rank":"366","Name":"? *� *K * �","PlayerID":"2682818","Score":"87438599"}
+{"rank":"225","name":"CHECHEN","id":"12638693","score":"109432252"},
+{"rank":"226","name":"КУЛ�?К","id":"3354027","score":"108927850"}
 ,
-{"Rank":"367","Name":"C??J�G?D�?","PlayerID":"15659929","Score":"87436830"}
+{"rank":"227","name":"best","id":"1161897","score":"108798033"},
+{"rank":"228","name":"PimplePopper","id":"20237209","score":"108600960"},
+{"rank":"229","name":"mongorhead","id":"1047304","score":"108066228"},
+{"rank":"230","name":"The ONE","id":"31089174","score":"107547706"},
+{"rank":"231","name":"HÑdRyK","id":"15682689","score":"107306731"}
 ,
-{"Rank":"368","Name":"SS12345","PlayerID":"1855561","Score":"87232286"},
-{"Rank":"369","Name":"???I_R???","PlayerID":"19670960","Score":"87169299"},
-{"Rank":"370","Name":"Mr-_*�MAR","PlayerID":"26540472","Score":"87112649"}
+{"rank":"232","name":"DE Slayer","id":"17759447","score":"107124399"},
+{"rank":"233","name":"È-JãnË_TnË2","id":"18011779","score":"106823189"}
 ,
-{"Rank":"371","Name":"BIGBADDAD","PlayerID":"3864833","Score":"86760200"},
-{"Rank":"372","Name":"Co�kie","PlayerID":"17802658","Score":"86691778"}
+{"rank":"234","name":"Kearin","id":"6489983","score":"106761395"},
+{"rank":"235","name":"Q-T","id":"1100045","score":"106643298"},
+{"rank":"236","name":"PVPGØ_ÇкДb�","id":"26460998","score":"106583997"}
 ,
-{"Rank":"373","Name":"new bie 1983","PlayerID":"21790397","Score":"86567304"},
-{"Rank":"374","Name":"A?�?L*?*??","PlayerID":"24957696","Score":"86470455"}
+{"rank":"237","name":"ЯBЙ_josie","id":"26154773","score":"106393594"}
 ,
-{"Rank":"375","Name":"??_HOP�L�$$","PlayerID":"9233340","Score":"86450642"}
+{"rank":"238","name":"LigaÅÇËSÎN�","id":"6672531","score":"106347079"}
 ,
-{"Rank":"376","Name":"??? 79","PlayerID":"16092679","Score":"86429143"},
-{"Rank":"377","Name":"Marija","PlayerID":"451923","Score":"86333718"},
-{"Rank":"378","Name":"D e v I l","PlayerID":"12140310","Score":"86216437"},
-{"Rank":"379","Name":"R3�LT�M�T�","PlayerID":"25507809","Score":"86072877"}
+{"rank":"239","name":"Ех�? DUN�?ILL","id":"8413545","score":"106299443"}
 ,
-{"Rank":"380","Name":"NR_K1NGJ4RW0","PlayerID":"25844980","Score":"85784376"},
-{"Rank":"381","Name":"wishes","PlayerID":"697803","Score":"85733400"},
-{"Rank":"382","Name":"Daria","PlayerID":"9386401","Score":"85725454"},
-{"Rank":"383","Name":"j�? D??�?","PlayerID":"8470123","Score":"85685443"}
+{"rank":"240","name":"Z�?ЭЯГ_PH","id":"26465017","score":"106259674"}
 ,
-{"Rank":"384","Name":"S-�-R-K-�-?","PlayerID":"1184973","Score":"85679646"}
+{"rank":"241","name":"Dovile","id":"2935967","score":"106168627"},
+{"rank":"242","name":"one_2_3_4U","id":"23649825","score":"106154119"},
+{"rank":"243","name":"Qц�?�?пSкцL","id":"20430706","score":"105800388"}
 ,
-{"Rank":"385","Name":"LB$ V�K�PR�","PlayerID":"32082717","Score":"85531072"}
+{"rank":"244","name":"Slimy Eggy","id":"13681576","score":"105335761"},
+{"rank":"245","name":"DJ_Franco $","id":"30938923","score":"105074150"},
+{"rank":"246","name":"ДО� �?МЩИ�","id":"17431420","score":"104284574"}
 ,
-{"Rank":"386","Name":"????_P?�$","PlayerID":"12803161","Score":"85486037"}
+{"rank":"247","name":"SMasterSP","id":"6733421","score":"104171256"},
+{"rank":"248","name":"JPS*-_-*Kîпб","id":"26181626","score":"103966902"}
 ,
-{"Rank":"387","Name":"Gao*?uclea?","PlayerID":"21152273","Score":"85377897"},
-{"Rank":"388","Name":"�_K�J�J��R","PlayerID":"4382549","Score":"85275089"}
+{"rank":"249","name":"Isipou","id":"14892009","score":"103961558"},
+{"rank":"250","name":"Ma$CДЯaDфBЯ","id":"339385","score":"103891226"}
 ,
-{"Rank":"389","Name":"Tundra","PlayerID":"47829","Score":"85218049"},
-{"Rank":"390","Name":"??_PL�TR-SQL","PlayerID":"14391647","Score":"85172266"}
+{"rank":"251","name":"�?еркан Л","id":"3773927","score":"103857003"}
 ,
-{"Rank":"391","Name":"UMAR-ZONE","PlayerID":"5470176","Score":"85142958"},
-{"Rank":"392","Name":"bolate","PlayerID":"9533806","Score":"85033010"},
-{"Rank":"393","Name":"deryl syahhh","PlayerID":"14179523","Score":"84908670"},
-{"Rank":"394","Name":"?????u-??","PlayerID":"8885496","Score":"84896169"},
-{"Rank":"395","Name":"Q?___�?�__C","PlayerID":"27793012","Score":"84858017"}
+{"rank":"252","name":"PA$INDU","id":"29637543","score":"103213355"},
+{"rank":"253","name":"ЦLåЯ*JåG*OY","id":"24300984","score":"103094247"}
 ,
-{"Rank":"396","Name":"Old Vespa","PlayerID":"9140110","Score":"84848684"},
-{"Rank":"397","Name":"Sir Elton","PlayerID":"15198801","Score":"84813187"},
-{"Rank":"398","Name":"G?�ZzL�-�T","PlayerID":"26018267","Score":"84733508"}
+{"rank":"254","name":"Dark AngeL01","id":"8987198","score":"102887819"},
+{"rank":"255","name":"нк_GodFather","id":"9646528","score":"102723806"}
 ,
-{"Rank":"399","Name":"G�LD Sn�K�","PlayerID":"8273539","Score":"84704404"}
+{"rank":"256","name":"THE-LAGG","id":"4512725","score":"102601892"},
+{"rank":"257","name":"ONE Point","id":"24803734","score":"102187834"},
+{"rank":"258","name":"Vina*_zöмвï","id":"9711919","score":"102140300"}
 ,
-{"Rank":"400","Name":"KoRoSenSei","PlayerID":"1260985","Score":"84610674"},
-{"Rank":"401","Name":"DEATH_DEALER","PlayerID":"3734077","Score":"84561001"},
-{"Rank":"402","Name":"gra�H�nt�r_*","PlayerID":"24903628","Score":"84460678"}
+{"rank":"259","name":"ЯбL_ЖîîNб","id":"16433378","score":"101787078"}
 ,
-{"Rank":"403","Name":"S??LL�??s?","PlayerID":"15016724","Score":"84429933"}
+{"rank":"260","name":"KÇG_QnBos_NR","id":"20065281","score":"101761524"}
 ,
-{"Rank":"404","Name":"dan- �s-----","PlayerID":"17981184","Score":"84221379"}
+{"rank":"261","name":"DÀRKQÚÈÈÑ_","id":"14053959","score":"101532336"}
 ,
-{"Rank":"405","Name":"C??_Caniball","PlayerID":"12201435","Score":"84163990"},
-{"Rank":"406","Name":"AnotherLAAAG","PlayerID":"6354767","Score":"84147900"},
-{"Rank":"407","Name":"?????? ?","PlayerID":"2859670","Score":"83956250"},
-{"Rank":"408","Name":"??g_�I?L","PlayerID":"24133845","Score":"83899729"}
+{"rank":"262","name":"Bot_Ukui2","id":"25133633","score":"101402884"},
+{"rank":"263","name":"X_B� BByTY� Râ","id":"3305577","score":"100627367"}
 ,
-{"Rank":"409","Name":"?B�_nEvErDie","PlayerID":"29359384","Score":"83849031"}
+{"rank":"264","name":"prince Meso","id":"18577035","score":"100551747"},
+{"rank":"265","name":"Папа Сло","id":"8311955","score":"100538858"}
 ,
-{"Rank":"410","Name":"garongg","PlayerID":"14008434","Score":"83484284"},
-{"Rank":"411","Name":"K?�W�LL�","PlayerID":"227577","Score":"83476255"}
+{"rank":"266","name":"SnakeGod","id":"204712","score":"99576573"},
+{"rank":"267","name":"Exc MALBORO","id":"25206620","score":"99389729"},
+{"rank":"268","name":"SULUCAN","id":"27690091","score":"99334861"},
+{"rank":"269","name":"KÇG_�?п�?к_B","id":"21603334","score":"99103588"}
 ,
-{"Rank":"412","Name":"BLACK COFFEE","PlayerID":"23643520","Score":"83364231"},
-{"Rank":"413","Name":"???_$ H�N�","PlayerID":"28593555","Score":"83236214"}
+{"rank":"270","name":"Venom","id":"23323317","score":"99019785"},
+{"rank":"271","name":"Bob","id":"18736523","score":"98955189"},
+{"rank":"272","name":"Й�?_ЙДБД�","id":"13047669","score":"98923740"}
 ,
-{"Rank":"414","Name":"?*LD_D_D?�G?","PlayerID":"22620297","Score":"83119607"}
+{"rank":"273","name":"FR_BadGirl","id":"33378634","score":"98556119"},
+{"rank":"274","name":"MISIA","id":"4617999","score":"98468983"},
+{"rank":"275","name":"ЯбL_QUEEN_Æ�","id":"8356314","score":"97862322"}
 ,
-{"Rank":"415","Name":"HI Gantengg*","PlayerID":"10167702","Score":"83069488"},
-{"Rank":"416","Name":"TontonD�sir�","PlayerID":"21833909","Score":"83021282"}
+{"rank":"276","name":"cHДpEL3ïЯфB","id":"16284258","score":"97811733"}
 ,
-{"Rank":"417","Name":"Patsy","PlayerID":"24505693","Score":"82870480"},
-{"Rank":"418","Name":"M��LaN","PlayerID":"16791589","Score":"82778442"}
+{"rank":"277","name":"КØmåtõZ","id":"8749801","score":"97717537"}
 ,
-{"Rank":"419","Name":"KCG-ALETTA","PlayerID":"17443508","Score":"82650642"},
-{"Rank":"420","Name":"GamerGeek-YT","PlayerID":"167246","Score":"82577784"},
-{"Rank":"421","Name":"Jun_Legend","PlayerID":"14368690","Score":"82313501"},
-{"Rank":"422","Name":"boa","PlayerID":"2105832","Score":"82199525"},
-{"Rank":"423","Name":"�?V*C4N4D469","PlayerID":"3480470","Score":"81795571"}
+{"rank":"278","name":"KCG p4p4 AL","id":"28582733","score":"97357020"},
+{"rank":"279","name":"IM_SupêrîøЯ","id":"23520098","score":"97236699"}
 ,
-{"Rank":"424","Name":"PRINCEES NZ","PlayerID":"20196725","Score":"81616864"},
-{"Rank":"425","Name":"W?F","PlayerID":"23534292","Score":"81429997"},
-{"Rank":"426","Name":"Boujee-6iX-","PlayerID":"18290316","Score":"81309633"},
-{"Rank":"427","Name":"Na Ryn","PlayerID":"11899018","Score":"81254247"},
-{"Rank":"428","Name":"NoRdXeym","PlayerID":"1622208","Score":"81081516"},
-{"Rank":"429","Name":"I�hFe�erIcy","PlayerID":"30062170","Score":"80985854"}
+{"rank":"280","name":"È-möön_TnË1","id":"21973813","score":"97158522"}
 ,
-{"Rank":"430","Name":"Rachel","PlayerID":"20574058","Score":"80981560"},
-{"Rank":"431","Name":"L�$*G�M�?*","PlayerID":"32683782","Score":"80955491"}
+{"rank":"281","name":"DêãR_BдSTãR","id":"24402613","score":"96723724"}
 ,
-{"Rank":"432","Name":"�� Pr�blemYT","PlayerID":"636393","Score":"80847302"}
+{"rank":"282","name":"WãR-$êrêJlk�","id":"5277715","score":"96613692"}
 ,
-{"Rank":"433","Name":"??????","PlayerID":"31033636","Score":"80804284"},
-{"Rank":"434","Name":"?????s","PlayerID":"14737899","Score":"80725923"},
-{"Rank":"435","Name":"Teacuptime","PlayerID":"2294113","Score":"80598514"},
-{"Rank":"436","Name":"J�e Uz�m�k�","PlayerID":"18150499","Score":"80424868"}
+{"rank":"283","name":"PAЙGERAЙ_458","id":"26946197","score":"96486971"}
 ,
-{"Rank":"437","Name":"KCG-DNS_nr","PlayerID":"8012582","Score":"80161260"},
-{"Rank":"438","Name":"L�rg� D?ag�","PlayerID":"18576666","Score":"79983586"}
+{"rank":"284","name":"Sharklord","id":"5719561","score":"96466240"},
+{"rank":"285","name":"йфФб Т�?�?","id":"26677118","score":"96406140"}
 ,
-{"Rank":"439","Name":"LYALYA","PlayerID":"6521925","Score":"79970129"},
-{"Rank":"440","Name":"B�rz__�r�n�","PlayerID":"8306417","Score":"79949369"}
+{"rank":"286","name":"Døпd Sнiød�","id":"13760180","score":"96336890"}
 ,
-{"Rank":"441","Name":"L??","PlayerID":"5168101","Score":"79941096"},
-{"Rank":"442","Name":"Gao*Duong","PlayerID":"26010325","Score":"79766640"},
-{"Rank":"443","Name":"C??*�o AB??","PlayerID":"28607950","Score":"79719490"}
+{"rank":"287","name":"cristian-_*","id":"8100559","score":"96024284"},
+{"rank":"288","name":"Pari *MA*","id":"25709570","score":"95664500"},
+{"rank":"289","name":"War-Gao*MaB�","id":"1775926","score":"95575621"}
 ,
-{"Rank":"444","Name":"C�X F1LL1PE*","PlayerID":"27207961","Score":"79640280"}
+{"rank":"290","name":"Yøц Шë�?ëP","id":"22837928","score":"95150685"}
 ,
-{"Rank":"445","Name":"DieAntwoord","PlayerID":"434969","Score":"79635607"},
-{"Rank":"446","Name":"Ms Shaba-SQL","PlayerID":"14678861","Score":"79565278"},
-{"Rank":"447","Name":"??_Nyonya G","PlayerID":"14359223","Score":"79537839"},
-{"Rank":"448","Name":"TFL-PloyKo","PlayerID":"18324946","Score":"79411093"},
-{"Rank":"449","Name":"CHELSEA FIRA","PlayerID":"10248793","Score":"79332679"},
-{"Rank":"450","Name":"L�i","PlayerID":"31877053","Score":"79306090"}
+{"rank":"291","name":"W�?R TÌM","id":"7998421","score":"95110748"}
 ,
-{"Rank":"451","Name":"B??g_�???","PlayerID":"7829742","Score":"79158243"}
+{"rank":"292","name":"S�?инø�?îт","id":"3732053","score":"95064846"}
 ,
-{"Rank":"452","Name":"UKR","PlayerID":"21341436","Score":"79026493"},
-{"Rank":"453","Name":"C?ouc?s???","PlayerID":"15782895","Score":"78981519"},
-{"Rank":"454","Name":"�r�k��g m�","PlayerID":"15874003","Score":"78948961"}
+{"rank":"293","name":"QЦЭЭЙ_LIÅ","id":"16899725","score":"94973215"}
 ,
-{"Rank":"455","Name":"JOLA -_*","PlayerID":"12625425","Score":"78919595"},
-{"Rank":"456","Name":"C�L�_$NACK","PlayerID":"5890628","Score":"78901707"}
+{"rank":"294","name":"MÅFÎÅShelen�","id":"7525028","score":"94940968"}
 ,
-{"Rank":"457","Name":"F�r_�v�?","PlayerID":"26804777","Score":"78900267"}
+{"rank":"295","name":"Hackerzz 6iX","id":"7878561","score":"94925301"},
+{"rank":"296","name":"Sт_�?HAПY-SQL","id":"7981845","score":"94568129"}
 ,
-{"Rank":"458","Name":"Katie","PlayerID":"13192268","Score":"78892535"},
-{"Rank":"459","Name":"oooScary_6iX","PlayerID":"8009743","Score":"78831755"},
-{"Rank":"460","Name":"NG YU","PlayerID":"19193809","Score":"78793889"},
-{"Rank":"461","Name":"GH�$T","PlayerID":"26871417","Score":"78733567"}
+{"rank":"297","name":"toto_6iX","id":"27356665","score":"94399372"},
+{"rank":"298","name":"XxLIxX","id":"4124292","score":"94361887"},
+{"rank":"299","name":"Fergus","id":"6032611","score":"94278522"},
+{"rank":"300","name":"M150 TH","id":"16668649","score":"94223376"},
+{"rank":"301","name":"TLR*_*DUY VN","id":"6544711","score":"94167582"},
+{"rank":"302","name":"RдjдKФDфЖ*","id":"8639810","score":"94064029"}
 ,
-{"Rank":"462","Name":"luxxxo","PlayerID":"19433227","Score":"78696076"},
-{"Rank":"463","Name":"MYK","PlayerID":"7550787","Score":"78653090"},
-{"Rank":"464","Name":"??_J?Y","PlayerID":"3591714","Score":"78373097"},
-{"Rank":"465","Name":"xXx_KSA _xXx","PlayerID":"25155336","Score":"78324490"},
-{"Rank":"466","Name":"Advystyles","PlayerID":"24666198","Score":"78252007"},
-{"Rank":"467","Name":"�cho","PlayerID":"21769879","Score":"78233483"}
+{"rank":"303","name":"мargasari_yн","id":"26637670","score":"93914787"}
 ,
-{"Rank":"468","Name":"GwapitoNOYPI","PlayerID":"15305094","Score":"77918677"},
-{"Rank":"469","Name":"??�K?_s??","PlayerID":"10102946","Score":"77874050"}
+{"rank":"304","name":"MÃJESTY","id":"16547748","score":"93669157"}
 ,
-{"Rank":"470","Name":"WtF_workd","PlayerID":"33390432","Score":"77746044"},
-{"Rank":"471","Name":"GG*D�vil�_FD","PlayerID":"25623966","Score":"77725331"}
+{"rank":"305","name":"Qц�?�?й_бéL","id":"32559668","score":"93453409"}
 ,
-{"Rank":"472","Name":"BRAIN*BOX-01","PlayerID":"21856046","Score":"77681596"},
-{"Rank":"473","Name":"M�F��B�G�M","PlayerID":"8471745","Score":"77471043"}
+{"rank":"306","name":"INDONESIA","id":"16538379","score":"93250167"},
+{"rank":"307","name":"TAHMID-GX","id":"25882180","score":"93017847"},
+{"rank":"308","name":"Alam medan","id":"25415516","score":"93000676"},
+{"rank":"309","name":"ИØthinP�?sØn","id":"1555300","score":"92995817"}
 ,
-{"Rank":"474","Name":"RUN_","PlayerID":"22524154","Score":"77439746"},
-{"Rank":"475","Name":"Fi??Y ?�v�","PlayerID":"20040355","Score":"77425941"}
+{"rank":"310","name":"FH_ÖWÕß_Gå�","id":"11803215","score":"92694443"}
 ,
-{"Rank":"476","Name":"TheRealLia","PlayerID":"27362763","Score":"77407141"},
-{"Rank":"477","Name":"vvvW�Wvvv","PlayerID":"544568","Score":"77287995"}
+{"rank":"311","name":"VN_ßäçGiäñ","id":"11808010","score":"92575609"}
 ,
-{"Rank":"478","Name":"Q�___ulf�___","PlayerID":"13216692","Score":"77253717"}
+{"rank":"312","name":"NIKE","id":"13042351","score":"92483630"},
+{"rank":"313","name":"ÎMT_Ëmìí","id":"21331467","score":"92305894"}
 ,
-{"Rank":"479","Name":"Tchuinn Love","PlayerID":"6604695","Score":"77124449"},
-{"Rank":"480","Name":"A-K-G-�-N","PlayerID":"28417070","Score":"76743974"}
+{"rank":"314","name":"JustTrying","id":"6079324","score":"92226402"},
+{"rank":"315","name":"ц_мy_Løv�? M","id":"29002433","score":"92178814"}
 ,
-{"Rank":"481","Name":"PANTERKA","PlayerID":"22487952","Score":"76697911"},
-{"Rank":"482","Name":"S�lence*Girl","PlayerID":"27352853","Score":"76679413"}
+{"rank":"316","name":"Corona-minus","id":"4766136","score":"92167271"},
+{"rank":"317","name":"Motozou","id":"31402064","score":"92161430"},
+{"rank":"318","name":"HEBI ICHIGO","id":"4974582","score":"92061817"},
+{"rank":"319","name":"F� LLè�?у_yн","id":"18985496","score":"92029156"}
 ,
-{"Rank":"483","Name":"?gL-�j?_M�?","PlayerID":"17212547","Score":"76675788"}
+{"rank":"320","name":"вцСíп_мд","id":"26684129","score":"92021970"}
 ,
-{"Rank":"484","Name":"ANGE?--6iX","PlayerID":"21040267","Score":"76611143"},
-{"Rank":"485","Name":"YBR EDIONNN","PlayerID":"13466809","Score":"76578115"},
-{"Rank":"486","Name":"F�ar_M�Nger","PlayerID":"28947991","Score":"76508043"}
+{"rank":"321","name":"OLDWOMAN OWG","id":"16051905","score":"91797114"},
+{"rank":"322","name":"Ms Aom тèáм","id":"29918648","score":"91656951"}
 ,
-{"Rank":"487","Name":"�-T�M�_Tn�1","PlayerID":"21203808","Score":"76463839"}
+{"rank":"323","name":"QÑ_MïSS VnE*","id":"28281137","score":"91629088"}
 ,
-{"Rank":"488","Name":"Ulen_Ketan","PlayerID":"27514928","Score":"76429065"},
-{"Rank":"489","Name":"TML- Nobita","PlayerID":"31265529","Score":"76417351"},
-{"Rank":"490","Name":"Fleur-de-Sel","PlayerID":"4533779","Score":"75915154"},
-{"Rank":"491","Name":"GE-RMIO-NA","PlayerID":"10451520","Score":"75857291"},
-{"Rank":"492","Name":"ChaNtik","PlayerID":"7752632","Score":"75818370"},
-{"Rank":"493","Name":"EVANGELION","PlayerID":"15599283","Score":"75748754"},
-{"Rank":"494","Name":"NEmene","PlayerID":"158979","Score":"75687961"},
-{"Rank":"495","Name":"Ahhuayra","PlayerID":"20828187","Score":"75635915"},
-{"Rank":"496","Name":"?��?�?�_","PlayerID":"5016865","Score":"75594989"}
+{"rank":"324","name":"morníng","id":"30078141","score":"91537302"}
 ,
-{"Rank":"497","Name":"H�d�_6�X-YT","PlayerID":"22074521","Score":"75509842"}
+{"rank":"325","name":"THE-JOKER","id":"1073116","score":"91415359"},
+{"rank":"326","name":"Vince Lin","id":"25381422","score":"90972811"},
+{"rank":"327","name":"Doctor *_* A","id":"21122182","score":"90788622"},
+{"rank":"328","name":"THE OWL","id":"2972361","score":"90519919"},
+{"rank":"329","name":"СИЖéø H S2","id":"7431127","score":"90473893"}
 ,
-{"Rank":"498","Name":"?���?�??","PlayerID":"5131964","Score":"75431666"}
+{"rank":"330","name":"Mømmå4","id":"6591161","score":"90468899"}
 ,
-{"Rank":"499","Name":"M�STE?_P?�Y","PlayerID":"27908389","Score":"75371532"}
+{"rank":"331","name":"�?ЛЬ-К�?ЙД","id":"3614646","score":"90215328"}
 ,
-{"Rank":"500","Name":"Sum 41","PlayerID":"8598815","Score":"75268211"},
-{"Rank":"501","Name":"Firefly","PlayerID":"2957005","Score":"75262283"},
-{"Rank":"502","Name":"H A K U N A","PlayerID":"1754367","Score":"74848301"},
-{"Rank":"503","Name":"Z�R� S�X�","PlayerID":"15229053","Score":"74828836"}
+{"rank":"332","name":"THe_Eagle","id":"16734159","score":"90146807"},
+{"rank":"333","name":"Artis$s","id":"22884913","score":"90119424"},
+{"rank":"334","name":"Емил","id":"5923732","score":"89973799"}
 ,
-{"Rank":"504","Name":"Anti Seb ?L","PlayerID":"3401383","Score":"74787084"},
-{"Rank":"505","Name":"???*�???","PlayerID":"21970375","Score":"74742827"}
+{"rank":"335","name":"õ_KìJîJîéR","id":"4382549","score":"89944859"}
 ,
-{"Rank":"506","Name":"Fanta","PlayerID":"19953955","Score":"74716929"},
-{"Rank":"507","Name":"Glitch","PlayerID":"22606917","Score":"74650120"},
-{"Rank":"508","Name":"GUGA EMOTE*_","PlayerID":"32359309","Score":"74426127"},
-{"Rank":"509","Name":"ViTaMiNkA","PlayerID":"27694303","Score":"74406394"},
-{"Rank":"510","Name":"Ny Sandra","PlayerID":"12723257","Score":"74292865"},
-{"Rank":"511","Name":"j�k�","PlayerID":"21929665","Score":"74128637"}
+{"rank":"336","name":"jdragon","id":"16794517","score":"89919165"},
+{"rank":"337","name":"AnacMacapaAP","id":"19139002","score":"89839268"},
+{"rank":"338","name":"ДмöЧ_PЯÎ�","id":"24407974","score":"89671807"}
 ,
-{"Rank":"512","Name":"slogoman","PlayerID":"19637433","Score":"74105228"},
-{"Rank":"513","Name":"�T�sH��gr�","PlayerID":"26074291","Score":"74096279"}
+{"rank":"339","name":"Fatma Sister","id":"25342916","score":"89665846"},
+{"rank":"340","name":"Потраши�","id":"4146114","score":"89525970"}
 ,
-{"Rank":"514","Name":"Silence*Nana","PlayerID":"31840892","Score":"73943949"},
-{"Rank":"515","Name":"��LDPL��","PlayerID":"8468559","Score":"73910115"}
+{"rank":"341","name":"�?нтøн","id":"27277309","score":"89286628"}
 ,
-{"Rank":"516","Name":"T __D__ G","PlayerID":"30189231","Score":"73871200"},
-{"Rank":"517","Name":"?�V?????","PlayerID":"17622799","Score":"73860228"}
+{"rank":"342","name":"KüNgPöW_6iX","id":"23422377","score":"89283981"}
 ,
-{"Rank":"518","Name":"Logan","PlayerID":"2629393","Score":"73818761"},
-{"Rank":"519","Name":"OG Dead eyes","PlayerID":"11768052","Score":"73727116"},
-{"Rank":"520","Name":"?????","PlayerID":"5021329","Score":"73582773"},
-{"Rank":"521","Name":"semut putih","PlayerID":"18434153","Score":"73565285"},
-{"Rank":"522","Name":"L? s?�? �-s","PlayerID":"8963367","Score":"73559822"}
+{"rank":"343","name":"I Løvê U","id":"10371996","score":"88871251"}
 ,
-{"Rank":"523","Name":"BUC��*G�RL","PlayerID":"14444109","Score":"73525269"}
+{"rank":"344","name":"DeMoNcOgZ uk","id":"17658308","score":"88850824"},
+{"rank":"345","name":"þФllyziинa","id":"15850430","score":"88726396"}
 ,
-{"Rank":"524","Name":"??_7??10?_","PlayerID":"27829624","Score":"73502841"},
-{"Rank":"525","Name":"??????","PlayerID":"5398124","Score":"73485045"},
-{"Rank":"526","Name":"????","PlayerID":"25608718","Score":"73473080"},
-{"Rank":"527","Name":"Topik","PlayerID":"17909176","Score":"73434711"},
-{"Rank":"528","Name":"���S�N� _6","PlayerID":"7589972","Score":"73427082"}
+{"rank":"346","name":"lëØ YagÄmï","id":"31659081","score":"88700751"}
 ,
-{"Rank":"529","Name":"K99","PlayerID":"6966027","Score":"73379863"},
-{"Rank":"530","Name":"SR CEZAR S2","PlayerID":"7043400","Score":"73372200"},
-{"Rank":"531","Name":"JESSI-OYUUUU","PlayerID":"18092453","Score":"73337149"},
-{"Rank":"532","Name":"DMoB-GiRL","PlayerID":"9609122","Score":"73209179"},
-{"Rank":"533","Name":"ANTI r?v??g?","PlayerID":"24024558","Score":"73153363"},
-{"Rank":"534","Name":"M�Shk�","PlayerID":"2527207","Score":"73152989"}
+{"rank":"347","name":"Shãdê26rúS","id":"18702189","score":"88681730"}
 ,
-{"Rank":"535","Name":"�?V *_* ��U","PlayerID":"13338467","Score":"73138602"}
+{"rank":"348","name":"�?�?G_ËGH�?_$","id":"28670445","score":"88532607"}
 ,
-{"Rank":"536","Name":"kanstantaa","PlayerID":"18902635","Score":"72928482"},
-{"Rank":"537","Name":"???_Julya","PlayerID":"25962652","Score":"72909242"},
-{"Rank":"538","Name":"GPS-MedanKrs","PlayerID":"28150586","Score":"72879417"},
-{"Rank":"539","Name":"�s_jagger*","PlayerID":"26898889","Score":"72821138"}
+{"rank":"349","name":"SERPENTINE","id":"3696757","score":"88512232"},
+{"rank":"350","name":"QиK*GUS","id":"17735265","score":"88258067"}
 ,
-{"Rank":"540","Name":"???? ��G?","PlayerID":"931628","Score":"72501574"}
+{"rank":"351","name":"bon-bon","id":"6671872","score":"88215125"},
+{"rank":"352","name":"Мд$т�?�? $н","id":"9451907","score":"88202914"}
 ,
-{"Rank":"541","Name":"AHAZ","PlayerID":"20964561","Score":"72444439"},
-{"Rank":"542","Name":"?�?? j�y_y","PlayerID":"28180596","Score":"72420522"}
+{"rank":"353","name":"BrunoBMF","id":"16269731","score":"88137868"},
+{"rank":"354","name":"�? R E A M","id":"17466965","score":"87949545"}
 ,
-{"Rank":"543","Name":"���*???z?","PlayerID":"19933989","Score":"72166022"}
+{"rank":"355","name":"M�?N�?_CHECHEN","id":"24829318","score":"87892293"}
 ,
-{"Rank":"544","Name":"Silver","PlayerID":"17868","Score":"72153186"},
-{"Rank":"545","Name":"Bruno","PlayerID":"406671","Score":"72128887"},
-{"Rank":"546","Name":"Emi","PlayerID":"7915031","Score":"72015460"},
-{"Rank":"547","Name":"lll","PlayerID":"14636956","Score":"71952499"},
-{"Rank":"548","Name":"plsdntkillme","PlayerID":"24249535","Score":"71910151"},
-{"Rank":"549","Name":"Samm","PlayerID":"7764491","Score":"71909904"},
-{"Rank":"550","Name":"BILIZART","PlayerID":"8603305","Score":"71811320"},
-{"Rank":"551","Name":"?? �y�B�t?","PlayerID":"20341642","Score":"71778842"}
+{"rank":"356","name":"Cry Baby","id":"24785794","score":"87744994"},
+{"rank":"357","name":"ЯД_�?_�?_К_�","id":"21185150","score":"87731344"}
 ,
-{"Rank":"552","Name":"CaliBear","PlayerID":"8176083","Score":"71756594"},
-{"Rank":"553","Name":"J�f�i� TH","PlayerID":"14949855","Score":"71691835"}
+{"rank":"358","name":"ЦLåЯ*Ç�?ÅZ","id":"4559413","score":"87697068"}
 ,
-{"Rank":"554","Name":"Reddy","PlayerID":"24623777","Score":"71663985"},
-{"Rank":"555","Name":"corona","PlayerID":"24631015","Score":"71637552"},
-{"Rank":"556","Name":"VLA*otr*","PlayerID":"9925364","Score":"71614155"},
-{"Rank":"557","Name":"Q?_� � ? �","PlayerID":"18901380","Score":"71563645"}
+{"rank":"359","name":"X_GODZILLA_X","id":"26415833","score":"87637280"},
+{"rank":"360","name":"NR_3SC4N0R","id":"29660939","score":"87619073"},
+{"rank":"361","name":"I__SILVER__I","id":"22700358","score":"87491470"},
+{"rank":"362","name":"Icewiz","id":"7698984","score":"87456554"},
+{"rank":"363","name":"т *ì *K * Å","id":"2682818","score":"87438599"}
 ,
-{"Rank":"558","Name":"CITAjaBangga","PlayerID":"20184665","Score":"71518274"},
-{"Rank":"559","Name":"LegitChonker","PlayerID":"26252873","Score":"71479538"},
-{"Rank":"560","Name":"V 1 K 1 ? G","PlayerID":"25187679","Score":"71456272"},
-{"Rank":"561","Name":"���_sneaky","PlayerID":"29788730","Score":"71331197"}
+{"rank":"364","name":"CИЖJØGДDØ�","id":"15659929","score":"87436830"}
 ,
-{"Rank":"562","Name":"GladiatorYT","PlayerID":"7581419","Score":"71225208"},
-{"Rank":"563","Name":"ANTI LEGENO","PlayerID":"15173870","Score":"71221751"},
-{"Rank":"564","Name":"D1NAR","PlayerID":"2325418","Score":"71219926"},
-{"Rank":"565","Name":"G??LD_6iX*_*","PlayerID":"10281998","Score":"71194290"},
-{"Rank":"566","Name":"Futtersucher","PlayerID":"24052474","Score":"71162887"},
-{"Rank":"567","Name":"Koko My Love","PlayerID":"7446498","Score":"71074587"},
-{"Rank":"568","Name":"Le**RuS","PlayerID":"4668572","Score":"70973654"},
-{"Rank":"569","Name":"SONG XCV","PlayerID":"5829919","Score":"70920275"},
-{"Rank":"570","Name":"i hunt_6ix","PlayerID":"27399957","Score":"70816717"},
-{"Rank":"571","Name":"RU_LYUBASHA","PlayerID":"6050298","Score":"70809145"},
-{"Rank":"572","Name":"??? ?R","PlayerID":"7574272","Score":"70652191"},
-{"Rank":"573","Name":"We Are One*","PlayerID":"179076","Score":"70597070"},
-{"Rank":"574","Name":"MR SAHDOW","PlayerID":"27356736","Score":"70505260"},
-{"Rank":"575","Name":"Tacitus","PlayerID":"8842152","Score":"70467800"},
-{"Rank":"576","Name":"korean uk","PlayerID":"21858378","Score":"70427703"},
-{"Rank":"577","Name":"Koppy","PlayerID":"29148195","Score":"70391869"},
-{"Rank":"578","Name":"KCG_BIMASENA","PlayerID":"23210305","Score":"70376147"},
-{"Rank":"579","Name":"LENA ELA_6iX","PlayerID":"32079727","Score":"70347724"},
-{"Rank":"580","Name":"TFL-s�x�Thai","PlayerID":"18768311","Score":"70138796"}
+{"rank":"365","name":"Nilsão Lenda","id":"15649843","score":"87264632"}
 ,
-{"Rank":"581","Name":"D�M�GE","PlayerID":"8691497","Score":"70102847"}
+{"rank":"366","name":"SS12345","id":"1855561","score":"87232286"},
+{"rank":"367","name":"ЙУДI_RДТЦ","id":"19670960","score":"87169299"}
 ,
-{"Rank":"582","Name":"janda belang","PlayerID":"9758480","Score":"69997762"},
-{"Rank":"583","Name":"SPARTAC","PlayerID":"7363222","Score":"69987047"},
-{"Rank":"584","Name":"Z-�-Y-�-P �H","PlayerID":"27931554","Score":"69953063"}
+{"rank":"368","name":"Mr-_*�?MAR","id":"26540472","score":"87112649"}
 ,
-{"Rank":"585","Name":"Satyn","PlayerID":"2447360","Score":"69951178"},
-{"Rank":"586","Name":"ALEX","PlayerID":"1077383","Score":"69788215"},
-{"Rank":"587","Name":"? n6�l","PlayerID":"27627426","Score":"69784275"}
+{"rank":"369","name":"BIGBADDAD","id":"3864833","score":"86760200"},
+{"rank":"370","name":"Coõkie","id":"17802658","score":"86691778"}
 ,
-{"Rank":"588","Name":"ARI","PlayerID":"4002578","Score":"69397934"},
-{"Rank":"589","Name":"KAVANI","PlayerID":"22695637","Score":"69354857"},
-{"Rank":"590","Name":"ST-LELE","PlayerID":"9552691","Score":"69305148"},
-{"Rank":"591","Name":"??i????_?","PlayerID":"12751169","Score":"69242824"},
-{"Rank":"592","Name":"W�R_????","PlayerID":"4347870","Score":"69150465"}
+{"rank":"371","name":"new bie 1983","id":"21790397","score":"86567304"},
+{"rank":"372","name":"SpîЯåL Kîñ","id":"18284742","score":"86537599"}
 ,
-{"Rank":"593","Name":"L�tG�tB�g�t","PlayerID":"26604748","Score":"69135175"}
+{"rank":"373","name":"A�?í�?L*ж*й�","id":"24957696","score":"86470455"}
 ,
-{"Rank":"594","Name":"OMiD IR","PlayerID":"7750703","Score":"69012345"},
-{"Rank":"595","Name":"l*SHAHRZAD*l","PlayerID":"21194157","Score":"68937643"},
-{"Rank":"596","Name":"?L�v�?-6�X","PlayerID":"29910543","Score":"68905565"}
+{"rank":"374","name":"нк_HOPËLË$$","id":"9233340","score":"86450642"}
 ,
-{"Rank":"597","Name":"WIWIR_$$","PlayerID":"19030493","Score":"68901553"},
-{"Rank":"598","Name":"GI�NG-DHT_VN","PlayerID":"10104175","Score":"68879522"}
+{"rank":"375","name":"за�? 79","id":"16092679","score":"86429143"}
 ,
-{"Rank":"599","Name":"GR_?????","PlayerID":"3760420","Score":"68804312"},
-{"Rank":"600","Name":"N�$M�K1NG*?R","PlayerID":"6878252","Score":"68741786"}
+{"rank":"376","name":"Marija","id":"451923","score":"86333718"},
+{"rank":"377","name":"D e v I l","id":"12140310","score":"86216437"},
+{"rank":"378","name":"R3ÅLTøMåTë","id":"25507809","score":"86072877"}
 ,
-{"Rank":"601","Name":"?�??_?�L?","PlayerID":"22235363","Score":"68740645"}
+{"rank":"379","name":"NR_K1NGJ4RW0","id":"25844980","score":"85784376"},
+{"rank":"380","name":"wishes","id":"697803","score":"85733400"},
+{"rank":"381","name":"Daria","id":"9386401","score":"85725454"},
+{"rank":"382","name":"jÊт Dа�?ãт","id":"8470123","score":"85685443"}
 ,
-{"Rank":"602","Name":"Akrep Derya","PlayerID":"17218908","Score":"68666086"},
-{"Rank":"603","Name":"PurPle-ART-","PlayerID":"15097855","Score":"68652949"},
-{"Rank":"604","Name":"�R-_-Milk","PlayerID":"7341617","Score":"68639545"}
+{"rank":"383","name":"S-Ê-R-K-Å-И","id":"1184973","score":"85679646"}
 ,
-{"Rank":"605","Name":"T-R-O-M-O-S","PlayerID":"26879027","Score":"68631903"},
-{"Rank":"606","Name":"L�stwith� �z","PlayerID":"19955818","Score":"68619228"}
+{"rank":"384","name":"LB$ V�?KÂPRÖ","id":"32082717","score":"85531072"}
 ,
-{"Rank":"607","Name":"?SE ?? NA?","PlayerID":"9697399","Score":"68611468"},
-{"Rank":"608","Name":"CocoMelon","PlayerID":"21720492","Score":"68579794"},
-{"Rank":"609","Name":"???????","PlayerID":"19387270","Score":"68521901"},
-{"Rank":"610","Name":"M��M_FR","PlayerID":"3411608","Score":"68379356"}
+{"rank":"385","name":"Я�?Я�?_Pгå$","id":"12803161","score":"85486037"}
 ,
-{"Rank":"611","Name":"k�y?  b? l? p4","PlayerID":"14793890","Score":"68333815"}
+{"rank":"386","name":"Gao*ИucleaЯ","id":"21152273","score":"85377897"}
 ,
-{"Rank":"612","Name":"MargaaaRita","PlayerID":"4057285","Score":"68296010"},
-{"Rank":"613","Name":"B�RZ?????","PlayerID":"6099311","Score":"68234736"}
+{"rank":"387","name":"Tundra","id":"47829","score":"85218049"},
+{"rank":"388","name":"ЙЯ_PLäTR-SQL","id":"14391647","score":"85172266"}
 ,
-{"Rank":"614","Name":"?? ? ????","PlayerID":"15750455","Score":"68195370"},
-{"Rank":"615","Name":"Legend fury","PlayerID":"7295166","Score":"67901780"},
-{"Rank":"616","Name":"fuR-goTTan V","PlayerID":"20646977","Score":"67828278"},
-{"Rank":"617","Name":"ET�M�LIA","PlayerID":"25775134","Score":"67771580"}
+{"rank":"389","name":"UMAR-ZONE","id":"5470176","score":"85142958"},
+{"rank":"390","name":"bolate","id":"9533806","score":"85033010"},
+{"rank":"391","name":"GHØ$T","id":"26871417","score":"84917108"}
 ,
-{"Rank":"618","Name":"W�lfie","PlayerID":"18858033","Score":"67693478"}
+{"rank":"392","name":"тейбкu-т�","id":"8885496","score":"84896169"}
 ,
-{"Rank":"619","Name":"AHHA__A?","PlayerID":"3539240","Score":"67553517"},
-{"Rank":"620","Name":"I�?_? ???$","PlayerID":"14548514","Score":"67547096"}
+{"rank":"393","name":"QЙ___ËСÅ__C","id":"27793012","score":"84858017"}
 ,
-{"Rank":"621","Name":"KCG_J��???","PlayerID":"8510230","Score":"67506845"}
+{"rank":"394","name":"Old Vespa","id":"9140110","score":"84848684"},
+{"rank":"395","name":"Sir Elton","id":"15198801","score":"84813187"},
+{"rank":"396","name":"G�?îZzLý-�?T","id":"26018267","score":"84733508"}
 ,
-{"Rank":"622","Name":"ANH VN *FAKE","PlayerID":"17406730","Score":"67412862"},
-{"Rank":"623","Name":"M A S K","PlayerID":"2681320","Score":"67386276"},
-{"Rank":"624","Name":"B�rzK��p�s?","PlayerID":"6460446","Score":"67253060"}
+{"rank":"397","name":"GøLD SnëKë","id":"8273539","score":"84704404"}
 ,
-{"Rank":"625","Name":"MG fire","PlayerID":"19542235","Score":"67172930"},
-{"Rank":"626","Name":"QueenSulecik","PlayerID":"29316458","Score":"67136432"},
-{"Rank":"627","Name":"???","PlayerID":"12643453","Score":"67129574"},
-{"Rank":"628","Name":"Parostatek","PlayerID":"16361829","Score":"67117493"},
-{"Rank":"629","Name":"Stig","PlayerID":"24666157","Score":"67071183"},
-{"Rank":"630","Name":"Alice","PlayerID":"23202265","Score":"66988385"},
-{"Rank":"631","Name":"I_Z_U_A_L","PlayerID":"16418575","Score":"66936939"},
-{"Rank":"632","Name":"W?F","PlayerID":"27150587","Score":"66899464"},
-{"Rank":"633","Name":"RAYA","PlayerID":"24787366","Score":"66842068"},
-{"Rank":"634","Name":"Wild_K�t_AES","PlayerID":"21663431","Score":"66818127"}
+{"rank":"398","name":"KoRoSenSei","id":"1260985","score":"84610674"},
+{"rank":"399","name":"DEATH_DEALER","id":"3734077","score":"84561001"},
+{"rank":"400","name":"graÿHûntër_*","id":"24903628","score":"84460678"}
 ,
-{"Rank":"635","Name":"�-Bola_Tn�10","PlayerID":"17467915","Score":"66797757"}
+{"rank":"401","name":"SкцLLÇ�?цs�","id":"15016724","score":"84429933"}
 ,
-{"Rank":"636","Name":"DONDOMIE","PlayerID":"513765","Score":"66795632"},
-{"Rank":"637","Name":"�-G DI�� 6ix","PlayerID":"28831803","Score":"66492287"}
+{"rank":"402","name":"Na Ryn","id":"11899018","score":"84403095"},
+{"rank":"403","name":"фмg_ßIЭL","id":"24133845","score":"84305714"}
 ,
-{"Rank":"638","Name":"Red-Pr�","PlayerID":"26723105","Score":"66427257"}
+{"rank":"404","name":"dan- Çs-----","id":"17981184","score":"84221379"}
 ,
-{"Rank":"639","Name":"HYP�R��N_6IX","PlayerID":"18509005","Score":"66255009"}
+{"rank":"405","name":"U-canT-SeeMe","id":"23816795","score":"84188897"},
+{"rank":"406","name":"CИЖ_Caniball","id":"12201435","score":"84163990"}
 ,
-{"Rank":"640","Name":"??_E?DL�$$","PlayerID":"13637818","Score":"66242648"}
+{"rank":"407","name":"AnotherLAAAG","id":"6354767","score":"84147900"},
+{"rank":"408","name":"ЯBÑ_nEvErDie","id":"29359384","score":"83849031"}
 ,
-{"Rank":"641","Name":"�MG ALFA","PlayerID":"18384633","Score":"66217241"}
+{"rank":"409","name":"garongg","id":"14008434","score":"83484284"},
+{"rank":"410","name":"KЯËWËLLÄ","id":"227577","score":"83476255"}
 ,
-{"Rank":"642","Name":"CiNt4_94","PlayerID":"18810838","Score":"66214963"},
-{"Rank":"643","Name":"dOpPeLg�nGeR","PlayerID":"19413130","Score":"66197956"}
+{"rank":"411","name":"BLACK COFFEE","id":"23643520","score":"83364231"},
+{"rank":"412","name":"ЯВЙ_$ HÔNÊ","id":"28593555","score":"83236214"}
 ,
-{"Rank":"644","Name":"?�$w?y","PlayerID":"8981713","Score":"66075888"}
+{"rank":"413","name":"Б*LD_D_DЯÃG�","id":"22620297","score":"83119607"}
 ,
-{"Rank":"645","Name":"Q?K_?�??�","PlayerID":"28647526","Score":"66035285"}
+{"rank":"414","name":"BRAIN*BOX-01","id":"21856046","score":"83114644"},
+{"rank":"415","name":"HI Gantengg*","id":"10167702","score":"83069488"},
+{"rank":"416","name":"TontonDésiré","id":"21833909","score":"83021282"}
 ,
-{"Rank":"646","Name":"??___?___??","PlayerID":"9460806","Score":"65861126"},
-{"Rank":"647","Name":"�F�Q�*-*","PlayerID":"30252740","Score":"65816276"}
+{"rank":"417","name":"Patsy","id":"24505693","score":"82870480"},
+{"rank":"418","name":"MööLaN","id":"16791589","score":"82778442"}
 ,
-{"Rank":"648","Name":"D-E-A-T-H","PlayerID":"16269193","Score":"65795714"},
-{"Rank":"649","Name":"C??_Nice","PlayerID":"13801695","Score":"65789679"},
-{"Rank":"650","Name":"Sunny","PlayerID":"31569617","Score":"65772029"},
-{"Rank":"651","Name":"???? RAHR?","PlayerID":"5986385","Score":"65745193"},
-{"Rank":"652","Name":"LiverLips","PlayerID":"1016250","Score":"65652521"},
-{"Rank":"653","Name":"DILLIGAF","PlayerID":"17805438","Score":"65651731"},
-{"Rank":"654","Name":"hero_Cs*","PlayerID":"16501583","Score":"65542101"},
-{"Rank":"655","Name":"N A G I N I","PlayerID":"18087285","Score":"65533269"},
-{"Rank":"656","Name":"NANYSIGMA","PlayerID":"4813525","Score":"65424261"},
-{"Rank":"657","Name":"N��B *PVP*","PlayerID":"18167534","Score":"65381561"}
+{"rank":"419","name":"GamerGeek-YT","id":"167246","score":"82577784"},
+{"rank":"420","name":"Jun_Legend","id":"14368690","score":"82313501"},
+{"rank":"421","name":"boa","id":"2105832","score":"82199525"},
+{"rank":"422","name":"LYALYA","id":"6521925","score":"82127858"},
+{"rank":"423","name":"ß�?V*Hÿøü�?","id":"3480470","score":"81795571"}
 ,
-{"Rank":"658","Name":"noobTEAMERS","PlayerID":"4185728","Score":"65377930"},
-{"Rank":"659","Name":"War-�S 176","PlayerID":"24374857","Score":"65313132"}
+{"rank":"424","name":"PRINCEES NZ","id":"20196725","score":"81616864"},
+{"rank":"425","name":"WТF","id":"23534292","score":"81429997"}
 ,
-{"Rank":"660","Name":"? ?�_Insomnia","PlayerID":"26175115","Score":"65292041"}
+{"rank":"426","name":"Boujee-6iX-","id":"18290316","score":"81309633"},
+{"rank":"427","name":"NoRdXeym","id":"1622208","score":"81081516"},
+{"rank":"428","name":"IçhFeîerIcy","id":"30062170","score":"80985854"}
 ,
-{"Rank":"661","Name":"TamrulBangla","PlayerID":"9241639","Score":"65281900"},
-{"Rank":"662","Name":"????????","PlayerID":"9942781","Score":"65179642"},
-{"Rank":"663","Name":"Water_Bug","PlayerID":"7900723","Score":"65149225"},
-{"Rank":"664","Name":"ZoHa*BD","PlayerID":"7955682","Score":"65115104"},
-{"Rank":"665","Name":"DRIFTer ZeRo","PlayerID":"26637630","Score":"65020149"},
-{"Rank":"666","Name":"????????","PlayerID":"3621268","Score":"64990401"},
-{"Rank":"667","Name":"kicsizso","PlayerID":"3166087","Score":"64929213"},
-{"Rank":"668","Name":"sdf","PlayerID":"2318096","Score":"64680571"},
-{"Rank":"669","Name":"????_P?�$","PlayerID":"10363019","Score":"64675171"}
+{"rank":"429","name":"Rachel","id":"20574058","score":"80981560"},
+{"rank":"430","name":"Lß$*GÄMÊЯ*","id":"32683782","score":"80955491"}
 ,
-{"Rank":"670","Name":"Sunshine_IRI","PlayerID":"2671342","Score":"64634984"},
-{"Rank":"671","Name":"?m?????�","PlayerID":"21110304","Score":"64567513"}
+{"rank":"431","name":"Ñö PröblemYT","id":"636393","score":"80847302"}
 ,
-{"Rank":"672","Name":"R�Y_��K��W","PlayerID":"18149945","Score":"64485467"}
+{"rank":"432","name":"любан�?","id":"31033636","score":"80804284"}
 ,
-{"Rank":"673","Name":"M�X�C�_R�AL","PlayerID":"26222191","Score":"64483087"}
+{"rank":"433","name":"К�?дтфs","id":"14737899","score":"80725923"}
 ,
-{"Rank":"674","Name":"?????_Q?-","PlayerID":"8922984","Score":"64467317"},
-{"Rank":"675","Name":"HDS ??????","PlayerID":"5847104","Score":"64401399"},
-{"Rank":"676","Name":"OHHHHHHHHHHH","PlayerID":"30167665","Score":"64379772"},
-{"Rank":"677","Name":"TUAREG","PlayerID":"3571831","Score":"64297524"},
-{"Rank":"678","Name":"bagel bite","PlayerID":"17714921","Score":"64257088"},
-{"Rank":"679","Name":"Albert","PlayerID":"28602367","Score":"64197509"},
-{"Rank":"680","Name":"Pause-Tempor","PlayerID":"5411166","Score":"64122124"},
-{"Rank":"681","Name":"Opachki","PlayerID":"2367125","Score":"64104119"},
-{"Rank":"682","Name":"�??-�?��","PlayerID":"26548273","Score":"64043115"}
+{"rank":"434","name":"Teacuptime","id":"2294113","score":"80598514"},
+{"rank":"435","name":"Jâe Uzümákí","id":"18150499","score":"80424868"}
 ,
-{"Rank":"683","Name":"The Girls","PlayerID":"31984019","Score":"64014890"},
-{"Rank":"684","Name":"?�?G ?D�?","PlayerID":"20161304","Score":"63960703"}
+{"rank":"436","name":"ЯgL-ëjп_Mî�","id":"17212547","score":"80242020"}
 ,
-{"Rank":"685","Name":"�_��D��_T?","PlayerID":"31061124","Score":"63940313"}
+{"rank":"437","name":"KCG-DNS_nr","id":"8012582","score":"80161260"},
+{"rank":"438","name":"Lårgó D�?agõ","id":"18576666","score":"79983586"}
 ,
-{"Rank":"686","Name":"B�rzNeMeZiDa","PlayerID":"4974535","Score":"63927020"}
+{"rank":"439","name":"Børz__ßrûnô","id":"8306417","score":"79949369"}
 ,
-{"Rank":"687","Name":"M�t?L M?iD�","PlayerID":"14248527","Score":"63919904"}
+{"rank":"440","name":"LЕО","id":"5168101","score":"79941096"}
 ,
-{"Rank":"688","Name":"Wiwir_Jateng","PlayerID":"29006823","Score":"63916723"},
-{"Rank":"689","Name":"��?�?G","PlayerID":"8575516","Score":"63914361"}
+{"rank":"441","name":"Gao*Duong","id":"26010325","score":"79766640"},
+{"rank":"442","name":"CÑX F1LL1PE*","id":"27207961","score":"79640280"}
 ,
-{"Rank":"690","Name":"Dee Bo","PlayerID":"9821062","Score":"63877065"},
-{"Rank":"691","Name":"C?iL_","PlayerID":"19159095","Score":"63860171"},
-{"Rank":"692","Name":"SH��_??G ?","PlayerID":"7384123","Score":"63840213"}
+{"rank":"443","name":"DieAntwoord","id":"434969","score":"79635607"},
+{"rank":"444","name":"Ms Shaba-SQL","id":"14678861","score":"79565278"},
+{"rank":"445","name":"нк_Nyonya G","id":"14359223","score":"79537839"}
 ,
-{"Rank":"693","Name":"corea TEAM","PlayerID":"30005337","Score":"63817523"},
-{"Rank":"694","Name":"IC�*$N�K�_YT","PlayerID":"24703687","Score":"63770823"}
+{"rank":"446","name":"TFL-PloyKo","id":"18324946","score":"79411093"},
+{"rank":"447","name":"CHELSEA FIRA","id":"10248793","score":"79332679"},
+{"rank":"448","name":"Léi","id":"31877053","score":"79306090"}
 ,
-{"Rank":"695","Name":"python","PlayerID":"5467448","Score":"63734138"},
-{"Rank":"696","Name":"L�iRA28 �?V*","PlayerID":"31633978","Score":"63620407"}
+{"rank":"449","name":"BдЙg_ßёнё","id":"7829742","score":"79158243"}
 ,
-{"Rank":"697","Name":"The*_*Vipe?","PlayerID":"4138299","Score":"63567121"},
-{"Rank":"698","Name":"MADAME_420","PlayerID":"30181456","Score":"63518072"},
-{"Rank":"699","Name":"Q? ��?I? ?","PlayerID":"24171355","Score":"63493873"}
+{"rank":"450","name":"UKR","id":"21341436","score":"79026493"},
+{"rank":"451","name":"C�?oucнsт�?Я","id":"15782895","score":"78981519"}
 ,
-{"Rank":"700","Name":"PR����_XLR","PlayerID":"6895695","Score":"63478175"}
+{"rank":"452","name":"ßrÆkïñg më","id":"15874003","score":"78948961"}
 ,
-{"Rank":"701","Name":"ALEX SP","PlayerID":"18646695","Score":"63413595"},
-{"Rank":"702","Name":"??E C?IStAL","PlayerID":"32108166","Score":"63395187"},
-{"Rank":"703","Name":"Typhussette*","PlayerID":"19765393","Score":"63359462"},
-{"Rank":"704","Name":"TOOTHPASTE","PlayerID":"1024566","Score":"63298771"},
-{"Rank":"705","Name":"?-R�HIT-FT?","PlayerID":"7759286","Score":"63037168"}
+{"rank":"453","name":"JOLA -_*","id":"12625425","score":"78919595"},
+{"rank":"454","name":"CØL�?_$NACK","id":"5890628","score":"78901707"}
 ,
-{"Rank":"706","Name":"�BD PR�TY*_*","PlayerID":"23165929","Score":"63012600"}
+{"rank":"455","name":"Før_êvê�?","id":"26804777","score":"78900267"}
 ,
-{"Rank":"707","Name":"A??-J??lD?","PlayerID":"5269667","Score":"62979435"},
-{"Rank":"708","Name":"Gao*Trung*g$","PlayerID":"20918898","Score":"62832687"},
-{"Rank":"709","Name":"DewNO MO LUV","PlayerID":"31296213","Score":"62694718"},
-{"Rank":"710","Name":"G�ING UNDXR","PlayerID":"2564850","Score":"62635322"}
+{"rank":"456","name":"Katie","id":"13192268","score":"78892535"},
+{"rank":"457","name":"NG YU","id":"19193809","score":"78793889"},
+{"rank":"458","name":"luxxxo","id":"19433227","score":"78696076"},
+{"rank":"459","name":"MYK","id":"7550787","score":"78653090"},
+{"rank":"460","name":"топик","id":"6792151","score":"78647472"}
 ,
-{"Rank":"711","Name":"JustForFun__","PlayerID":"17394916","Score":"62579034"},
-{"Rank":"712","Name":"Justavision","PlayerID":"5381014","Score":"62545773"},
-{"Rank":"713","Name":"L�mb�_�","PlayerID":"10426971","Score":"62511142"}
+{"rank":"461","name":"Угадай к","id":"2859670","score":"78629985"}
 ,
-{"Rank":"714","Name":"�?�_???�","PlayerID":"3627886","Score":"62462613"}
+{"rank":"462","name":"ЕП_JфY","id":"3591714","score":"78373097"}
 ,
-{"Rank":"715","Name":"istri L Rcti","PlayerID":"29725425","Score":"62431921"},
-{"Rank":"716","Name":"Mamba","PlayerID":"5691665","Score":"62397369"},
-{"Rank":"717","Name":"Wiggle","PlayerID":"2946346","Score":"62303357"},
-{"Rank":"718","Name":"��dK�?m�","PlayerID":"25461735","Score":"62275400"}
+{"rank":"463","name":"xXx_KSA _xXx","id":"25155336","score":"78324490"},
+{"rank":"464","name":"Advystyles","id":"24666198","score":"78252007"},
+{"rank":"465","name":"Æcho","id":"21769879","score":"78233483"}
 ,
-{"Rank":"719","Name":"?s?�s????","PlayerID":"30698027","Score":"62207105"}
+{"rank":"466","name":"Ulen_Ketan","id":"27514928","score":"78230055"},
+{"rank":"467","name":"GwapitoNOYPI","id":"15305094","score":"77918677"},
+{"rank":"468","name":"ЯюçKУ_sдЧ","id":"10102946","score":"77874050"}
 ,
-{"Rank":"720","Name":"?�??�???","PlayerID":"26286368","Score":"62092951"}
+{"rank":"469","name":"WtF_workd","id":"33390432","score":"77746044"},
+{"rank":"470","name":"GG*Døvilê_FD","id":"25623966","score":"77725331"}
 ,
-{"Rank":"721","Name":"Daffodil","PlayerID":"3980115","Score":"61983419"},
-{"Rank":"722","Name":"??_�V�5B�6","PlayerID":"22439207","Score":"61857299"}
+{"rank":"471","name":"MÅFÎÅBÕGÕM","id":"8471745","score":"77471043"}
 ,
-{"Rank":"723","Name":"R�� ��ll","PlayerID":"6492991","Score":"61815928"}
+{"rank":"472","name":"RUN_","id":"22524154","score":"77439746"},
+{"rank":"473","name":"FiЭ�?Y Яévø","id":"20040355","score":"77425941"}
 ,
-{"Rank":"724","Name":"riNd?-??n_QN","PlayerID":"28192935","Score":"61713735"},
-{"Rank":"725","Name":"�?V*BORUTO","PlayerID":"24673374","Score":"61682233"}
+{"rank":"474","name":"TheRealLia","id":"27362763","score":"77407141"},
+{"rank":"475","name":"vvvWÕWvvv","id":"544568","score":"77287995"}
 ,
-{"Rank":"726","Name":"KLEBER","PlayerID":"20700548","Score":"61587534"},
-{"Rank":"727","Name":"NINA____BY","PlayerID":"4594635","Score":"61578075"},
-{"Rank":"728","Name":"??_$i GENIT","PlayerID":"12384347","Score":"61563324"},
-{"Rank":"729","Name":"�?_??sS_G�","PlayerID":"26834190","Score":"61549649"}
+{"rank":"476","name":"QÑ___ulfã___","id":"13216692","score":"77253717"}
 ,
-{"Rank":"730","Name":"D?�dl?$?�d","PlayerID":"16101136","Score":"61529197"}
+{"rank":"477","name":"Й�?_7ЦЙ10Я_","id":"27829624","score":"77250962"}
 ,
-{"Rank":"731","Name":"DamakaPL","PlayerID":"5319908","Score":"61404639"},
-{"Rank":"732","Name":"Emily","PlayerID":"27667285","Score":"61397405"},
-{"Rank":"733","Name":"MIMPI BURUK","PlayerID":"33228590","Score":"61387609"},
-{"Rank":"734","Name":"Jens","PlayerID":"29333445","Score":"61341025"},
-{"Rank":"735","Name":"C? L?_?0y","PlayerID":"29138818","Score":"61312165"},
-{"Rank":"736","Name":"KissMySnake","PlayerID":"17723093","Score":"61171773"},
-{"Rank":"737","Name":"H�rD_Lucifer","PlayerID":"5922153","Score":"61157164"}
+{"rank":"478","name":"Tchuinn Love","id":"6604695","score":"77124449"},
+{"rank":"479","name":"A-K-G-Ü-N","id":"28417070","score":"76743974"}
 ,
-{"Rank":"738","Name":"�_�","PlayerID":"1698916","Score":"61148680"}
+{"rank":"480","name":"ANGEЯ--6iX","id":"21040267","score":"76611143"}
 ,
-{"Rank":"739","Name":"Vid","PlayerID":"27547687","Score":"61082947"},
-{"Rank":"740","Name":"SniPerViPer","PlayerID":"775560","Score":"61065707"},
-{"Rank":"741","Name":"D�?G�?-�P?","PlayerID":"24217117","Score":"61042050"}
+{"rank":"481","name":"YBR EDIONNN","id":"13466809","score":"76578115"},
+{"rank":"482","name":"FËar_MØNger","id":"28947991","score":"76508043"}
 ,
-{"Rank":"742","Name":"????? UA","PlayerID":"787718","Score":"61021557"},
-{"Rank":"743","Name":"TFL J� Thai","PlayerID":"20898320","Score":"60973546"}
+{"rank":"483","name":"È-TÿMë_TnË1","id":"21203808","score":"76463839"}
 ,
-{"Rank":"744","Name":"HUM-TUNG-DEE","PlayerID":"18236954","Score":"60861446"},
-{"Rank":"745","Name":"H���?�?�","PlayerID":"21509584","Score":"60834076"}
+{"rank":"484","name":"TML- Nobita","id":"31265529","score":"76417351"},
+{"rank":"485","name":"Fleur-de-Sel","id":"4533779","score":"75915154"},
+{"rank":"486","name":"ChaNtik","id":"7752632","score":"75818370"},
+{"rank":"487","name":"EVANGELION","id":"15599283","score":"75748754"},
+{"rank":"488","name":"NEmene","id":"158979","score":"75687961"},
+{"rank":"489","name":"Ahhuayra","id":"20828187","score":"75635915"},
+{"rank":"490","name":"ЧéÞтüлå_","id":"5016865","score":"75594989"}
 ,
-{"Rank":"746","Name":"�-N�r�k_Tn�","PlayerID":"17436622","Score":"60830938"}
+{"rank":"491","name":"Hådê_6îX-YT","id":"22074521","score":"75509842"}
 ,
-{"Rank":"747","Name":"R�YAL I�D","PlayerID":"22732076","Score":"60788497"}
+{"rank":"492","name":"КØÑØХÅМ�","id":"5131964","score":"75431666"}
 ,
-{"Rank":"748","Name":"????l s?�","PlayerID":"13567004","Score":"60695220"}
+{"rank":"493","name":"MÅSTEЯ_PЯØY","id":"27908389","score":"75371532"}
 ,
-{"Rank":"749","Name":"�L?�K*BA?DE","PlayerID":"8891976","Score":"60675122"}
+{"rank":"494","name":"Sum 41","id":"8598815","score":"75268211"},
+{"rank":"495","name":"Firefly","id":"2957005","score":"75262283"},
+{"rank":"496","name":"H A K U N A","id":"1754367","score":"74848301"},
+{"rank":"497","name":"ZÀRÀ SÈXÌ","id":"15229053","score":"74828836"}
 ,
-{"Rank":"750","Name":"Busra","PlayerID":"21161726","Score":"60638985"},
-{"Rank":"751","Name":"?L�?*?ex","PlayerID":"23481339","Score":"60598383"}
+{"rank":"498","name":"Anti Seb ЖL","id":"3401383","score":"74787084"}
 ,
-{"Rank":"752","Name":"eQui?oX*NuNa","PlayerID":"8111958","Score":"60546485"},
-{"Rank":"753","Name":"??????-?","PlayerID":"1069198","Score":"60492389"},
-{"Rank":"754","Name":"POLAND KING","PlayerID":"25595691","Score":"60474112"},
-{"Rank":"755","Name":"mrmadmod","PlayerID":"32972950","Score":"60456020"},
-{"Rank":"756","Name":"Im�m M�hdi","PlayerID":"27797151","Score":"60451223"}
+{"rank":"499","name":"тн�?*ÑфИд","id":"21970375","score":"74742827"}
 ,
-{"Rank":"757","Name":"????L - F?","PlayerID":"1231965","Score":"60433629"},
-{"Rank":"758","Name":"Slimey","PlayerID":"10958111","Score":"60391447"},
-{"Rank":"759","Name":"lovely","PlayerID":"18368914","Score":"60337553"},
-{"Rank":"760","Name":"S0l0RedBull","PlayerID":"2061982","Score":"60199281"},
-{"Rank":"761","Name":"ANGEL-OYUUUU","PlayerID":"8518520","Score":"60181628"},
-{"Rank":"762","Name":"?�� �? �?","PlayerID":"26621350","Score":"60125109"}
+{"rank":"500","name":"Fanta","id":"19953955","score":"74716929"},
+{"rank":"501","name":"Glitch","id":"22606917","score":"74650120"},
+{"rank":"502","name":"GUGA EMOTE*_","id":"32359309","score":"74426127"},
+{"rank":"503","name":"ViTaMiNkA","id":"27694303","score":"74406394"},
+{"rank":"504","name":"Ny Sandra","id":"12723257","score":"74292865"},
+{"rank":"505","name":"jåkë","id":"21929665","score":"74128637"}
 ,
-{"Rank":"763","Name":"rach","PlayerID":"6647976","Score":"60085181"},
-{"Rank":"764","Name":"M�h�m�d-_-�","PlayerID":"28119269","Score":"60084216"}
+{"rank":"506","name":"slogoman","id":"19637433","score":"74105228"},
+{"rank":"507","name":"ßT�?sHúñgrÿ","id":"26074291","score":"74096279"}
 ,
-{"Rank":"765","Name":"bibi","PlayerID":"6503714","Score":"59973467"},
-{"Rank":"766","Name":"Q_?i? ?L?$k","PlayerID":"28523263","Score":"59963739"},
-{"Rank":"767","Name":"tanja","PlayerID":"578397","Score":"59879160"},
-{"Rank":"768","Name":"MAD Rose","PlayerID":"5583783","Score":"59856537"},
-{"Rank":"769","Name":"?????","PlayerID":"2813984","Score":"59779843"},
-{"Rank":"770","Name":"T???i?_�J","PlayerID":"11543249","Score":"59760689"}
+{"rank":"508","name":"Silence*Nana","id":"31840892","score":"73943949"},
+{"rank":"509","name":"i hunt_6ix","id":"27399957","score":"73942898"},
+{"rank":"510","name":"ÇÒLDPLÀ�?","id":"8468559","score":"73910115"}
 ,
-{"Rank":"771","Name":"G�Y�L__G�Y�","PlayerID":"9950730","Score":"59708771"}
+{"rank":"511","name":"T __D__ G","id":"30189231","score":"73871200"},
+{"rank":"512","name":"ЖËVЮЮЮЮЛ","id":"17622799","score":"73860228"}
 ,
-{"Rank":"772","Name":"HF W��gg� HF","PlayerID":"15947513","Score":"59702302"}
+{"rank":"513","name":"Logan","id":"2629393","score":"73818761"},
+{"rank":"514","name":"KCG-ALETTA","id":"17443508","score":"73749253"},
+{"rank":"515","name":"OG Dead eyes","id":"11768052","score":"73727116"},
+{"rank":"516","name":"азаза","id":"5021329","score":"73607495"}
 ,
-{"Rank":"773","Name":"A001n3000","PlayerID":"17593636","Score":"59680761"},
-{"Rank":"774","Name":"�??���??","PlayerID":"20964505","Score":"59608545"}
+{"rank":"517","name":"semut putih","id":"18434153","score":"73565285"},
+{"rank":"518","name":"L� sкá�? ç-s","id":"8963367","score":"73559822"}
 ,
-{"Rank":"775","Name":"?_Squis?y_?","PlayerID":"17601","Score":"59601137"},
-{"Rank":"776","Name":"BoRz_Melk�y�","PlayerID":"6929545","Score":"59525843"}
+{"rank":"519","name":"BUC�?Ñ*G�?RL","id":"14444109","score":"73525269"}
 ,
-{"Rank":"777","Name":"??�_FLY","PlayerID":"26318353","Score":"59459785"}
+{"rank":"520","name":"Боб�","id":"25608718","score":"73473080"}
 ,
-{"Rank":"778","Name":"XNA","PlayerID":"5385966","Score":"59451263"},
-{"Rank":"779","Name":"D�W*��Rk�t?","PlayerID":"13624963","Score":"59440810"}
+{"rank":"521","name":"Topik","id":"17909176","score":"73434711"},
+{"rank":"522","name":"ÅÇËSÎNÄ _6","id":"7589972","score":"73427082"}
 ,
-{"Rank":"780","Name":"Sneaky","PlayerID":"9339327","Score":"59402415"},
-{"Rank":"781","Name":"Jwnypwny","PlayerID":"31475717","Score":"59370248"},
-{"Rank":"782","Name":"K�G �S�m�R?","PlayerID":"14909477","Score":"59331506"}
+{"rank":"523","name":"�?Ц�?Ц RAHRЬ","id":"5986385","score":"73388078"}
 ,
-{"Rank":"783","Name":"DGamingHEHE","PlayerID":"902183","Score":"59305194"},
-{"Rank":"784","Name":"TROUBLE_6iX","PlayerID":"19784216","Score":"59261355"},
-{"Rank":"785","Name":"Ha�?�?L_y?","PlayerID":"18549024","Score":"59184190"}
+{"rank":"524","name":"K99","id":"6966027","score":"73379863"},
+{"rank":"525","name":"SR CEZAR S2","id":"7043400","score":"73372200"},
+{"rank":"526","name":"JESSI-OYUUUU","id":"18092453","score":"73337149"},
+{"rank":"527","name":"DMoB-GiRL","id":"9609122","score":"73209179"},
+{"rank":"528","name":"ANTI rзvзйg�","id":"24024558","score":"73153363"}
 ,
-{"Rank":"786","Name":"???605","PlayerID":"7663228","Score":"59174657"},
-{"Rank":"787","Name":"sanuka_ �z","PlayerID":"18244487","Score":"59145063"}
+{"rank":"529","name":"MãShkã","id":"2527207","score":"73152989"}
 ,
-{"Rank":"788","Name":"Dewa mabok","PlayerID":"11586065","Score":"59144466"},
-{"Rank":"789","Name":"Hate Lag","PlayerID":"29381992","Score":"59078504"},
-{"Rank":"790","Name":"J�rm�ng�ndr","PlayerID":"3396692","Score":"59011237"}
+{"rank":"530","name":"ß�?V *_* �?ØU","id":"13338467","score":"73138602"}
 ,
-{"Rank":"791","Name":"NATALI","PlayerID":"14477353","Score":"58994936"},
-{"Rank":"792","Name":"M�MMY_B��","PlayerID":"21312909","Score":"58959567"}
+{"rank":"531","name":"Le**RuS","id":"4668572","score":"72964862"},
+{"rank":"532","name":"kanstantaa","id":"18902635","score":"72928482"},
+{"rank":"533","name":"СИЖ_Julya","id":"25962652","score":"72909242"}
 ,
-{"Rank":"793","Name":"Acc�l�r�t�r","PlayerID":"20065566","Score":"58945949"}
+{"rank":"534","name":"GPS-MedanKrs","id":"28150586","score":"72879417"},
+{"rank":"535","name":"Çs_jagger*","id":"26898889","score":"72821138"}
 ,
-{"Rank":"794","Name":"??�?��","PlayerID":"27802520","Score":"58937366"}
+{"rank":"536","name":"M A S K","id":"2681320","score":"72521435"},
+{"rank":"537","name":"Тьмы ÂñG�","id":"931628","score":"72501574"}
 ,
-{"Rank":"795","Name":"VIZITER","PlayerID":"1105630","Score":"58905014"},
-{"Rank":"796","Name":"Taghbo","PlayerID":"845324","Score":"58858026"},
-{"Rank":"797","Name":"Good Play","PlayerID":"11915376","Score":"58845605"},
-{"Rank":"798","Name":"CH�NelTAIWAN","PlayerID":"17630242","Score":"58830851"}
+{"rank":"538","name":"AHAZ","id":"20964561","score":"72444439"},
+{"rank":"539","name":"вäйБ jåy_y","id":"28180596","score":"72420522"}
 ,
-{"Rank":"799","Name":"??_GesTanK","PlayerID":"25061022","Score":"58733768"},
-{"Rank":"800","Name":"???????1","PlayerID":"23745069","Score":"58732923"},
-{"Rank":"801","Name":"��RK S��L","PlayerID":"933991","Score":"58640972"}
+{"rank":"540","name":"�?Þð*Йфчz�","id":"19933989","score":"72166022"}
 ,
-{"Rank":"802","Name":"Alg�ri HMZ19","PlayerID":"22830175","Score":"58596335"}
+{"rank":"541","name":"Silver","id":"17868","score":"72153186"},
+{"rank":"542","name":"Bruno","id":"406671","score":"72128887"},
+{"rank":"543","name":"Emi","id":"7915031","score":"72015460"},
+{"rank":"544","name":"Samm","id":"7764491","score":"72004888"},
+{"rank":"545","name":"lll","id":"14636956","score":"71952499"},
+{"rank":"546","name":"plsdntkillme","id":"24249535","score":"71910151"},
+{"rank":"547","name":"BILIZART","id":"8603305","score":"71811320"},
+{"rank":"548","name":"ЙЯ ÅyåBät�","id":"20341642","score":"71778842"}
 ,
-{"Rank":"803","Name":"putri malam","PlayerID":"28581268","Score":"58583040"},
-{"Rank":"804","Name":"T�P_STRIKER","PlayerID":"25205174","Score":"58579742"}
+{"rank":"549","name":"CaliBear","id":"8176083","score":"71756594"},
+{"rank":"550","name":"Jâfñiê TH","id":"14949855","score":"71691835"}
 ,
-{"Rank":"805","Name":"Gao*Pikachu","PlayerID":"32861793","Score":"58483303"},
-{"Rank":"806","Name":"???_s? k�r?","PlayerID":"12634713","Score":"58450210"}
+{"rank":"551","name":"corona","id":"24631015","score":"71637552"},
+{"rank":"552","name":"Qй_ß ë н ë","id":"18901380","score":"71563645"}
 ,
-{"Rank":"807","Name":"�MT_BG j49O","PlayerID":"14941019","Score":"58443330"}
+{"rank":"553","name":"CITAjaBangga","id":"20184665","score":"71518274"},
+{"rank":"554","name":"LegitChonker","id":"26252873","score":"71479538"},
+{"rank":"555","name":"V 1 K 1 И G","id":"25187679","score":"71456272"}
 ,
-{"Rank":"808","Name":"War-H��-SQL","PlayerID":"27662963","Score":"58385786"}
+{"rank":"556","name":"�?ÇÉ_sneaky","id":"29788730","score":"71331197"}
 ,
-{"Rank":"809","Name":"Dancing_Klak","PlayerID":"56611","Score":"58371782"},
-{"Rank":"810","Name":"???d� �r?","PlayerID":"10183921","Score":"58235413"}
+{"rank":"557","name":"ЖLPeter�?z","id":"19768237","score":"71308198"}
 ,
-{"Rank":"811","Name":"Player2","PlayerID":"26607824","Score":"58214380"},
-{"Rank":"812","Name":"VictoryKing","PlayerID":"5414277","Score":"58145661"},
-{"Rank":"813","Name":"micro","PlayerID":"3207677","Score":"58140646"},
-{"Rank":"814","Name":"K??? ????","PlayerID":"23695013","Score":"58137846"},
-{"Rank":"815","Name":"GALuh PAkuAn","PlayerID":"27013711","Score":"58042003"},
-{"Rank":"816","Name":"Prince Gama","PlayerID":"32241232","Score":"58009278"},
-{"Rank":"817","Name":"EXC ROCKET","PlayerID":"17618670","Score":"58008745"},
-{"Rank":"818","Name":"M�g�W��M�n","PlayerID":"8064912","Score":"57972376"}
+{"rank":"558","name":"PANTERKA","id":"22487952","score":"71284897"},
+{"rank":"559","name":"GladiatorYT","id":"7581419","score":"71225208"},
+{"rank":"560","name":"ANTI LEGENO","id":"15173870","score":"71221751"},
+{"rank":"561","name":"D1NAR","id":"2325418","score":"71219926"},
+{"rank":"562","name":"GФФLD_6iX*_*","id":"10281998","score":"71194290"}
 ,
-{"Rank":"819","Name":"?�P_�? Q??","PlayerID":"13172178","Score":"57966801"}
+{"rank":"563","name":"Futtersucher","id":"24052474","score":"71162887"},
+{"rank":"564","name":"Koko My Love","id":"7446498","score":"71074587"},
+{"rank":"565","name":"SONG XCV","id":"5829919","score":"70920275"},
+{"rank":"566","name":"RU_LYUBASHA","id":"6050298","score":"70809145"},
+{"rank":"567","name":"Ц�?iчама_�","id":"12751169","score":"70788707"}
 ,
-{"Rank":"820","Name":"Nita_AYu_***","PlayerID":"28043754","Score":"57965714"},
-{"Rank":"821","Name":"YOyo MelbAUS","PlayerID":"31328721","Score":"57854128"},
-{"Rank":"822","Name":"Prince Nick","PlayerID":"27964615","Score":"57823246"},
-{"Rank":"823","Name":"HBD-UdinTmK","PlayerID":"16732016","Score":"57771790"},
-{"Rank":"824","Name":"�- GTW _Tn�3","PlayerID":"20087739","Score":"57672467"}
+{"rank":"568","name":"М�?Й ЯR","id":"7574272","score":"70652191"}
 ,
-{"Rank":"825","Name":"?? ?sep Adun","PlayerID":"20376090","Score":"57654314"},
-{"Rank":"826","Name":"??????","PlayerID":"10759112","Score":"57649203"},
-{"Rank":"827","Name":"?gl-L�leM�ns","PlayerID":"9552658","Score":"57558993"}
+{"rank":"569","name":"We Are One*","id":"179076","score":"70597070"},
+{"rank":"570","name":"MR SAHDOW","id":"27356736","score":"70505260"},
+{"rank":"571","name":"Tacitus","id":"8842152","score":"70467800"},
+{"rank":"572","name":"korean uk","id":"21858378","score":"70427703"},
+{"rank":"573","name":"Koppy","id":"29148195","score":"70392433"},
+{"rank":"574","name":"KCG_BIMASENA","id":"23210305","score":"70376147"},
+{"rank":"575","name":"LENA ELA_6iX","id":"32079727","score":"70347724"},
+{"rank":"576","name":"Satyn","id":"2447360","score":"70322218"},
+{"rank":"577","name":"TFL-sëxÿThai","id":"18768311","score":"70138796"}
 ,
-{"Rank":"828","Name":"S-�-R-K-�-�","PlayerID":"27922871","Score":"57534969"}
+{"rank":"578","name":"V_Î_K_ÆTØ Я","id":"1009843","score":"70134702"}
 ,
-{"Rank":"829","Name":"IM_�LT?�","PlayerID":"24430784","Score":"57513181"}
+{"rank":"579","name":"DÅMÅGE","id":"8691497","score":"70102847"}
 ,
-{"Rank":"830","Name":"� E A �","PlayerID":"5686385","Score":"57492747"}
+{"rank":"580","name":"janda belang","id":"9758480","score":"69997762"},
+{"rank":"581","name":"SPARTAC","id":"7363222","score":"69987047"},
+{"rank":"582","name":"Z-Ë-Y-Ñ-P åH","id":"27931554","score":"69953063"}
 ,
-{"Rank":"831","Name":"?$-?�?eL-?","PlayerID":"32724368","Score":"57491129"}
+{"rank":"583","name":"ALEX","id":"1077383","score":"69788215"},
+{"rank":"584","name":"� n6èl","id":"27627426","score":"69784275"}
 ,
-{"Rank":"832","Name":"BabySnakey","PlayerID":"28549106","Score":"57487245"},
-{"Rank":"833","Name":"King*_*Minos","PlayerID":"24452933","Score":"57484697"},
-{"Rank":"834","Name":"Z�H?�� �","PlayerID":"18011560","Score":"57467631"}
+{"rank":"585","name":"Sîlence*Girl","id":"27352853","score":"69742765"}
 ,
-{"Rank":"835","Name":"�?�?�","PlayerID":"2076364","Score":"57430065"}
+{"rank":"586","name":"GIØNG-DHT_VN","id":"10104175","score":"69610282"}
 ,
-{"Rank":"836","Name":"BATTLESHIP","PlayerID":"33266319","Score":"57374387"},
-{"Rank":"837","Name":"wiro sablen6","PlayerID":"14140282","Score":"57353954"},
-{"Rank":"838","Name":"F�??Y H???","PlayerID":"25329099","Score":"57335574"}
+{"rank":"587","name":"ARI","id":"4002578","score":"69397934"},
+{"rank":"588","name":"ST-LELE","id":"9552691","score":"69305148"},
+{"rank":"589","name":"WãR_Шнур","id":"4347870","score":"69150465"}
 ,
-{"Rank":"839","Name":"Th��d�r","PlayerID":"26126166","Score":"57328444"}
+{"rank":"590","name":"OMiD IR","id":"7750703","score":"69012345"},
+{"rank":"591","name":"l*SHAHRZAD*l","id":"21194157","score":"68937643"},
+{"rank":"592","name":"GE-RMIO-NA","id":"10451520","score":"68906266"},
+{"rank":"593","name":"ФL�?v�?�?-6ïX","id":"29910543","score":"68905565"}
 ,
-{"Rank":"840","Name":"Me2xEow2x","PlayerID":"27972800","Score":"57326627"},
-{"Rank":"841","Name":"Hapless G","PlayerID":"22849030","Score":"57315993"},
-{"Rank":"842","Name":"W�R_?????","PlayerID":"7236942","Score":"57282835"}
+{"rank":"594","name":"WIWIR_$$","id":"19030493","score":"68901553"},
+{"rank":"595","name":"GR_�?ЛЬФ�?","id":"3760420","score":"68804312"}
 ,
-{"Rank":"843","Name":"Exc Purnama","PlayerID":"31501962","Score":"57264485"},
-{"Rank":"844","Name":"???H?D?*$$","PlayerID":"20656260","Score":"57246896"},
-{"Rank":"845","Name":"Mr_ Miyagi","PlayerID":"6189519","Score":"57241446"},
-{"Rank":"846","Name":"Pr� Play3r","PlayerID":"30118333","Score":"57049510"}
+{"rank":"596","name":"NØ$MØK1NG*ЯR","id":"6878252","score":"68741786"}
 ,
-{"Rank":"847","Name":"W�R-?????","PlayerID":"28026779","Score":"57024525"}
+{"rank":"597","name":"кìйб_бéL�","id":"22235363","score":"68740645"}
 ,
-{"Rank":"848","Name":"?�P_M�hezz","PlayerID":"22069830","Score":"57011644"}
+{"rank":"598","name":"Akrep Derya","id":"17218908","score":"68666086"},
+{"rank":"599","name":"PurPle-ART-","id":"15097855","score":"68652949"},
+{"rank":"600","name":"ÑR-_-Milk","id":"7341617","score":"68639545"}
 ,
-{"Rank":"849","Name":"?�?_??x�?","PlayerID":"31665436","Score":"57008690"}
+{"rank":"601","name":"T-R-O-M-O-S","id":"26879027","score":"68631903"},
+{"rank":"602","name":"Løstwithñ �?z","id":"19955818","score":"68619228"}
 ,
-{"Rank":"850","Name":"XpLord_Muiz","PlayerID":"10054945","Score":"57007014"},
-{"Rank":"851","Name":"PAIDJO_","PlayerID":"20332694","Score":"56958700"},
-{"Rank":"852","Name":"gfamCknMama","PlayerID":"21316115","Score":"56953890"},
-{"Rank":"853","Name":"B�rz_?�?�?","PlayerID":"26329133","Score":"56951486"}
+{"rank":"603","name":"ВSE ЯД NAЯ","id":"9697399","score":"68611468"}
 ,
-{"Rank":"854","Name":"DlNGLE BERRY","PlayerID":"23625047","Score":"56897048"},
-{"Rank":"855","Name":"HerO_TheBest","PlayerID":"1009956","Score":"56887782"},
-{"Rank":"856","Name":"??? ?? ??","PlayerID":"5821400","Score":"56843250"},
-{"Rank":"857","Name":"CLEOPTRA_SQL","PlayerID":"6244034","Score":"56820421"},
-{"Rank":"858","Name":"EVRYTHING","PlayerID":"2478743","Score":"56799604"},
-{"Rank":"859","Name":"X Fighter-YT","PlayerID":"533453","Score":"56743902"},
-{"Rank":"860","Name":"Evil Mamba","PlayerID":"10546777","Score":"56628095"},
-{"Rank":"861","Name":"zaltaa","PlayerID":"27506581","Score":"56617444"},
-{"Rank":"862","Name":"Clark Still","PlayerID":"14736748","Score":"56565685"},
-{"Rank":"863","Name":"MG MASTEROV","PlayerID":"23835985","Score":"56555599"},
-{"Rank":"864","Name":"��R�T��","PlayerID":"29466799","Score":"56498273"}
+{"rank":"604","name":"CocoMelon","id":"21720492","score":"68579794"},
+{"rank":"605","name":"Пь�?ныйМ�","id":"3621268","score":"68537724"}
 ,
-{"Rank":"865","Name":"ALEV","PlayerID":"22279851","Score":"56493452"},
-{"Rank":"866","Name":"NR_S??I?_SQL","PlayerID":"25940849","Score":"56397814"},
-{"Rank":"867","Name":"�???? ??","PlayerID":"26621249","Score":"56370321"}
+{"rank":"606","name":"милашка","id":"19387270","score":"68521901"}
 ,
-{"Rank":"868","Name":"?????","PlayerID":"6792151","Score":"56363293"},
-{"Rank":"869","Name":"MD SABIR*Ali","PlayerID":"28238274","Score":"56340145"},
-{"Rank":"870","Name":"t�????_$h?","PlayerID":"16190470","Score":"56238816"}
+{"rank":"607","name":"CИЖ*Éo ABИ�","id":"28607950","score":"68479019"}
 ,
-{"Rank":"871","Name":"PRINCE_Fire","PlayerID":"18534376","Score":"56205519"},
-{"Rank":"872","Name":"�s__???�?","PlayerID":"13370464","Score":"56154332"}
+{"rank":"608","name":"MÌ�?M_FR","id":"3411608","score":"68379356"}
 ,
-{"Rank":"873","Name":"ImMrMeeseeks","PlayerID":"5868547","Score":"56129641"},
-{"Rank":"874","Name":"M���$�","PlayerID":"4959161","Score":"56126055"}
+{"rank":"609","name":"kùy�  b� l� p4","id":"14793890","score":"68333815"}
 ,
-{"Rank":"875","Name":"istria new","PlayerID":"31789660","Score":"55945848"},
-{"Rank":"876","Name":"JUGGERNAUT","PlayerID":"4009580","Score":"55896322"},
-{"Rank":"877","Name":"M�F��Shelen?","PlayerID":"7525028","Score":"55711069"}
+{"rank":"610","name":"MargaaaRita","id":"4057285","score":"68296010"},
+{"rank":"611","name":"BØRZа�?Люб","id":"6099311","score":"68234736"}
 ,
-{"Rank":"878","Name":"Exc icikiwir","PlayerID":"31710385","Score":"55709579"},
-{"Rank":"879","Name":"Moon ?????","PlayerID":"6652162","Score":"55703399"},
-{"Rank":"880","Name":"C-N-M-C-M","PlayerID":"2570105","Score":"55680228"},
-{"Rank":"881","Name":"AXIORIS","PlayerID":"15765499","Score":"55645464"},
-{"Rank":"882","Name":"?????Pr�?","PlayerID":"23334265","Score":"55598324"}
+{"rank":"612","name":"У� �? Кони","id":"15750455","score":"68195370"}
 ,
-{"Rank":"883","Name":"Pit�goras","PlayerID":"27810147","Score":"55578363"}
+{"rank":"613","name":"Legend fury","id":"7295166","score":"67901780"},
+{"rank":"614","name":"fuR-goTTan V","id":"20646977","score":"67828278"},
+{"rank":"615","name":"Wølfie","id":"18858033","score":"67798195"}
 ,
-{"Rank":"884","Name":"janda bolang","PlayerID":"9758490","Score":"55559723"},
-{"Rank":"885","Name":"zz_SupeR�E_z","PlayerID":"30558113","Score":"55537958"}
+{"rank":"616","name":"Wiwir_Jateng","id":"29006823","score":"67790117"},
+{"rank":"617","name":"ETòMéLIA","id":"25775134","score":"67771580"}
 ,
-{"Rank":"886","Name":"mmm","PlayerID":"24978571","Score":"55536389"},
-{"Rank":"887","Name":"Th�sau?us","PlayerID":"23670856","Score":"55354820"}
+{"rank":"618","name":"AHHA__AБ","id":"3539240","score":"67553517"}
 ,
-{"Rank":"888","Name":"NR_MBAREP Jr","PlayerID":"22333974","Score":"55229495"},
-{"Rank":"889","Name":"Prince-�Y�","PlayerID":"18982201","Score":"55177456"}
+{"rank":"619","name":"KCG_JäÑбкЯ","id":"8510230","score":"67522411"}
 ,
-{"Rank":"890","Name":"senja**","PlayerID":"8976073","Score":"55151479"},
-{"Rank":"891","Name":"PMC-Jeab-PMC","PlayerID":"20916362","Score":"55107091"},
-{"Rank":"892","Name":"�MG_Capa","PlayerID":"24300293","Score":"55071156"}
+{"rank":"620","name":"ANH VN *FAKE","id":"17406730","score":"67412862"},
+{"rank":"621","name":"deryl syahhh","id":"14179523","score":"67355955"},
+{"rank":"622","name":"BørzKåÞpûs�","id":"6460446","score":"67253060"}
 ,
-{"Rank":"893","Name":"Alex_CT","PlayerID":"3821937","Score":"55063885"},
-{"Rank":"894","Name":"PRoZa","PlayerID":"11614158","Score":"55063303"},
-{"Rank":"895","Name":"Y-U-$-U-F ?Y","PlayerID":"2463344","Score":"55048787"},
-{"Rank":"896","Name":"Fight Coward","PlayerID":"31920310","Score":"55037840"},
-{"Rank":"897","Name":"PRO LIFE","PlayerID":"13456064","Score":"55010776"},
-{"Rank":"898","Name":"LION e AREMA","PlayerID":"14808039","Score":"54974385"},
-{"Rank":"899","Name":"SAMDOEDELNL","PlayerID":"6707180","Score":"54970475"},
-{"Rank":"900","Name":"RBN_l S2 U","PlayerID":"28258013","Score":"54968961"},
-{"Rank":"901","Name":"BadGuy","PlayerID":"2681484","Score":"54952555"},
-{"Rank":"902","Name":"S-N-C","PlayerID":"15135980","Score":"54933551"},
-{"Rank":"903","Name":"D�rix_G�?J?","PlayerID":"12763428","Score":"54914085"}
+{"rank":"623","name":"MG fire","id":"19542235","score":"67172930"},
+{"rank":"624","name":"QueenSulecik","id":"29316458","score":"67136432"},
+{"rank":"625","name":"н�?м","id":"12643453","score":"67129574"}
 ,
-{"Rank":"904","Name":"�-TiT�_Tn�22","PlayerID":"17513044","Score":"54833316"}
+{"rank":"626","name":"Parostatek","id":"16361829","score":"67117493"},
+{"rank":"627","name":"Stig","id":"24666157","score":"67071183"},
+{"rank":"628","name":"Alice","id":"23202265","score":"66988385"},
+{"rank":"629","name":"I_Z_U_A_L","id":"16418575","score":"66936939"},
+{"rank":"630","name":"WТF","id":"27150587","score":"66899464"}
 ,
-{"Rank":"905","Name":"????????","PlayerID":"7784850","Score":"54815700"},
-{"Rank":"906","Name":"M��LaN2024","PlayerID":"6340227","Score":"54797655"}
+{"rank":"631","name":"RAYA","id":"24787366","score":"66842068"},
+{"rank":"632","name":"Accëlèrätør","id":"20065566","score":"66831334"}
 ,
-{"Rank":"907","Name":"N� Pr�bl�mYT","PlayerID":"27560326","Score":"54751446"}
+{"rank":"633","name":"Wild_Kèt_AES","id":"21663431","score":"66818127"}
 ,
-{"Rank":"908","Name":"Mower","PlayerID":"1542532","Score":"54746928"},
-{"Rank":"909","Name":"�?V* �M�n�","PlayerID":"28085859","Score":"54746134"}
+{"rank":"634","name":"É-Bola_TnË10","id":"17467915","score":"66797757"}
 ,
-{"Rank":"910","Name":"F��_?-$-?_?","PlayerID":"6960276","Score":"54736382"}
+{"rank":"635","name":"DONDOMIE","id":"513765","score":"66795632"},
+{"rank":"636","name":"Ø-G DIÑØ 6ix","id":"28831803","score":"66492287"}
 ,
-{"Rank":"911","Name":"Ang?? G???","PlayerID":"7152017","Score":"54706402"},
-{"Rank":"912","Name":"Ehe","PlayerID":"3733912","Score":"54683799"},
-{"Rank":"913","Name":"nebulproYT","PlayerID":"372893","Score":"54679994"},
-{"Rank":"914","Name":"ShoonOnBreak","PlayerID":"17722824","Score":"54678205"},
-{"Rank":"915","Name":"Huinn_Qughes","PlayerID":"26672290","Score":"54671143"},
-{"Rank":"916","Name":"shakala","PlayerID":"910383","Score":"54586062"},
-{"Rank":"917","Name":"KADU LENDA","PlayerID":"16184257","Score":"54559059"},
-{"Rank":"918","Name":"Noypi2 X*JPT","PlayerID":"21211576","Score":"54488521"},
-{"Rank":"919","Name":"TYX*LIEN","PlayerID":"25798669","Score":"54416271"},
-{"Rank":"920","Name":"V_�_K_�T� ?","PlayerID":"1009843","Score":"54380503"}
+{"rank":"637","name":"Red-Prõ","id":"26723105","score":"66427257"}
 ,
-{"Rank":"921","Name":"c?sp�?","PlayerID":"27015784","Score":"54367417"}
+{"rank":"638","name":"HYPÊRÎØN_6IX","id":"18509005","score":"66255009"}
 ,
-{"Rank":"922","Name":"WtF_workhard","PlayerID":"8527823","Score":"54330714"},
-{"Rank":"923","Name":"CheeseDoodle","PlayerID":"5049152","Score":"54329948"},
-{"Rank":"924","Name":"?_�_?_�_? _","PlayerID":"7400976","Score":"54310288"}
+{"rank":"639","name":"нк_EИDLË$$","id":"13637818","score":"66242648"}
 ,
-{"Rank":"925","Name":"stringy_�$","PlayerID":"24321512","Score":"54302681"}
+{"rank":"640","name":"ÔMG ALFA","id":"18384633","score":"66217241"}
 ,
-{"Rank":"926","Name":"��ih? r�94","PlayerID":"14852737","Score":"54271113"}
+{"rank":"641","name":"CiNt4_94","id":"18810838","score":"66214963"},
+{"rank":"642","name":"dOpPeLgÄnGeR","id":"19413130","score":"66197956"}
 ,
-{"Rank":"927","Name":"motomoto","PlayerID":"6421630","Score":"54259810"},
-{"Rank":"928","Name":"World Peace","PlayerID":"26190854","Score":"54258008"},
-{"Rank":"929","Name":"no_mercy____","PlayerID":"28992396","Score":"54142301"},
-{"Rank":"930","Name":"�?V*��?�?","PlayerID":"26386319","Score":"54135509"}
+{"rank":"643","name":"вÛ$wДy","id":"8981713","score":"66075888"}
 ,
-{"Rank":"931","Name":"AnthonySarki","PlayerID":"7065812","Score":"54082444"},
-{"Rank":"932","Name":"Tennesse?","PlayerID":"1114137","Score":"54076331"},
-{"Rank":"933","Name":"P-M-C Fc*","PlayerID":"29707183","Score":"54022653"},
-{"Rank":"934","Name":"mamba-es","PlayerID":"3354662","Score":"54020932"},
-{"Rank":"935","Name":"�?V*A_Super*","PlayerID":"20253337","Score":"54014412"}
+{"rank":"644","name":"QиK_вåтмå","id":"28647526","score":"66035285"}
 ,
-{"Rank":"936","Name":"�D?��?�","PlayerID":"28751991","Score":"53980004"}
+{"rank":"645","name":"ЖЖ___м___Ж�","id":"9460806","score":"65861126"}
 ,
-{"Rank":"937","Name":"abnormal","PlayerID":"8809103","Score":"53967461"},
-{"Rank":"938","Name":"paulro","PlayerID":"639267","Score":"53958625"},
-{"Rank":"939","Name":"DarkRat","PlayerID":"1278309","Score":"53891375"},
-{"Rank":"940","Name":"y4na","PlayerID":"18122431","Score":"53811419"},
-{"Rank":"941","Name":"Q?___L�V�_F?","PlayerID":"29000612","Score":"53780257"}
+{"rank":"646","name":"D-E-A-T-H","id":"16269193","score":"65795714"},
+{"rank":"647","name":"CИЖ_Nice","id":"13801695","score":"65789679"}
 ,
-{"Rank":"942","Name":"ExC DjiSamSU","PlayerID":"10173482","Score":"53754337"},
-{"Rank":"943","Name":"toto_CS*","PlayerID":"16721002","Score":"53753041"},
-{"Rank":"944","Name":"wanda","PlayerID":"9053236","Score":"53717831"},
-{"Rank":"945","Name":"???-S???f","PlayerID":"11615729","Score":"53686356"},
-{"Rank":"946","Name":"ucinkku","PlayerID":"23195514","Score":"53648050"},
-{"Rank":"947","Name":"�?V*KabunZi?","PlayerID":"21172310","Score":"53631168"}
+{"rank":"648","name":"Sunny","id":"31569617","score":"65772029"},
+{"rank":"649","name":"LiverLips","id":"1016250","score":"65652521"},
+{"rank":"650","name":"hero_Cs*","id":"16501583","score":"65542101"},
+{"rank":"651","name":"N A G I N I","id":"18087285","score":"65533269"},
+{"rank":"652","name":"Justavision","id":"5381014","score":"65425037"},
+{"rank":"653","name":"NANYSIGMA","id":"4813525","score":"65424261"},
+{"rank":"654","name":"NØØB *PVP*","id":"18167534","score":"65381561"}
 ,
-{"Rank":"948","Name":"Kimhiano","PlayerID":"32403065","Score":"53630054"},
-{"Rank":"949","Name":"NR_dEsTRoy","PlayerID":"27827259","Score":"53617758"},
-{"Rank":"950","Name":"Ava","PlayerID":"27828882","Score":"53597928"},
-{"Rank":"951","Name":"����t","PlayerID":"5120734","Score":"53570327"}
+{"rank":"655","name":"noobTEAMERS","id":"4185728","score":"65377930"},
+{"rank":"656","name":"War-ÈS 176","id":"24374857","score":"65313132"}
 ,
-{"Rank":"952","Name":"Dino$avage","PlayerID":"25614250","Score":"53548781"},
-{"Rank":"953","Name":"H�t-K???","PlayerID":"1120156","Score":"53529312"}
+{"rank":"657","name":"� �?�?_Insomnia","id":"26175115","score":"65292041"}
 ,
-{"Rank":"954","Name":"Seraphim","PlayerID":"4564090","Score":"53484346"},
-{"Rank":"955","Name":"????????","PlayerID":"7457211","Score":"53480169"},
-{"Rank":"956","Name":"xnxx","PlayerID":"17725885","Score":"53449354"},
-{"Rank":"957","Name":"Br_sneaky","PlayerID":"4721177","Score":"53396570"},
-{"Rank":"958","Name":"smoothie","PlayerID":"19774069","Score":"53372561"},
-{"Rank":"959","Name":"�-M�RZ�_Tn�","PlayerID":"24999078","Score":"53331764"}
+{"rank":"658","name":"TamrulBangla","id":"9241639","score":"65281900"},
+{"rank":"659","name":"жжжжжжж�","id":"9942781","score":"65179642"}
 ,
-{"Rank":"960","Name":"�?V* V�?�","PlayerID":"26812803","Score":"53172902"}
+{"rank":"660","name":"Water_Bug","id":"7900723","score":"65149225"},
+{"rank":"661","name":"ZoHa*BD","id":"7955682","score":"65115104"},
+{"rank":"662","name":"DRIFTer ZeRo","id":"26637630","score":"65020149"},
+{"rank":"663","name":"kicsizso","id":"3166087","score":"64929213"},
+{"rank":"664","name":"sdf","id":"2318096","score":"64680571"},
+{"rank":"665","name":"Я�?Я�?_Pгå$","id":"10363019","score":"64675171"}
 ,
-{"Rank":"961","Name":"Muhahaha","PlayerID":"5641716","Score":"53156245"},
-{"Rank":"962","Name":"Snake","PlayerID":"22297533","Score":"53129567"},
-{"Rank":"963","Name":"W�R_ShArP274","PlayerID":"8525657","Score":"53096954"}
+{"rank":"666","name":"Sunshine_IRI","id":"2671342","score":"64634984"},
+{"rank":"667","name":"СmреКозã","id":"21110304","score":"64567513"}
 ,
-{"Rank":"964","Name":"IM-Jenny Ace","PlayerID":"20016444","Score":"53080998"},
-{"Rank":"965","Name":"???","PlayerID":"31828398","Score":"53075158"},
-{"Rank":"966","Name":"Eatster","PlayerID":"27009328","Score":"53056683"},
-{"Rank":"967","Name":"�-N�N�_Tn�9","PlayerID":"17907878","Score":"53025019"}
+{"rank":"668","name":"RéY_úÑKñóW","id":"18149945","score":"64485467"}
 ,
-{"Rank":"968","Name":"sanghan yOu","PlayerID":"17177028","Score":"52995077"},
-{"Rank":"969","Name":"??_? R � ?","PlayerID":"9949978","Score":"52974813"}
+{"rank":"669","name":"MÊXÎCØ_RÊAL","id":"26222191","score":"64483087"}
 ,
-{"Rank":"970","Name":"BangKing","PlayerID":"20766530","Score":"52970743"},
-{"Rank":"971","Name":"AmparoSp LND","PlayerID":"28378314","Score":"52930308"},
-{"Rank":"972","Name":"T??_�a?i","PlayerID":"8083601","Score":"52882909"}
+{"rank":"670","name":"тндкд_Qй-","id":"8922984","score":"64467317"}
 ,
-{"Rank":"973","Name":"ICE QUEEN","PlayerID":"1526076","Score":"52870287"},
-{"Rank":"974","Name":"H????�_","PlayerID":"29146301","Score":"52804076"}
+{"rank":"671","name":"HDS Тарта�","id":"5847104","score":"64401399"}
 ,
-{"Rank":"975","Name":"NUCK CHORRiS","PlayerID":"7151453","Score":"52627113"},
-{"Rank":"976","Name":"PAPRIKA","PlayerID":"2518054","Score":"52615087"},
-{"Rank":"977","Name":"stig bei","PlayerID":"7533245","Score":"52604162"},
-{"Rank":"978","Name":"�-?�?a�_Tn","PlayerID":"15493780","Score":"52581962"}
+{"rank":"672","name":"OHHHHHHHHHHH","id":"30167665","score":"64379772"},
+{"rank":"673","name":"TUAREG","id":"3571831","score":"64297524"},
+{"rank":"674","name":"bagel bite","id":"17714921","score":"64257088"},
+{"rank":"675","name":"Albert","id":"28602367","score":"64197509"},
+{"rank":"676","name":"T�?�?вiт_�?J","id":"11543249","score":"64133539"}
 ,
-{"Rank":"979","Name":"ARTEM 7???","PlayerID":"25558255","Score":"52522538"},
-{"Rank":"980","Name":"Ababil","PlayerID":"9331844","Score":"52515812"},
-{"Rank":"981","Name":"lerd","PlayerID":"22245384","Score":"52474767"},
-{"Rank":"982","Name":"K�?G_L�V�_F","PlayerID":"9856389","Score":"52418299"}
+{"rank":"677","name":"Pause-Tempor","id":"5411166","score":"64122124"},
+{"rank":"678","name":"Opachki","id":"2367125","score":"64104119"},
+{"rank":"679","name":"Ç�?ч-Üгãâ","id":"26548273","score":"64043115"}
 ,
-{"Rank":"983","Name":"Placak JAGAT","PlayerID":"14021964","Score":"52327647"},
-{"Rank":"984","Name":"L�$*�?T-?AY","PlayerID":"29402798","Score":"52318442"}
+{"rank":"680","name":"The Girls","id":"31984019","score":"64014890"},
+{"rank":"681","name":"ЙëЙG дDìЙ","id":"20161304","score":"63960703"}
 ,
-{"Rank":"985","Name":"SHARTLORD","PlayerID":"6512873","Score":"52291564"},
-{"Rank":"986","Name":"T?iXie -SQL-","PlayerID":"9245097","Score":"52256425"},
-{"Rank":"987","Name":"TC-Zuku","PlayerID":"771789","Score":"52237262"},
-{"Rank":"988","Name":"Cenotaph","PlayerID":"22632446","Score":"52213219"},
-{"Rank":"989","Name":"D�raemee_*","PlayerID":"31398506","Score":"52195098"}
+{"rank":"682","name":"È_ÌÑDÌÆ_T�","id":"31061124","score":"63940313"}
 ,
-{"Rank":"990","Name":"PR�_G�M3R_DT","PlayerID":"18384422","Score":"52115974"}
+{"rank":"683","name":"LëtGëtBïgØt","id":"26604748","score":"63938897"}
 ,
-{"Rank":"991","Name":"SF_riNd?-??n","PlayerID":"15571136","Score":"52064629"},
-{"Rank":"992","Name":"???????","PlayerID":"4764154","Score":"52008113"},
-{"Rank":"993","Name":"AKELA YODHA","PlayerID":"28517979","Score":"52007105"},
-{"Rank":"994","Name":"??????","PlayerID":"6669134","Score":"52003201"},
-{"Rank":"995","Name":"?lu�i","PlayerID":"27907629","Score":"51969911"}
+{"rank":"684","name":"BØrzNeMeZiDa","id":"4974535","score":"63927020"}
 ,
-{"Rank":"996","Name":"Count Zero","PlayerID":"6983411","Score":"51863504"},
-{"Rank":"997","Name":"��� ??? ?","PlayerID":"21839517","Score":"51796355"}
+{"rank":"685","name":"MêtдL MдiDê","id":"14248527","score":"63919904"}
 ,
-{"Rank":"998","Name":"TRAVANDO_G?","PlayerID":"19974213","Score":"51769277"},
-{"Rank":"999","Name":"C�X Banzy","PlayerID":"30513616","Score":"51752884"}
+{"rank":"686","name":"Çÿвø�?G","id":"8575516","score":"63914361"}
 ,
-{"Rank":"1000","Name":"??L_��?�_","PlayerID":"7611306","Score":"51656345"}
+{"rank":"687","name":"War-Häï-SQL","id":"27662963","score":"63890179"}
+,
+{"rank":"688","name":"Dee Bo","id":"9821062","score":"63877065"},
+{"rank":"689","name":"TFL ToomThai","id":"22695637","score":"63875157"},
+{"rank":"690","name":"CнiL_","id":"19159095","score":"63860171"}
+,
+{"rank":"691","name":"SHå�?_ЙЯG Ф","id":"7384123","score":"63840213"}
+,
+{"rank":"692","name":"corea TEAM","id":"30005337","score":"63817523"},
+{"rank":"693","name":"ICÉ*$NäKÉ_YT","id":"24703687","score":"63770823"}
+,
+{"rank":"694","name":"LøiRA28 ß�?V*","id":"31633978","score":"63620407"}
+,
+{"rank":"695","name":"The*_*Vipe�?","id":"4138299","score":"63567121"}
+,
+{"rank":"696","name":"MADAME_420","id":"30181456","score":"63518072"},
+{"rank":"697","name":"QЙ ÇÅЯIЙ �","id":"24171355","score":"63493873"}
+,
+{"rank":"698","name":"PRÎÑÇÊ_XLR","id":"6895695","score":"63478175"}
+,
+{"rank":"699","name":"ALEX SP","id":"18646695","score":"63413595"},
+{"rank":"700","name":"тнE C�?IStAL","id":"32108166","score":"63395187"}
+,
+{"rank":"701","name":"Typhussette*","id":"19765393","score":"63359462"},
+{"rank":"702","name":"TOOTHPASTE","id":"1024566","score":"63298771"},
+{"rank":"703","name":"ф-RØHIT-FTШ","id":"7759286","score":"63037168"}
+,
+{"rank":"704","name":"ÑBD PRÎTY*_*","id":"23165929","score":"63012600"}
+,
+{"rank":"705","name":"A�?�?-Jф�?lD�?","id":"5269667","score":"62979435"}
+,
+{"rank":"706","name":"oooScary_6iX","id":"8009743","score":"62871181"},
+{"rank":"707","name":"Gao*Trung*g$","id":"20918898","score":"62832687"},
+{"rank":"708","name":"DewNO MO LUV","id":"31296213","score":"62694718"},
+{"rank":"709","name":"GØING UNDXR","id":"2564850","score":"62635322"}
+,
+{"rank":"710","name":"JustForFun__","id":"17394916","score":"62579034"},
+{"rank":"711","name":"Límbõ_Æ","id":"10426971","score":"62511142"}
+,
+{"rank":"712","name":"istri L Rcti","id":"29725425","score":"62431921"},
+{"rank":"713","name":"Mamba","id":"5691665","score":"62397369"},
+{"rank":"714","name":"Wiggle","id":"2946346","score":"62303357"},
+{"rank":"715","name":"ßådKå�?må","id":"25461735","score":"62275400"}
+,
+{"rank":"716","name":"МsМäsтё�?�","id":"30698027","score":"62207105"}
+,
+{"rank":"717","name":"дøлбãнч�","id":"26286368","score":"62092951"}
+,
+{"rank":"718","name":"Daffodil","id":"3980115","score":"61983419"},
+{"rank":"719","name":"нк_ÇVÀ5BÊ6","id":"22439207","score":"61857299"}
+,
+{"rank":"720","name":"Rè�? ßÛll","id":"6492991","score":"61815928"}
+,
+{"rank":"721","name":"riNdд-мдn_QN","id":"28192935","score":"61713735"}
+,
+{"rank":"722","name":"ß�?V*BORUTO","id":"24673374","score":"61682233"}
+,
+{"rank":"723","name":"KLEBER","id":"20700548","score":"61587534"},
+{"rank":"724","name":"NINA____BY","id":"4594635","score":"61578075"},
+{"rank":"725","name":"нк_$i GENIT","id":"12384347","score":"61563324"}
+,
+{"rank":"726","name":"äП_пДsS_G�?","id":"26834190","score":"61549649"}
+,
+{"rank":"727","name":"Dёådlч$нåd","id":"16101136","score":"61529197"}
+,
+{"rank":"728","name":"DamakaPL","id":"5319908","score":"61404639"},
+{"rank":"729","name":"Emily","id":"27667285","score":"61397405"},
+{"rank":"730","name":"MIMPI BURUK","id":"33228590","score":"61387609"},
+{"rank":"731","name":"Jens","id":"29333445","score":"61341025"},
+{"rank":"732","name":"C� Lм_в0y","id":"29138818","score":"61312165"}
+,
+{"rank":"733","name":"KissMySnake","id":"17723093","score":"61171773"},
+{"rank":"734","name":"HãrD_Lucifer","id":"5922153","score":"61157164"}
+,
+{"rank":"735","name":"ø_ø","id":"1698916","score":"61148680"}
+,
+{"rank":"736","name":"Vid","id":"27547687","score":"61082947"},
+{"rank":"737","name":"SniPerViPer","id":"775560","score":"61065707"},
+{"rank":"738","name":"DÃИGè�?-ÂP�","id":"24217117","score":"61042050"}
+,
+{"rank":"739","name":"Бабай UA","id":"787718","score":"61021557"}
+,
+{"rank":"740","name":"Дц�?ёl sнì","id":"13567004","score":"60872758"}
+,
+{"rank":"741","name":"HUM-TUNG-DEE","id":"18236954","score":"60861446"},
+{"rank":"742","name":"HÅñÅ�?Å�?Å","id":"21509584","score":"60834076"}
+,
+{"rank":"743","name":"É-Nãrük_TnË","id":"17436622","score":"60830938"}
+,
+{"rank":"744","name":"RØYAL IÑD","id":"22732076","score":"60788497"}
+,
+{"rank":"745","name":"Reddy","id":"24623777","score":"60727792"},
+{"rank":"746","name":"ßLдÇK*BAЙDE","id":"8891976","score":"60675122"}
+,
+{"rank":"747","name":"Busra","id":"21161726","score":"60638985"},
+{"rank":"748","name":"ЦLåЯ*Яex","id":"23481339","score":"60598383"}
+,
+{"rank":"749","name":"eQuiИoX*NuNa","id":"8111958","score":"60546485"}
+,
+{"rank":"750","name":"MAD Rose","id":"5583783","score":"60543202"},
+{"rank":"751","name":"Мелка�?-Ч","id":"1069198","score":"60492389"}
+,
+{"rank":"752","name":"POLAND KING","id":"25595691","score":"60474112"},
+{"rank":"753","name":"mrmadmod","id":"32972950","score":"60456020"},
+{"rank":"754","name":"Imåm Måhdi","id":"27797151","score":"60451223"}
+,
+{"rank":"755","name":"ЯЭВЭL - Fт","id":"1231965","score":"60433629"}
+,
+{"rank":"756","name":"Slimey","id":"10958111","score":"60391447"},
+{"rank":"757","name":"Queen Lovely","id":"18368914","score":"60337553"},
+{"rank":"758","name":"S0l0RedBull","id":"2061982","score":"60199281"},
+{"rank":"759","name":"ANGEL-OYUUUU","id":"8518520","score":"60181628"},
+{"rank":"760","name":"ЯßÑ �?Я �?�","id":"26621350","score":"60125109"}
+,
+{"rank":"761","name":"rach","id":"6647976","score":"60085181"},
+{"rank":"762","name":"Mûhåmëd-_-ø","id":"28119269","score":"60084216"}
+,
+{"rank":"763","name":"Taghbo","id":"845324","score":"59974467"},
+{"rank":"764","name":"bibi","id":"6503714","score":"59973467"},
+{"rank":"765","name":"Q_Яiж дLд$k","id":"28523263","score":"59963739"}
+,
+{"rank":"766","name":"tanja","id":"578397","score":"59879160"},
+{"rank":"767","name":"GÈYÀL__GÈYÒ","id":"9950730","score":"59708771"}
+,
+{"rank":"768","name":"HF Wïñggÿ HF","id":"15947513","score":"59702302"}
+,
+{"rank":"769","name":"A001n3000","id":"17593636","score":"59680761"},
+{"rank":"770","name":"ÄввýØËп�","id":"20964505","score":"59608545"}
+,
+{"rank":"771","name":"Ф_Squisнy_Ф","id":"17601","score":"59601137"}
+,
+{"rank":"772","name":"BoRz_Melkåyå","id":"6929545","score":"59525843"}
+,
+{"rank":"773","name":"про605","id":"7663228","score":"59499796"}
+,
+{"rank":"774","name":"JUGGERNAUT","id":"4009580","score":"59499112"},
+{"rank":"775","name":"DILLIGAF","id":"17805438","score":"59490605"},
+{"rank":"776","name":"XNA","id":"5385966","score":"59451263"},
+{"rank":"777","name":"DÈW*ÑãRkÕt�","id":"13624963","score":"59440810"}
+,
+{"rank":"778","name":"Sneaky","id":"9339327","score":"59402415"},
+{"rank":"779","name":"A�?�?_G�?issд","id":"15385965","score":"59401286"}
+,
+{"rank":"780","name":"Jwnypwny","id":"31475717","score":"59370248"},
+{"rank":"781","name":"KÇG åSémÄR�","id":"14909477","score":"59331506"}
+,
+{"rank":"782","name":"DGamingHEHE","id":"902183","score":"59305194"},
+{"rank":"783","name":"TROUBLE_6iX","id":"19784216","score":"59261355"},
+{"rank":"784","name":"HaïЯï�?L_yн","id":"18549024","score":"59184190"}
+,
+{"rank":"785","name":"sanuka_ �?z","id":"18244487","score":"59145063"}
+,
+{"rank":"786","name":"Dewa mabok","id":"11586065","score":"59144466"},
+{"rank":"787","name":"Hate Lag","id":"29381992","score":"59078504"},
+{"rank":"788","name":"NATALI","id":"14477353","score":"58994936"},
+{"rank":"789","name":"I�?Й_� �?�?ж$","id":"14548514","score":"58966787"}
+,
+{"rank":"790","name":"MØMMY_BØÅ","id":"21312909","score":"58959567"}
+,
+{"rank":"791","name":"Îи�?_ДттÌ","id":"3627886","score":"58944794"}
+,
+{"rank":"792","name":"VIZITER","id":"1105630","score":"58905014"},
+{"rank":"793","name":"Good Play","id":"11915376","score":"58845605"},
+{"rank":"794","name":"CHÆNelTAIWAN","id":"17630242","score":"58830851"}
+,
+{"rank":"795","name":"нк_GesTanK","id":"25061022","score":"58733768"}
+,
+{"rank":"796","name":"кра�?ава1","id":"23745069","score":"58732923"}
+,
+{"rank":"797","name":"�?ÂRK SØÜL","id":"933991","score":"58640972"}
+,
+{"rank":"798","name":"Algéri HMZ19","id":"22830175","score":"58596335"}
+,
+{"rank":"799","name":"putri malam","id":"28581268","score":"58583040"},
+{"rank":"800","name":"TØP_STRIKER","id":"25205174","score":"58579742"}
+,
+{"rank":"801","name":"Gao*Pikachu","id":"32861793","score":"58483303"},
+{"rank":"802","name":"ЯВЙ_s� kúr�","id":"12634713","score":"58450210"}
+,
+{"rank":"803","name":"ÎMT_BG j49O","id":"14941019","score":"58443330"}
+,
+{"rank":"804","name":"Dancing_Klak","id":"56611","score":"58371782"},
+{"rank":"805","name":"Вциdå Årй","id":"10183921","score":"58235413"}
+,
+{"rank":"806","name":"Player2","id":"26607824","score":"58214380"},
+{"rank":"807","name":"YinYangM$TR","id":"27909124","score":"58146455"},
+{"rank":"808","name":"VictoryKing","id":"5414277","score":"58145661"},
+{"rank":"809","name":"micro","id":"3207677","score":"58140646"},
+{"rank":"810","name":"K�?О� ОЛ�?Ь","id":"23695013","score":"58137846"}
+,
+{"rank":"811","name":"GALuh PAkuAn","id":"27013711","score":"58042003"},
+{"rank":"812","name":"Prince Gama","id":"32241232","score":"58009278"},
+{"rank":"813","name":"EXC ROCKET","id":"17618670","score":"58008745"},
+{"rank":"814","name":"MëgåWøëMån","id":"8064912","score":"57972376"}
+,
+{"rank":"815","name":"Я�?P_ïм Qц�","id":"13172178","score":"57966801"}
+,
+{"rank":"816","name":"Nita_AYu_***","id":"28043754","score":"57965714"},
+{"rank":"817","name":"YOyo MelbAUS","id":"31328721","score":"57854128"},
+{"rank":"818","name":"Prince Nick","id":"27964615","score":"57823246"},
+{"rank":"819","name":"Hi-KArinn","id":"16732016","score":"57771790"},
+{"rank":"820","name":"É- GTW _TnË3","id":"20087739","score":"57672467"}
+,
+{"rank":"821","name":"ЙЯ �?sep Adun","id":"20376090","score":"57654314"}
+,
+{"rank":"822","name":"курдик","id":"10759112","score":"57649203"}
+,
+{"rank":"823","name":"Яgl-LæleMåns","id":"9552658","score":"57558993"}
+,
+{"rank":"824","name":"ШДИHЕDД*$$","id":"20656260","score":"57537259"}
+,
+{"rank":"825","name":"S-Ê-R-K-Å-Ñ","id":"27922871","score":"57534969"}
+,
+{"rank":"826","name":"IM_ÛLTЯÄ","id":"24430784","score":"57513181"}
+,
+{"rank":"827","name":"�? E A �?","id":"5686385","score":"57492747"}
+,
+{"rank":"828","name":"Я$-ЯéВeL-Д","id":"32724368","score":"57491129"}
+,
+{"rank":"829","name":"BabySnakey","id":"28549106","score":"57487245"},
+{"rank":"830","name":"King*_*Minos","id":"24452933","score":"57484697"},
+{"rank":"831","name":"ZÂHЯÂÑ Ñ","id":"18011560","score":"57467631"}
+,
+{"rank":"832","name":"ØмêГâ","id":"2076364","score":"57430065"}
+,
+{"rank":"833","name":"Fight Coward","id":"31920310","score":"57371865"},
+{"rank":"834","name":"wiro sablen6","id":"14140282","score":"57353954"},
+{"rank":"835","name":"FÎЭ�?Y Hцй�","id":"25329099","score":"57335574"}
+,
+{"rank":"836","name":"Thûñdêr","id":"26126166","score":"57328444"}
+,
+{"rank":"837","name":"Me2xEow2x","id":"27972800","score":"57326627"},
+{"rank":"838","name":"Hapless G","id":"22849030","score":"57315993"},
+{"rank":"839","name":"WãR_Муруш","id":"7236942","score":"57282835"}
+,
+{"rank":"840","name":"Exc Purnama","id":"31501962","score":"57264485"},
+{"rank":"841","name":"Mr_ Miyagi","id":"6189519","score":"57241446"},
+{"rank":"842","name":"Prø Play3r","id":"30118333","score":"57049510"}
+,
+{"rank":"843","name":"WãR-�?�?ГЕЛ","id":"28026779","score":"57024525"}
+,
+{"rank":"844","name":"Я�?P_Mähezz","id":"22069830","score":"57011644"}
+,
+{"rank":"845","name":"�?øн_мдxí�","id":"31665436","score":"57008690"}
+,
+{"rank":"846","name":"XpLord_Muiz","id":"10054945","score":"57007014"},
+{"rank":"847","name":"PAIDJO_","id":"20332694","score":"56958700"},
+{"rank":"848","name":"gfamCknMama","id":"21316115","score":"56953890"},
+{"rank":"849","name":"Børz_Лêгê�","id":"26329133","score":"56951486"}
+,
+{"rank":"850","name":"VLA*otr*","id":"9925364","score":"56907315"},
+{"rank":"851","name":"HerO_TheBest","id":"1009956","score":"56887782"},
+{"rank":"852","name":"Баклан","id":"5398124","score":"56874594"}
+,
+{"rank":"853","name":"кыш от м�","id":"5821400","score":"56843250"}
+,
+{"rank":"854","name":"CLEOPTRA_SQL","id":"6244034","score":"56820421"},
+{"rank":"855","name":"EVRYTHING","id":"2478743","score":"56799604"},
+{"rank":"856","name":"X Fighter-YT","id":"533453","score":"56743902"},
+{"rank":"857","name":"Evil Mamba","id":"10546777","score":"56628095"},
+{"rank":"858","name":"Çs__тд�?êж","id":"13370464","score":"56620836"}
+,
+{"rank":"859","name":"zaltaa","id":"27506581","score":"56617444"},
+{"rank":"860","name":"Clark Still","id":"14736748","score":"56565685"},
+{"rank":"861","name":"MG MASTEROV","id":"23835985","score":"56555599"},
+{"rank":"862","name":"ÑêRãTêÇ","id":"29466799","score":"56498273"}
+,
+{"rank":"863","name":"ALEV","id":"22279851","score":"56493452"},
+{"rank":"864","name":"NR_SДМIЙ_SQL","id":"25940849","score":"56397814"}
+,
+{"rank":"865","name":"ÎптЭЯ Ут","id":"26621249","score":"56370321"}
+,
+{"rank":"866","name":"abnormal","id":"8809103","score":"56363079"},
+{"rank":"867","name":"MD SABIR*Ali","id":"28238274","score":"56340145"},
+{"rank":"868","name":"të�?�?Ф�?_$h�","id":"16190470","score":"56238816"}
+,
+{"rank":"869","name":"PRINCE_Fire","id":"18534376","score":"56205519"},
+{"rank":"870","name":"ImMrMeeseeks","id":"5868547","score":"56129641"},
+{"rank":"871","name":"python","id":"5467448","score":"56042707"},
+{"rank":"872","name":"istria new","id":"31789660","score":"55945848"},
+{"rank":"873","name":"senja**","id":"8976073","score":"55868867"},
+{"rank":"874","name":"Exc icikiwir","id":"31710385","score":"55709579"},
+{"rank":"875","name":"Moon Игорь","id":"6652162","score":"55703399"}
+,
+{"rank":"876","name":"C-N-M-C-M","id":"2570105","score":"55680228"},
+{"rank":"877","name":"AXIORIS","id":"15765499","score":"55645464"},
+{"rank":"878","name":"ChathamSnake","id":"5796972","score":"55635745"},
+{"rank":"879","name":"Или�?нPrï�","id":"23334265","score":"55598324"}
+,
+{"rank":"880","name":"Pitágoras","id":"27810147","score":"55578363"}
+,
+{"rank":"881","name":"janda bolang","id":"9758490","score":"55559723"},
+{"rank":"882","name":"zz_SupeRáE_z","id":"30558113","score":"55537958"}
+,
+{"rank":"883","name":"mmm","id":"24978571","score":"55536389"},
+{"rank":"884","name":"тнê_FLY","id":"26318353","score":"55525076"}
+,
+{"rank":"885","name":"ßäñït","id":"5120734","score":"55461541"}
+,
+{"rank":"886","name":"Thësau�?us","id":"23670856","score":"55354820"}
+,
+{"rank":"887","name":"NR_MBAREP Jr","id":"22333974","score":"55252470"},
+{"rank":"888","name":"PRØ_GÃM3R_DT","id":"18384422","score":"55238395"}
+,
+{"rank":"889","name":"Prince-øYø","id":"18982201","score":"55177456"}
+,
+{"rank":"890","name":"Kimhiano","id":"32403065","score":"55077622"},
+{"rank":"891","name":"ÔMG_Capa","id":"24300293","score":"55071156"}
+,
+{"rank":"892","name":"Alex_CT","id":"3821937","score":"55063885"},
+{"rank":"893","name":"PRoZa","id":"11614158","score":"55063303"},
+{"rank":"894","name":"Y-U-$-U-F �?Y","id":"2463344","score":"55048787"}
+,
+{"rank":"895","name":"Noypi2 X*JPT","id":"21211576","score":"55034659"},
+{"rank":"896","name":"PRO LIFE","id":"13456064","score":"55010776"},
+{"rank":"897","name":"LION e AREMA","id":"14808039","score":"54974385"},
+{"rank":"898","name":"SAMDOEDELNL","id":"6707180","score":"54970475"},
+{"rank":"899","name":"RBN_l S2 U","id":"28258013","score":"54968961"},
+{"rank":"900","name":"BadGuy","id":"2681484","score":"54952555"},
+{"rank":"901","name":"S-N-C","id":"15135980","score":"54933551"},
+{"rank":"902","name":"Dèrix_GåЙJ�?","id":"12763428","score":"54914085"}
+,
+{"rank":"903","name":"ÆFÙQÆ*-*","id":"30252740","score":"54912485"}
+,
+{"rank":"904","name":"È-TiTÿ_TnË22","id":"17513044","score":"54882587"}
+,
+{"rank":"905","name":"Подколо�","id":"7784850","score":"54815700"}
+,
+{"rank":"906","name":"MööLaN2024","id":"6340227","score":"54797655"}
+,
+{"rank":"907","name":"Nô PrôblémYT","id":"27560326","score":"54751446"}
+,
+{"rank":"908","name":"Mower","id":"1542532","score":"54746928"},
+{"rank":"909","name":"ß�?V* ØMënØ","id":"28085859","score":"54746134"}
+,
+{"rank":"910","name":"Fñç_Д-$-Ц_�","id":"6960276","score":"54736382"}
+,
+{"rank":"911","name":"Hit-Naxalka","id":"5983059","score":"54722951"},
+{"rank":"912","name":"Ang�?ч Gаме","id":"7152017","score":"54706402"}
+,
+{"rank":"913","name":"nebulproYT","id":"372893","score":"54679994"},
+{"rank":"914","name":"ShoonOnBreak","id":"17722824","score":"54678205"},
+{"rank":"915","name":"Huinn_Qughes","id":"26672290","score":"54671143"},
+{"rank":"916","name":"shakala","id":"910383","score":"54586062"},
+{"rank":"917","name":"KADU LENDA","id":"16184257","score":"54559059"},
+{"rank":"918","name":"TYX*LIEN","id":"25798669","score":"54416271"},
+{"rank":"919","name":"cдspË�?","id":"27015784","score":"54367417"}
+,
+{"rank":"920","name":"WtF_workhard","id":"8527823","score":"54330714"},
+{"rank":"921","name":"CheeseDoodle","id":"5049152","score":"54329948"},
+{"rank":"922","name":"Х_ú_М_é_� _","id":"7400976","score":"54310288"}
+,
+{"rank":"923","name":"ØGSnкЭaт�?�","id":"5553479","score":"54306038"}
+,
+{"rank":"924","name":"stringy_ç$","id":"24321512","score":"54302681"}
+,
+{"rank":"925","name":"ìçih� rá94","id":"14852737","score":"54271113"}
+,
+{"rank":"926","name":"motomoto","id":"6421630","score":"54259810"},
+{"rank":"927","name":"World Peace","id":"26190854","score":"54258008"},
+{"rank":"928","name":"no_mercy____","id":"28992396","score":"54142301"},
+{"rank":"929","name":"ß�?V*�?ÅЙþ�","id":"26386319","score":"54135509"}
+,
+{"rank":"930","name":"AnthonySarki","id":"7065812","score":"54082444"},
+{"rank":"931","name":"Tennesseе","id":"1114137","score":"54076331"}
+,
+{"rank":"932","name":"P-M-C Fc*","id":"29707183","score":"54022653"},
+{"rank":"933","name":"ß�?V*A_Super*","id":"20253337","score":"54014412"}
+,
+{"rank":"934","name":"TFL Jö Thai","id":"20898320","score":"53997164"}
+,
+{"rank":"935","name":"paulro","id":"639267","score":"53958625"},
+{"rank":"936","name":"DarkRat","id":"1278309","score":"53891375"},
+{"rank":"937","name":"y4na","id":"18122431","score":"53811419"},
+{"rank":"938","name":"Jørmüngãndr","id":"3396692","score":"53796506"}
+,
+{"rank":"939","name":"Qй___LØVË_F�","id":"29000612","score":"53780257"}
+,
+{"rank":"940","name":"ExC DjiSamSU","id":"10173482","score":"53754337"},
+{"rank":"941","name":"toto_CS*","id":"16721002","score":"53753041"},
+{"rank":"942","name":"wanda","id":"9053236","score":"53717831"},
+{"rank":"943","name":"�?�?�?-S�?�?дf","id":"11615729","score":"53686356"}
+,
+{"rank":"944","name":"ucinkku","id":"23195514","score":"53648050"},
+{"rank":"945","name":"ß�?V*KabunZiИ","id":"21172310","score":"53631168"}
+,
+{"rank":"946","name":"NR_dEsTRoy","id":"27827259","score":"53617758"},
+{"rank":"947","name":"Ava","id":"27828882","score":"53597928"},
+{"rank":"948","name":"Dino$avage","id":"25614250","score":"53548781"},
+{"rank":"949","name":"Hít-K�?ти","id":"1120156","score":"53529312"}
+,
+{"rank":"950","name":"Seraphim","id":"4564090","score":"53484346"},
+{"rank":"951","name":"Хулиган�","id":"7457211","score":"53480169"}
+,
+{"rank":"952","name":"xnxx","id":"17725885","score":"53449354"},
+{"rank":"953","name":"Br_sneaky","id":"4721177","score":"53396570"},
+{"rank":"954","name":"smoothie","id":"19774069","score":"53372561"},
+{"rank":"955","name":"È-M�?RZÅ_TnË","id":"24999078","score":"53331764"}
+,
+{"rank":"956","name":"DlNGLE BERRY","id":"23625047","score":"53222621"},
+{"rank":"957","name":"ß�?V* V�?ИÎ","id":"26812803","score":"53172902"}
+,
+{"rank":"958","name":"Muhahaha","id":"5641716","score":"53156245"},
+{"rank":"959","name":"Snake","id":"22297533","score":"53129567"},
+{"rank":"960","name":"WãR_ShArP274","id":"8525657","score":"53096954"}
+,
+{"rank":"961","name":"IM-Jenny Ace","id":"20016444","score":"53080998"},
+{"rank":"962","name":"К�?ю","id":"31828398","score":"53075158"}
+,
+{"rank":"963","name":"Eatster","id":"27009328","score":"53056683"},
+{"rank":"964","name":"È-NüNä_TnË9","id":"17907878","score":"53025019"}
+,
+{"rank":"965","name":"sanghan yOu","id":"17177028","score":"52995077"},
+{"rank":"966","name":"нк_С R Ø Ш","id":"9949978","score":"52974813"}
+,
+{"rank":"967","name":"BangKing","id":"20766530","score":"52970743"},
+{"rank":"968","name":"AmparoSp LND","id":"28378314","score":"52930308"},
+{"rank":"969","name":"TЯФ_�?aиi","id":"8083601","score":"52882909"}
+,
+{"rank":"970","name":"ICE QUEEN","id":"1526076","score":"52870287"},
+{"rank":"971","name":"Hдйдвì_","id":"29146301","score":"52804076"}
+,
+{"rank":"972","name":"ЛюТыЙ","id":"2813984","score":"52727571"}
+,
+{"rank":"973","name":"йдüмíí","id":"27802520","score":"52685834"}
+,
+{"rank":"974","name":"NUCK CHORRiS","id":"7151453","score":"52627113"},
+{"rank":"975","name":"PAPRIKA","id":"2518054","score":"52615087"},
+{"rank":"976","name":"stig bei","id":"7533245","score":"52604162"},
+{"rank":"977","name":"É-мöмaÿ_Tn","id":"15493780","score":"52581962"}
+,
+{"rank":"978","name":"тL�?*_*тú-vn","id":"14176338","score":"52579413"}
+,
+{"rank":"979","name":"Ababil","id":"9331844","score":"52515812"},
+{"rank":"980","name":"lerd","id":"22245384","score":"52474767"},
+{"rank":"981","name":"K�?ЙG_LØVË_F","id":"9856389","score":"52418299"}
+,
+{"rank":"982","name":"Placak JAGAT","id":"14021964","score":"52327647"},
+{"rank":"983","name":"Lß$*ßЭT-�?AY","id":"29402798","score":"52318442"}
+,
+{"rank":"984","name":"SHARTLORD","id":"6512873","score":"52291564"},
+{"rank":"985","name":"T�?iXie -SQL-","id":"9245097","score":"52256425"}
+,
+{"rank":"986","name":"TC-Zuku","id":"771789","score":"52237262"},
+{"rank":"987","name":"Bull","id":"8472439","score":"52225200"},
+{"rank":"988","name":"Cenotaph","id":"22632446","score":"52213219"},
+{"rank":"989","name":"Døraemee_*","id":"31398506","score":"52195098"}
+,
+{"rank":"990","name":"SAVAGEAXE123","id":"4813307","score":"52121726"},
+{"rank":"991","name":"SF_riNdд-мдn","id":"15571136","score":"52064629"}
+,
+{"rank":"992","name":"Великий","id":"4764154","score":"52008113"}
+,
+{"rank":"993","name":"AKELA YODHA","id":"28517979","score":"52007105"},
+{"rank":"994","name":"Ужонок","id":"6669134","score":"52003201"}
+,
+{"rank":"995","name":"кluÄi","id":"27907629","score":"51969911"}
+,
+{"rank":"996","name":"MË�?Ü$Ã","id":"4959161","score":"51893703"}
+,
+{"rank":"997","name":"Count Zero","id":"6983411","score":"51863504"},
+{"rank":"998","name":"Kâb тèáм S","id":"22635118","score":"51829516"}
+,
+{"rank":"999","name":"ÅßÇ тнз �","id":"21839517","score":"51796355"}
+,
+{"rank":"1000","name":"TRAVANDO_GБ","id":"19974213","score":"51769277"}
 
 ]
