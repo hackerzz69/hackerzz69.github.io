@@ -1,20 +1,19 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
 </script>
 
 <template>
   <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
+    <div id="logo">
+      <img width="32px" src="https://www.pngrepo.com/png/25812/512/highlighter.png" />
+      <h2 id="logoText">Highlite</h2>
     </div>
+    <nav>
+      <RouterLink to="/" class="navItem">Home</RouterLink>
+      <RouterLink to="/map" class="navItem">Map</RouterLink>
+      <RouterLink to="/calculators" class="navItem">Calculators</RouterLink>
+      <!-- Drop Down Menu -->
+    </nav>
   </header>
 
   <RouterView />
@@ -22,64 +21,49 @@ import HelloWorld from './components/HelloWorld.vue'
 
 <style scoped>
 header {
-  line-height: 1.5;
-  max-height: 100vh;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: #222121;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
+/* Navbar Dropdown Element */
 nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
+  display: flex;
+  gap: 1rem;
+}
+nav .navItem {
+  color: #fff;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+}
+nav .navItem:hover {
+  background-color: #444343;
+  transition: background-color 0.3s ease;
+}
+nav .router-link-active {
+  background-color: #373737;
 }
 
-nav a.router-link-exact-active {
-  color: var(--color-text);
+#logo {
+  display: flex;
+  align-items: center;
 }
 
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
+#logo h2 {
+  margin-left: 0.5rem;
+  color: #fff;
 
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
+  /* Highlight Effect */
+  text-shadow:
+    0 0 5px rgba(242, 255, 0, 0.8),
+    0 0 10px rgba(210, 208, 75, 0.6),
+    0 0 15px rgba(199, 193, 23, 0.4),
+    0 0 20px rgba(186, 238, 15, 0.2);
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-transform: uppercase;
 }
 </style>
