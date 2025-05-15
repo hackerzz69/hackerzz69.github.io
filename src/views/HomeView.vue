@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import TheWelcome from '../components/TheWelcome.vue'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faDiscord } from '@fortawesome/free-brands-svg-icons'
 </script>
 
 <template>
@@ -23,10 +24,27 @@ import TheWelcome from '../components/TheWelcome.vue'
         </a>
       </div>
     </div>
+    <div class="footer">
+      <div id="copyright">
+        <p>© 2025 Highlite. All rights reserved.</p>
+        <p>Made with ❤️ by the Highlite Team</p>
+      </div>
+    </div>
+
+    <div class="joinUs">
+      <a href="https://discord.gg/SszbKF5dtm" target="_blank">
+        <button>Join us on <FontAwesomeIcon :icon="faDiscord" /></button>
+      </a>
+    </div>
   </main>
 </template>
 
 <style scoped>
+.joinUs {
+  position: fixed;
+  right: 5px;
+  bottom: 5px;
+}
 /* Center the content */
 main {
   text-align: center;
@@ -40,7 +58,7 @@ main::before {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('https://cdn.discordapp.com/attachments/1370897973608976424/1371404358138331256/image.png?ex=6823ac16&is=68225a96&hm=81debdbcfa0d695d239ef3b0b16b7cfaa6a49a845c2c4d0c25932884924d5a52&format=webp&quality=lossless&width=1611&height=800');
+  background-image: url('@/assets/homepageBackground.png');
   background-size: cover;
   background-position: center;
   z-index: -1; /* Behind the content */
@@ -91,7 +109,7 @@ button:active {
 main {
   padding-top: 0px;
   padding-bottom: 0px;
-  margin-top: -72px;
+  margin-top: -120px;
 }
 .content {
   background: #00000096;

@@ -4,7 +4,7 @@ import MapView from '@/views/MapView.vue'
 import CalculatorView from '@/views/CalculatorView.vue'
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(),
   routes: [
     {
       path: '/',
