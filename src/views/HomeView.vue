@@ -7,20 +7,17 @@ import { faDiscord } from '@fortawesome/free-brands-svg-icons'
   <main>
     <div class="contentHolder">
       <div class="content">
-        <h2>We need your support!</h2>
+        <h2>Thank you for your support!</h2>
         <p>
-          Highlite is a community-driven project that aims to provide a comprehensive and
-          user-friendly experience for players of the game HighSpell. Our goal is to provide a
-          RuneLite-esque experience for HighSpell, with a focus on enhancing the gameplay experience
-          and providing valuable tools and resources for players. In order to develop Highlite and
-          release it to the broader public, we need Dew's support. We ask that you please show your
-          support on our suggestion thread.
+          Highlite is officially coming soon™️. We are working hard to bring you the best experience
+          possible. In the meantime, we invite you to join our community and stay updated on our
+          progress. We are open to suggestions and feedback on any features you would like to.
         </p>
         <a
-          href="https://discord.com/channels/936532810955620392/1370897973608976424/1370897973608976424"
+          href="https://discord.gg/SszbKF5dtm"
           target="_blank"
         >
-          <button>Support Us</button>
+          <button>Join us on <FontAwesomeIcon :icon="faDiscord" /></button>
         </a>
       </div>
     </div>

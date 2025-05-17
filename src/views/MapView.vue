@@ -2,6 +2,8 @@
 import { onMounted } from 'vue'
 import locations from '@/assets/markerInformation/Locations.json'
 import entities from '@/assets/markerInformation/worldEntities.json'
+import npcs from '@/assets/markerInformation/NPCs.json'
+import npcDefinitions from '@/assets/markerInformation/NPCDefs.json'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faDiscord } from '@fortawesome/free-brands-svg-icons'
 import * as L from 'leaflet'
@@ -32,6 +34,19 @@ function layerAdd(layer, levelMarkers, layerControls) {
   } else {
     document.getElementById('map').style.backgroundColor = '#000000'
   }
+
+  // Remove all layers from the map
+  if (!layer || !layer.layer || layer.layer._map) {
+    // Initial call does not have this defined
+    return;
+  }
+  layer.layer._map.eachLayer((mapLayer) => {
+    if (mapLayer && !(mapLayer instanceof L.imageOverlay)) {
+      console.log(mapLayer)
+      mapLayer.remove()
+    }
+  })
+
 }
 
 onMounted(() => {
@@ -56,8 +71,7 @@ onMounted(() => {
   const map: L.Map = L.map('map', {
     crs: L.CRS.Simple,
     minZoom: -2,
-    maxBounds: bounds,
-    maxBoundsViscosity: 1,
+    maxBoundsViscosity: 0.5,
   }).fitBounds(bounds)
 
   const overworldLayers = L.layerGroup()
@@ -100,7 +114,17 @@ onMounted(() => {
       }),
       title: location.name,
     })
-    addItem(marker, 'Overworld', 'Locations')
+    switch(location.labelType) {
+      case 0:
+        addItem(marker, 'Underworld', 'Locations')
+        break;
+      case 1:
+        addItem(marker, 'Overworld', 'Locations')
+        break;
+      case 2:
+        addItem(marker, 'Sky', 'Locations')
+        break;
+    }
   })
 
   entities.worldEntities.forEach((entity) => {
@@ -728,7 +752,167 @@ onMounted(() => {
     }
   })
 
-  const layerControls = L.control.layers(baseMaps, {}, { collapsed: true }).addTo(map)
+  npcs.npcs.forEach((npc) => {
+    // Check if NPC has a value for "shopdef_id"
+    if (npc.shopdef_id) {
+      // Capitalize characters after spaces
+      const name = npc.desc.replace(/(?:^|\s)\S/g, (a) => a.toUpperCase())
+      const marker = L.marker([npc.y + 512, npc.x + 512], {
+        // Icon for NPC is Unicode: 🏪
+        icon: L.divIcon({
+          className: 'text-label lvl-1',
+          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;transform: translate(-0.35rem, -0.5rem);">🏪</div>`,
+        }),
+        title: name,
+      })
+
+      // Bind Type to Marker Tooltip
+      // Example type: polartree
+      // Example Popup: "Polar Tree"
+      marker.bindPopup(name)
+      switch (npc.mapLevel) {
+        case 1:
+          addItem(marker, 'Overworld', 'Shops')
+          break
+        case 0:
+          addItem(marker, 'Underworld', 'Shops')
+          break
+        case 2:
+          addItem(marker, 'Sky', 'Shops')
+          break
+      }
+      return;
+    }
+
+    if (npc.isAlwaysAggroOverride) {
+      // Capitalize characters after spaces
+      const name = npc.desc.replace(/(?:^|\s)\S/g, (a) => a.toUpperCase())
+      const marker = L.marker([npc.y + 512, npc.x + 512], {
+        // Icon for Aggro NPC is Devil: 😈
+        icon: L.divIcon({
+          className: 'text-label lvl-1',
+          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;transform: translate(-0.35rem, -0.5rem);">😈</div>`,
+        }),
+        title: name,
+      })
+
+      // Bind Type to Marker Tooltip
+      // Example type: polartree
+      // Example Popup: "Polar Tree"
+      marker.bindPopup(name)
+      switch (npc.mapLevel) {
+        case 1:
+          addItem(marker, 'Overworld', 'Aggro NPCs')
+          break
+        case 0:
+          addItem(marker, 'Underworld', 'Aggro NPCs')
+          break
+        case 2:
+          addItem(marker, 'Sky', 'Aggro NPCs')
+          break
+      }
+      return;
+    }
+
+
+    // Find the item in the npcDefinitions.npcDefs JSON array where npc._id == npcDef._id
+    const npcDef = npcDefinitions.npcDefs.find(
+      (npcDef) => npc.npcdef_id === npcDef._id
+    )
+
+    // Check if npcDef has a definition for "combat"
+    if (!npcDef) {
+      // Add Regular NPC
+      // Capitalize characters after spaces
+      const name = npc.desc.replace(/(?:^|\s)\S/g, (a) => a.toUpperCase())
+      const marker = L.marker([npc.y + 512, npc.x + 512], {
+        // Icon for NPC is Unicode: 👤
+        icon: L.divIcon({
+          className: 'text-label lvl-1',
+          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;transform: translate(-0.35rem, -0.5rem);">👤</div>`,
+        }),
+        title: name,
+      })
+      // Bind Type to Marker Tooltip
+      // Example type: polartree
+      // Example Popup: "Polar Tree"
+      marker.bindPopup(name)
+      switch (npc.mapLevel) {
+        case 1:
+          addItem(marker, 'Overworld', 'NPCs')
+          break
+        case 0:
+          addItem(marker, 'Underworld', 'NPCs')
+          break
+        case 2:
+          addItem(marker, 'Sky', 'NPCs')
+          break
+      }
+      return
+    }
+    // Check if npcDef has a value for "combat"
+    if (!npcDef.combat) {
+      // Add Regular NPC
+      // Capitalize characters after spaces
+      const name = npc.desc.replace(/(?:^|\s)\S/g, (a) => a.toUpperCase())
+      const marker = L.marker([npc.y + 512, npc.x + 512], {
+        // Icon for NPC is Unicode: 👤
+        icon: L.divIcon({
+          className: 'text-label lvl-1',
+          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;transform: translate(-0.35rem, -0.5rem);">👤</div>`,
+        }),
+        title: name,
+      })
+      // Bind Type to Marker Tooltip
+      // Example type: polartree
+      // Example Popup: "Polar Tree"
+      marker.bindPopup(name)
+      switch (npc.mapLevel) {
+        case 1:
+          addItem(marker, 'Overworld', 'NPCs')
+          break
+        case 0:
+          addItem(marker, 'Underworld', 'NPCs')
+          break
+        case 2:
+          addItem(marker, 'Sky', 'NPCs')
+          break
+      }
+      return
+    }
+    if (npcDef.combat) {
+      // Add Attackable NPC
+      // Capitalize characters after spaces
+      const name = npc.desc.replace(/(?:^|\s)\S/g, (a) => a.toUpperCase())
+      const marker = L.marker([npc.y + 512, npc.x + 512], {
+        // Icon for NPC is Unicode: ⚔️
+        icon: L.divIcon({
+          className: 'text-label lvl-1',
+          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;transform: translate(-0.35rem, -0.5rem);">⚔️</div>`,
+        }),
+        title: name,
+      })
+      // Bind Type to Marker Tooltip
+      // Example type: polartree
+      // Example Popup: "Polar Tree"
+      marker.bindPopup(name)
+      switch (npc.mapLevel) {
+        case 1:
+          addItem(marker, 'Overworld', 'Attackable NPCs')
+          break
+        case 0:
+          addItem(marker, 'Underworld', 'Attackable NPCs')
+          break
+        case 2:
+          addItem(marker, 'Sky', 'Attackable NPCs')
+          break
+      }
+      return;
+    }
+  })
+
+  const layerControls =
+  L.control.layers(baseMaps, {}, { collapsed: true }).addTo(map)
 
   // Add Search Functionality via DOM
   const searchInput = document.createElement('input')
@@ -809,12 +993,26 @@ onMounted(() => {
               // Remove the layer from the map
               if (layer instanceof L.Marker) {
                 const markerTitle = layer.options.title || ''
-                if (markerTitle === '') {
-                  console.log(layer.options.html)
-                }
                 if (markerTitle.toLowerCase().includes(searchTerm)) {
                   layer.addTo(map)
-                  map.setView(layer.getLatLng(), 2)
+                  const layerMarker = layer._icon.children[0];
+
+                  // Add yellow text shadow to the marker
+                  layerMarker.style.textShadow = '0px 0px 16px yellow';
+                  // layerMarker.style.transform = 'translate(-0.70rem, -1rem)';
+                  layerMarker.style.transition = 'all 0.5s ease';
+                  layerMarker.style.fontSize = '1.25rem';
+
+                  // Wait for 0.3s before removing the text shadow
+                  setTimeout(() => {
+                    layerMarker.style.textShadow = '0px 0px 8px black';
+                    layerMarker.style.fontSize = '1rem';
+                    layerMarker.style.transform = 'translate(-0.35rem, -0.5rem)';
+                  }, 200);
+
+
+
+                 // map.setView(layer.getLatLng(), 2)
                 } else {
                   map.removeLayer(layer)
                 }
