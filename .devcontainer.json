@@ -1,0 +1,9 @@
+{
+    "name": "Highlite Development Environment",
+    "image": "oven/bun",
+    "updateRemoteUserUID": true,
+    "features": {
+        "ghcr.io/devcontainers/features/git:1": {}
+    },
+    "postCreateCommand": "apt update && apt install ca-certificates -y"
+}

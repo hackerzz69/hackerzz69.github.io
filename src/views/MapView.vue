@@ -753,10 +753,15 @@ onMounted(() => {
   })
 
   npcs.npcs.forEach((npc) => {
+    // Find the item in the npcDefinitions.npcDefs JSON array where npc._id == npcDef._id
+    const npcDef = npcDefinitions.npcDefs.find(
+      (npcDef) => npc.npcdef_id === npcDef._id
+    )
+
     // Check if NPC has a value for "shopdef_id"
     if (npc.shopdef_id) {
       // Capitalize characters after spaces
-      const name = npc.desc.replace(/(?:^|\s)\S/g, (a) => a.toUpperCase())
+      const name = npcDef.name.replace(/(?:^|\s)\S/g, (a) => a.toUpperCase())
       const marker = L.marker([npc.y + 512, npc.x + 512], {
         // Icon for NPC is Unicode: 🏪
         icon: L.divIcon({
@@ -786,7 +791,7 @@ onMounted(() => {
 
     if (npc.isAlwaysAggroOverride) {
       // Capitalize characters after spaces
-      const name = npc.desc.replace(/(?:^|\s)\S/g, (a) => a.toUpperCase())
+      const name = npcDef.name.replace(/(?:^|\s)\S/g, (a) => a.toUpperCase()) + " (Lvl. " + npcDef.combat.level + ")";
       const marker = L.marker([npc.y + 512, npc.x + 512], {
         // Icon for Aggro NPC is Devil: 😈
         icon: L.divIcon({
@@ -814,17 +819,11 @@ onMounted(() => {
       return;
     }
 
-
-    // Find the item in the npcDefinitions.npcDefs JSON array where npc._id == npcDef._id
-    const npcDef = npcDefinitions.npcDefs.find(
-      (npcDef) => npc.npcdef_id === npcDef._id
-    )
-
     // Check if npcDef has a definition for "combat"
     if (!npcDef) {
       // Add Regular NPC
       // Capitalize characters after spaces
-      const name = npc.desc.replace(/(?:^|\s)\S/g, (a) => a.toUpperCase())
+      const name = npcDef.name.replace(/(?:^|\s)\S/g, (a) => a.toUpperCase())
       const marker = L.marker([npc.y + 512, npc.x + 512], {
         // Icon for NPC is Unicode: 👤
         icon: L.divIcon({
@@ -854,7 +853,7 @@ onMounted(() => {
     if (!npcDef.combat) {
       // Add Regular NPC
       // Capitalize characters after spaces
-      const name = npc.desc.replace(/(?:^|\s)\S/g, (a) => a.toUpperCase())
+      const name = npcDef.name.replace(/(?:^|\s)\S/g, (a) => a.toUpperCase())
       const marker = L.marker([npc.y + 512, npc.x + 512], {
         // Icon for NPC is Unicode: 👤
         icon: L.divIcon({
@@ -883,7 +882,7 @@ onMounted(() => {
     if (npcDef.combat) {
       // Add Attackable NPC
       // Capitalize characters after spaces
-      const name = npc.desc.replace(/(?:^|\s)\S/g, (a) => a.toUpperCase())
+      const name = npcDef.name.replace(/(?:^|\s)\S/g, (a) => a.toUpperCase()) + " (Lvl. " + npcDef.combat.level + ")";
       const marker = L.marker([npc.y + 512, npc.x + 512], {
         // Icon for NPC is Unicode: ⚔️
         icon: L.divIcon({
