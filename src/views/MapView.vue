@@ -8,14 +8,81 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faDiscord } from '@fortawesome/free-brands-svg-icons'
 import * as L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+import 'leaflet.markercluster/dist/MarkerCluster.css'
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
+import 'leaflet.markercluster/dist/leaflet.markercluster.js'
+
+L.Control.Layers.include({
+  getOverlays: function() {
+    // create hash to hold all layers
+    let control, layers;
+    layers = {};
+    control = this;
+
+    // loop thru all layers in control
+    control._layers.forEach(function(obj) {
+      let layerName;
+
+      // check if layer is an overlay
+      if (obj.overlay) {
+        // get name of overlay
+        layerName = obj.name;
+        // store whether it's present on the map or not
+        return layers[layerName] = control._map.hasLayer(obj.layer);
+      }
+    });
+
+    return layers;
+  }
+});
+
+// Animate the class "playerPos" rotating
+const animatePlayerPos = () => {
+  const playerPos = document.querySelector('.playerPos')
+  if (playerPos) {
+    playerPos.classList.add('rotate')
+    setTimeout(() => {
+      playerPos.classList.remove('rotate')
+    }, 1000)
+  }
+}
+
+// Animate the class "playerPos" rotating 
+setInterval(() => {
+  const element = document.getElementsByClassName('playerPosition')[0]
+  element.style.zIndex = '9999'
+  element.style.transition = 'rotate 0.1s linear'
+  // Get elements current rotation
+  const currentRotation = (parseInt(element.style.rotate.replace('deg', ''))) || 0
+  if (currentRotation >= 360) {
+    element.style.transition = 'rotate 0.0s linear'
+    element.style.rotate = '0deg'
+  } else {
+    // Set the new rotation
+    element.style.rotate = `${currentRotation + 5}deg`
+  }
+
+}, 100);
+
 
 function layerAdd(layer, levelMarkers, layerControls) {
+  // Get currently active layers
+  const activatedLayers = layerControls.getOverlays()
+
+
   // Update the overlay layers based on the available level markers
   for (const key in levelMarkers) {
     if (key == layer.name) {
       for (const subKey in levelMarkers[key]) {
         if (levelMarkers[key][subKey]) {
           layerControls.addOverlay(levelMarkers[key][subKey], subKey)
+          if (activatedLayers != {}) {
+            // If the subkey exists and is true in activatedLayers
+            if (activatedLayers[subKey]) {
+              // Add the layer to the map
+              levelMarkers[key][subKey].addTo(layerControls._map)
+            }
+          }
         }
       }
     } else {
@@ -34,19 +101,6 @@ function layerAdd(layer, levelMarkers, layerControls) {
   } else {
     document.getElementById('map').style.backgroundColor = '#000000'
   }
-
-  // Remove all layers from the map
-  if (!layer || !layer.layer || layer.layer._map) {
-    // Initial call does not have this defined
-    return;
-  }
-  layer.layer._map.eachLayer((mapLayer) => {
-    if (mapLayer && !(mapLayer instanceof L.imageOverlay)) {
-      console.log(mapLayer)
-      mapLayer.remove()
-    }
-  })
-
 }
 
 onMounted(() => {
@@ -56,6 +110,12 @@ onMounted(() => {
   ]
 
   const levelMarkers = {
+    Overworld: {},
+    Underworld: {},
+    Sky: {},
+  }
+
+  const treeMarkersSearch = {
     Overworld: {},
     Underworld: {},
     Sky: {},
@@ -71,6 +131,7 @@ onMounted(() => {
   const map: L.Map = L.map('map', {
     crs: L.CRS.Simple,
     minZoom: -2,
+    maxZoom: 20,
     maxBoundsViscosity: 0.5,
   }).fitBounds(bounds)
 
@@ -92,7 +153,7 @@ onMounted(() => {
     Underworld: underworldLayers,
   }
 
-  function addItem(marker: L.Marker, level: string, group: string) {
+  function addItem(marker: L.Marker, level: string, group: string, addTo : boolean = true) {
     if (!levelMarkers[level][group]) {
       levelMarkers[level][group] = L.layerGroup()
     }
@@ -100,7 +161,22 @@ onMounted(() => {
     if (!searchMarkers[level][marker.options.title]) {
       searchMarkers[level][marker.options.title] = []
     }
-    marker.addTo(levelMarkers[level][group])
+    if (addTo) {
+      marker.addTo(levelMarkers[level][group])
+    }
+  }
+
+  function addTree(marker: L.Marker, level: string, group: string, addTo : boolean = true) {
+    if (!treeMarkersSearch[level][group]) {
+      treeMarkersSearch[level][group] = L.layerGroup()
+    }
+
+    if (!searchMarkers[level][marker.options.title]) {
+      searchMarkers[level][marker.options.title] = []
+    }
+    if (addTo) {
+      marker.addTo(treeMarkersSearch[level][group])
+    }
   }
 
   overworldLayers.addTo(map)
@@ -126,23 +202,38 @@ onMounted(() => {
         break;
     }
   })
-
+  const treeClusters = {}
   entities.worldEntities.forEach((entity) => {
-    // Trees
-    if (entity.type.includes('tree') && entity.type != 'treestump') {
-      const name = entity.type.replace('tree', ' Tree')
+
+    if ((entity.type.includes('tree') || entity.type.includes('cherryblossom')) && entity.type != 'treestump') {
+      let name = entity.type.replace('tree', ' Tree')
+      name = name.replace('blossom', ' Blossom')
       const nameWithSpaces = name.replace(/([a-z])([A-Z])/g, '$1 $2')
       const nameWithSpacesCapitalized =
         nameWithSpaces.charAt(0).toUpperCase() + nameWithSpaces.slice(1)
 
       const marker = L.marker([entity.z + 512, entity.x + 512], {
-        // Icon for Trees is Unicode: 🌳
+        title: nameWithSpacesCapitalized,
+        // Use Leaflet Default Icon
         icon: L.divIcon({
           className: 'text-label lvl-1',
-          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;transform: translate(-0.165rem, -1.1rem);">🌳</div>`,
+          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;transform: translate(-0.35rem, -0.5rem);">🌳</div>`,
         }),
-        title: nameWithSpacesCapitalized,
       })
+      if (!treeClusters[entity.lvl]) {
+        treeClusters[entity.lvl] = {}
+      }
+
+      if (!treeClusters[entity.lvl][entity.type]) {
+        treeClusters[entity.lvl][entity.type] = L.markerClusterGroup({
+          showCoverageOnHover: false,
+          spiderfyOnMaxZoom: true,
+          disableClusteringAtZoom: 2,
+        })
+      }
+
+      // Add the marker to the cluster group
+      treeClusters[entity.lvl][entity.type].addLayer(marker)
 
       // Bind Type to Marker Tooltip
       // Example type: polartree
@@ -150,13 +241,13 @@ onMounted(() => {
       marker.bindPopup(nameWithSpacesCapitalized)
       switch (entity.lvl) {
         case 1:
-          addItem(marker, 'Overworld', 'Trees')
+          addTree(marker, 'Overworld', 'Trees')
           break
         case 0:
-          addItem(marker, 'Underworld', 'Trees')
+          addTree(marker, 'Underworld', 'Trees')
           break
         case 2:
-          addItem(marker, 'Sky', 'Trees')
+          addTree(marker, 'Sky', 'Trees')
           break
       }
     }
@@ -752,6 +843,29 @@ onMounted(() => {
     }
   })
 
+  // Add the tree clusters to the map
+  for (let i = 0; i < 3; i++) {
+    switch(i) {
+      case 0:
+        for (const type in treeClusters[0]) {
+          addItem(treeClusters[0][type], 'Underworld', 'Trees')
+        }
+        break
+      case 1:
+        for (const type in treeClusters[1]) {
+          addItem(treeClusters[1][type], 'Overworld', 'Trees')
+        }
+        break
+      case 2:
+        for (const type in treeClusters[2]) {
+          addItem(treeClusters[2][type], 'Sky', 'Trees')
+        }
+        break
+    }
+  }
+
+  console.log(treeClusters)
+
   npcs.npcs.forEach((npc) => {
     // Find the item in the npcDefinitions.npcDefs JSON array where npc._id == npcDef._id
     const npcDef = npcDefinitions.npcDefs.find(
@@ -940,8 +1054,9 @@ onMounted(() => {
   document.getElementById('map').appendChild(searchInput)
 
   searchInput.addEventListener('input', (e) => {
-    const searchTerm = e.target.value.toLowerCase()
-    if (searchTerm === '') {
+    let searchTerm = e.target.value.toLowerCase()
+
+    if (searchTerm.trim() === '') {
       // If search term is empty, remove all markers
       for (const key in levelMarkers) {
         for (const subKey in levelMarkers[key]) {
@@ -954,23 +1069,38 @@ onMounted(() => {
           }
         }
       }
-      return
+
+      // for (const lvlKey in treeClusters) {
+      //   for (const typeKey in treeClusters[lvlKey]) {
+      //     if (treeClusters[lvlKey][typeKey] instanceof L.markerClusterGroup) {
+      //       treeClusters[lvlKey][typeKey].eachLayer((layer) => {
+      //         if (layer instanceof L.Marker) {
+      //           map.removeLayer(layer)
+      //         }
+      //       })
+      //     }
+      //   }
+      // }
+
+      for (const key in treeMarkersSearch) {
+        for (const subKey in treeMarkersSearch[key]) {
+          if (treeMarkersSearch[key][subKey] instanceof L.LayerGroup) {
+            treeMarkersSearch[key][subKey].eachLayer((layer) => {
+              if (layer instanceof L.Marker) {
+                map.removeLayer(layer)
+              }
+            })
+          }
+        }
+      }
+
+      return;
     }
 
     // Wait for user to stop typing for 500ms before performing search
     clearTimeout(performSearchFilter.timeout)
     performSearchFilter.timeout = setTimeout(() => {
-      // Disable Search Input
-      searchInput.disabled = true
-      searchInput.style.opacity = '0.5'
-      searchInput.style.cursor = 'not-allowed'
-
-      performSearchFilter(searchTerm)
-
-      // Enable Search Input
-      searchInput.disabled = false
-      searchInput.style.opacity = '0.8'
-      searchInput.style.cursor = 'text'
+      performSearchFilter(e.target.value.toLowerCase())
     }, 500)
   })
 
@@ -1021,11 +1151,50 @@ onMounted(() => {
         }
       }
     }
+ 
+    for (const key in treeMarkersSearch) {
+      if (key == mapLayer) {
+        for (const subKey in treeMarkersSearch[key]) {
+          // Check if the treeMarkersSearch[key][subKey] is a layer group
+          if (treeMarkersSearch[key][subKey] instanceof L.LayerGroup) {
+            treeMarkersSearch[key][subKey].remove()
+            treeMarkersSearch[key][subKey].eachLayer((layer) => {
+              // Remove the layer from the map
+              if (layer instanceof L.Marker) {
+                const markerTitle = layer.options.title || ''
+                if (markerTitle.toLowerCase().includes(searchTerm)) {
+                  layer.addTo(map)
+                  const layerMarker = layer._icon.children[0];
+
+                  // Add yellow text shadow to the marker
+                  layerMarker.style.textShadow = '0px 0px 16px yellow';
+                  // layerMarker.style.transform = 'translate(-0.70rem, -1rem)';
+                  layerMarker.style.transition = 'all 0.5s ease';
+                  layerMarker.style.fontSize = '1.25rem';
+
+                  // Wait for 0.3s before removing the text shadow
+                  setTimeout(() => {
+                    layerMarker.style.textShadow = '0px 0px 8px black';
+                    layerMarker.style.fontSize = '1rem';
+                    layerMarker.style.transform = 'translate(-0.35rem, -0.5rem)';
+                  }, 200);
+
+
+
+                 // map.setView(layer.getLatLng(), 2)
+                } else {
+                  map.removeLayer(layer)
+                }
+              }
+            })
+          }
+        }
+      }
+    }
   }
 
   map.on('baselayerchange', (e) => {
     layerAdd(e, levelMarkers, layerControls)
-    map.fitBounds(bounds)
   })
 
   layerAdd({ name: 'Overworld' }, levelMarkers, layerControls) // Initialize
@@ -1033,6 +1202,52 @@ onMounted(() => {
   levelMarkers.Overworld.Locations.addTo(map)
 
   map.fitBounds(bounds)
+
+  // Check URL for parameters
+  const urlParams = new URLSearchParams(window.location.search)
+
+  // If the URL contains a parameter "lvl", set the map to that level
+  const level = urlParams.get('lvl')
+
+  // If the URL contains a parameter 'pos_x', set the map to that position
+  const posX = urlParams.get('pos_x')
+
+  // If the URL contains a parameter 'pos_y', set the map to that position
+  const posY = urlParams.get('pos_y')
+
+  if (posX && posY) {
+    // Set the map to the position
+    map.setView([posY, posX], 1)
+
+    // Draw a red x marker at the position
+    const marker = L.marker([posY, posX], {
+      icon: L.divIcon({
+        className: '',
+        html: `<div class="marker playerPosition" style="font-size:1.5rem;color:white;text-shadow: 0px 0px 8px black;width:48px;transform-origin:center;">❌</div>`,
+      }),
+      title: 'You are here',
+    })
+
+    marker.addTo(map)
+  }
+
+  // Change layer based on URL parameter
+  if (level) {
+    switch (level) {
+      case 'Overworld':
+        map.addLayer(overworldLayers)
+        break
+      case 'Underworld':
+        map.addLayer(underworldLayers)
+        break
+      case 'Sky':
+        map.addLayer(skyLayers)
+        break
+    }
+  } else {
+    // Default to Overworld
+    map.addLayer(overworldLayers)
+  }
 })
 </script>
 
