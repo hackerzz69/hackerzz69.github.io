@@ -47,9 +47,10 @@ const animatePlayerPos = () => {
   }
 }
 
-// Animate the class "playerPos" rotating 
+// Animate the class "playerPos" rotating
 setInterval(() => {
   const element = document.getElementsByClassName('playerPosition')[0]
+  if (!element) return
   element.style.zIndex = '9999'
   element.style.transition = 'rotate 0.1s linear'
   // Get elements current rotation
@@ -1032,24 +1033,25 @@ onMounted(() => {
   searchInput.type = 'text'
   searchInput.placeholder = 'Search...'
   searchInput.style.position = 'absolute'
-  searchInput.style.bottom = '10px'
-  searchInput.style.left = '10px'
+  searchInput.style.top = '10px'
+  searchInput.style.left = '50%';
+  searchInput.style.transform = 'translateX(-50%)'
   searchInput.style.zIndex = '1000'
   searchInput.style.padding = '5px'
-  searchInput.style.backgroundColor = 'white'
+  searchInput.style.backgroundColor = '#0d0d0d'
   searchInput.style.border = '1px solid black'
   searchInput.style.borderRadius = '5px'
-  searchInput.style.width = '200px'
+  searchInput.style.width = '350px'
   searchInput.style.boxShadow = '0px 0px 5px black'
   searchInput.style.fontSize = '1rem'
-  searchInput.style.color = 'black'
+  searchInput.style.color = 'white'
   searchInput.style.textAlign = 'center'
   searchInput.style.fontFamily = 'Arial, sans-serif'
   searchInput.style.fontWeight = 'bold'
   searchInput.style.transition = 'all 0.3s ease'
   searchInput.style.outline = 'none'
   searchInput.style.cursor = 'pointer'
-  searchInput.style.opacity = '0.8'
+  searchInput.style.opacity = '1'
   searchInput.style.transition = 'opacity 0.3s ease'
   document.getElementById('map').appendChild(searchInput)
 
@@ -1151,7 +1153,7 @@ onMounted(() => {
         }
       }
     }
- 
+
     for (const key in treeMarkersSearch) {
       if (key == mapLayer) {
         for (const subKey in treeMarkersSearch[key]) {
@@ -1255,12 +1257,6 @@ onMounted(() => {
   <main>
     <!-- Leaflet Map -->
     <div id="map"></div>
-
-    <div class="joinUs">
-      <a href="https://discord.gg/SszbKF5dtm" target="_blank">
-        <button>Join us on <FontAwesomeIcon :icon="faDiscord" /></button>
-      </a>
-    </div>
   </main>
 </template>
 
@@ -1299,5 +1295,11 @@ button:hover {
 }
 button:active {
   background-color: #373737;
+}
+.leaflet-layer,
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out,
+.leaflet-control-attribution {
+  filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%) !important;
 }
 </style>

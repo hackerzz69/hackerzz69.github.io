@@ -9,18 +9,6 @@ import { faDiscord } from '@fortawesome/free-brands-svg-icons'
       <h2>Coming Soon...</h2>
       <p></p>
     </div>
-    <div class="footer">
-      <div id="copyright">
-        <p>© 2025 Highlite. All rights reserved.</p>
-        <p>Made with ❤️ by the Highlite Team</p>
-      </div>
-    </div>
-
-    <div class="joinUs">
-      <a href="https://discord.gg/SszbKF5dtm" target="_blank">
-        <button>Join us on <FontAwesomeIcon :icon="faDiscord" /></button>
-      </a>
-    </div>
   </main>
 </template>
 

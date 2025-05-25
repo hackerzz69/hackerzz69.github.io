@@ -1,12 +1,13 @@
 <script setup lang="ts">
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faDiscord } from '@fortawesome/free-brands-svg-icons'
 import { RouterLink, RouterView } from 'vue-router'
 </script>
 
 <template>
   <header>
     <div id="logo">
-      <img width="32px" src="https://www.pngrepo.com/png/25812/512/highlighter.png" />
-      <h2 id="logoText">Highlite</h2>
+      <img width="43px" src="@/assets/logo.png" />
     </div>
     <nav>
       <RouterLink to="/" class="navItem">Home</RouterLink>
@@ -15,8 +16,19 @@ import { RouterLink, RouterView } from 'vue-router'
       <!-- Drop Down Menu -->
     </nav>
   </header>
-
   <RouterView />
+  <div class="footer">
+    <div id="copyright">
+      <span>© 2025 Highlite. All rights reserved.</span>
+      <span>Made with ❤️ by the Highlite Team</span>
+    </div>
+  </div>
+
+  <div class="joinUs">
+    <a href="https://discord.gg/SszbKF5dtm" target="_blank">
+      <button>Join us on <FontAwesomeIcon :icon="faDiscord" /></button>
+    </a>
+  </div>
 </template>
 
 <style scoped>
@@ -25,7 +37,7 @@ header {
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
-  background-color: #222121;
+  background-color: #1a1a1a;
 }
 
 /* Navbar Dropdown Element */
