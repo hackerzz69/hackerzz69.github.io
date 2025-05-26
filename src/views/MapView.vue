@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, render } from 'vue'
 import locations from '@/assets/markerInformation/Locations.json'
 import entities from '@/assets/markerInformation/worldEntities.json'
 import npcs from '@/assets/markerInformation/NPCs.json'
 import npcDefinitions from '@/assets/markerInformation/NPCDefs.json'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faDiscord } from '@fortawesome/free-brands-svg-icons'
 import * as L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import 'leaflet.markercluster/dist/MarkerCluster.css'
@@ -37,17 +35,6 @@ L.Control.Layers.include({
 });
 
 // Animate the class "playerPos" rotating
-const animatePlayerPos = () => {
-  const playerPos = document.querySelector('.playerPos')
-  if (playerPos) {
-    playerPos.classList.add('rotate')
-    setTimeout(() => {
-      playerPos.classList.remove('rotate')
-    }, 1000)
-  }
-}
-
-// Animate the class "playerPos" rotating
 setInterval(() => {
   const element = document.getElementsByClassName('playerPosition')[0]
   if (!element) return
@@ -66,10 +53,9 @@ setInterval(() => {
 }, 100);
 
 
-function layerAdd(layer, levelMarkers, layerControls) {
+function layerAdd(layer, levelMarkers, layerControls, performSearch) {
   // Get currently active layers
   const activatedLayers = layerControls.getOverlays()
-
 
   // Update the overlay layers based on the available level markers
   for (const key in levelMarkers) {
@@ -78,9 +64,7 @@ function layerAdd(layer, levelMarkers, layerControls) {
         if (levelMarkers[key][subKey]) {
           layerControls.addOverlay(levelMarkers[key][subKey], subKey)
           if (activatedLayers != {}) {
-            // If the subkey exists and is true in activatedLayers
             if (activatedLayers[subKey]) {
-              // Add the layer to the map
               levelMarkers[key][subKey].addTo(layerControls._map)
             }
           }
@@ -88,11 +72,8 @@ function layerAdd(layer, levelMarkers, layerControls) {
       }
     } else {
       for (const subKey in levelMarkers[key]) {
-        if (levelMarkers[key][subKey]) {
-          layerControls.removeLayer(levelMarkers[key][subKey])
-          //  If layer is on the map, activate it for the new layer
-          levelMarkers[key][subKey].remove()
-        }
+        levelMarkers[key][subKey].remove()
+        layerControls.removeLayer(levelMarkers[key][subKey])
       }
     }
   }
@@ -110,6 +91,8 @@ onMounted(() => {
     [1024, 1024],
   ]
 
+  let searchMarkers : L.Marker[] = [];
+
   const levelMarkers = {
     Overworld: {},
     Underworld: {},
@@ -122,18 +105,14 @@ onMounted(() => {
     Sky: {},
   }
 
-  const searchMarkers = {
-    Overworld: {},
-    Underworld: {},
-    Sky: {},
-  }
-
   // Initialize the map
   const map: L.Map = L.map('map', {
     crs: L.CRS.Simple,
     minZoom: -2,
     maxZoom: 20,
     maxBoundsViscosity: 0.5,
+    preferCanvas: true,
+    renderer: L.canvas(),
   }).fitBounds(bounds)
 
   const overworldLayers = L.layerGroup()
@@ -154,30 +133,20 @@ onMounted(() => {
     Underworld: underworldLayers,
   }
 
-  function addItem(marker: L.Marker, level: string, group: string, addTo : boolean = true) {
+  function addItem(marker: L.Marker, level: string, group: string) {
     if (!levelMarkers[level][group]) {
       levelMarkers[level][group] = L.layerGroup()
     }
 
-    if (!searchMarkers[level][marker.options.title]) {
-      searchMarkers[level][marker.options.title] = []
-    }
-    if (addTo) {
-      marker.addTo(levelMarkers[level][group])
-    }
+    marker.addTo(levelMarkers[level][group])
   }
 
-  function addTree(marker: L.Marker, level: string, group: string, addTo : boolean = true) {
+  function addTree(marker: L.Marker, level: string, group: string) {
     if (!treeMarkersSearch[level][group]) {
       treeMarkersSearch[level][group] = L.layerGroup()
     }
 
-    if (!searchMarkers[level][marker.options.title]) {
-      searchMarkers[level][marker.options.title] = []
-    }
-    if (addTo) {
-      marker.addTo(treeMarkersSearch[level][group])
-    }
+    marker.addTo(treeMarkersSearch[level][group])
   }
 
   overworldLayers.addTo(map)
@@ -865,8 +834,6 @@ onMounted(() => {
     }
   }
 
-  console.log(treeClusters)
-
   npcs.npcs.forEach((npc) => {
     // Find the item in the npcDefinitions.npcDefs JSON array where npc._id == npcDef._id
     const npcDef = npcDefinitions.npcDefs.find(
@@ -1056,57 +1023,24 @@ onMounted(() => {
   document.getElementById('map').appendChild(searchInput)
 
   searchInput.addEventListener('input', (e) => {
-    let searchTerm = e.target.value.toLowerCase()
-
-    if (searchTerm.trim() === '') {
-      // If search term is empty, remove all markers
-      for (const key in levelMarkers) {
-        for (const subKey in levelMarkers[key]) {
-          if (levelMarkers[key][subKey] instanceof L.LayerGroup) {
-            levelMarkers[key][subKey].eachLayer((layer) => {
-              if (layer instanceof L.Marker) {
-                map.removeLayer(layer)
-              }
-            })
-          }
-        }
-      }
-
-      // for (const lvlKey in treeClusters) {
-      //   for (const typeKey in treeClusters[lvlKey]) {
-      //     if (treeClusters[lvlKey][typeKey] instanceof L.markerClusterGroup) {
-      //       treeClusters[lvlKey][typeKey].eachLayer((layer) => {
-      //         if (layer instanceof L.Marker) {
-      //           map.removeLayer(layer)
-      //         }
-      //       })
-      //     }
-      //   }
-      // }
-
-      for (const key in treeMarkersSearch) {
-        for (const subKey in treeMarkersSearch[key]) {
-          if (treeMarkersSearch[key][subKey] instanceof L.LayerGroup) {
-            treeMarkersSearch[key][subKey].eachLayer((layer) => {
-              if (layer instanceof L.Marker) {
-                map.removeLayer(layer)
-              }
-            })
-          }
-        }
-      }
-
-      return;
-    }
+    clearTimeout(performSearchFilter.timeout)
 
     // Wait for user to stop typing for 500ms before performing search
-    clearTimeout(performSearchFilter.timeout)
     performSearchFilter.timeout = setTimeout(() => {
       performSearchFilter(e.target.value.toLowerCase())
     }, 500)
   })
 
   async function performSearchFilter(searchTerm) {
+    for (const marker in searchMarkers) {
+      map.removeLayer(searchMarkers[marker])
+    }
+    searchMarkers = [];
+
+    if (!searchTerm || searchTerm.trim() === '') {
+      return
+    }
+
     // Get current layer
     const mapLayer = map.hasLayer(overworldLayers)
       ? 'Overworld'
@@ -1141,11 +1075,14 @@ onMounted(() => {
                     layerMarker.style.transform = 'translate(-0.35rem, -0.5rem)';
                   }, 200);
 
-
+                  searchMarkers.push(layer);
 
                  // map.setView(layer.getLatLng(), 2)
                 } else {
                   map.removeLayer(layer)
+                  searchMarkers = searchMarkers.filter(
+                    (marker) => marker !== layer
+                  )
                 }
               }
             })
@@ -1181,11 +1118,14 @@ onMounted(() => {
                     layerMarker.style.transform = 'translate(-0.35rem, -0.5rem)';
                   }, 200);
 
-
+                  searchMarkers.push(layer);
 
                  // map.setView(layer.getLatLng(), 2)
                 } else {
                   map.removeLayer(layer)
+                  searchMarkers = searchMarkers.filter(
+                    (marker) => marker !== layer
+                  )
                 }
               }
             })
@@ -1197,6 +1137,7 @@ onMounted(() => {
 
   map.on('baselayerchange', (e) => {
     layerAdd(e, levelMarkers, layerControls)
+    performSearchFilter(searchInput.value.toLowerCase())
   })
 
   layerAdd({ name: 'Overworld' }, levelMarkers, layerControls) // Initialize
