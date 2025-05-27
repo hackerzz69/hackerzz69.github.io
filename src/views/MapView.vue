@@ -1158,6 +1158,8 @@ onMounted(() => {
   // If the URL contains a parameter 'pos_y', set the map to that position
   const posY = urlParams.get('pos_y')
 
+  const hideDecor = urlParams.get('hide_decor')
+
   if (posX && posY) {
     // Set the map to the position
     map.setView([posY, posX], 1)
@@ -1172,6 +1174,29 @@ onMounted(() => {
     })
 
     marker.addTo(map)
+  }
+
+  if (hideDecor) {
+    // Hide class footer and tag header
+    const footer = document.querySelector('.footer');
+    const header = document.querySelector('header');
+    const joinUs = document.querySelector('.joinUs');
+    if (footer) {
+      footer.style.display = 'none';
+    }
+    if (header) {
+      header.style.display = 'none';
+    }
+    if (joinUs) {
+      joinUs.style.display = 'none';
+    }
+
+    // Update map height to fill the screen
+    const main = document.querySelector('main');
+    if (main) {
+      main.style.height = '100vh';
+    }
+
   }
 
   // Change layer based on URL parameter
