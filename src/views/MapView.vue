@@ -10,6 +10,7 @@ import 'leaflet.markercluster/dist/MarkerCluster.css'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 import 'leaflet.markercluster/dist/leaflet.markercluster.js'
 
+
 L.Control.Layers.include({
   getOverlays: function() {
     // create hash to hold all layers
@@ -153,10 +154,11 @@ onMounted(() => {
 
   locations.locations.forEach((location) => {
     // Text Marker
-    const marker = new L.Marker([location.y + 512, location.x + 512], {
+    const marker = new L.Marker([location.y + 512.5, location.x + 512.5], {
+
       icon: L.divIcon({
-        className: 'text-label lvl-1',
-        html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;color:white;text-shadow: 0px 0px 8px black;transform:translate(-200%, -50%);white-space:nowrap;">${location.name}</div>`,
+        className: 'text-label',
+        html: `<div style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;color:white;white-space:nowrap;position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);">${location.name}</div>`,
       }),
       title: location.name,
     })
@@ -182,12 +184,15 @@ onMounted(() => {
       const nameWithSpacesCapitalized =
         nameWithSpaces.charAt(0).toUpperCase() + nameWithSpaces.slice(1)
 
-      const marker = L.marker([entity.z + 512, entity.x + 512], {
+      const marker = L.marker([entity.z + 512.5, entity.x + 512.5], {
         title: nameWithSpacesCapitalized,
         // Use Leaflet Default Icon
         icon: L.divIcon({
-          className: 'text-label lvl-1',
-          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;transform: translate(-0.35rem, -0.5rem);">🌳</div>`,
+          className: 'text-label',
+          iconSize: [20, 24],
+          iconAnchor: [10, 24],
+          popupAnchor: [0, -20],
+          html: `<div class="marker">🌳</div>`,
         }),
       })
       if (!treeClusters[entity.lvl]) {
@@ -227,11 +232,14 @@ onMounted(() => {
       const nameWithSpaces = name.replace(/([a-z])([A-Z])/g, '$1 $2')
       const nameWithSpacesCapitalized =
         nameWithSpaces.charAt(0).toUpperCase() + nameWithSpaces.slice(1)
-      const marker = L.marker([entity.z + 512, entity.x + 512], {
+      const marker = L.marker([entity.z + 512.5, entity.x + 512.5], {
         // Icon for Obelisk is Unicode: 🗿
         icon: L.divIcon({
-          className: 'text-label lvl-1',
-          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;transform: translate(-0.35rem, 0rem);">🗿</div>`,
+          className: 'text-label',
+          iconSize: [20, 24],
+          iconAnchor: [10, 24],
+          popupAnchor: [0, -20],
+          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;">🗿</div>`,
         }),
 
         title: nameWithSpacesCapitalized,
@@ -261,11 +269,14 @@ onMounted(() => {
       const nameWithSpacesCapitalized =
         nameWithSpaces.charAt(0).toUpperCase() + nameWithSpaces.slice(1)
 
-      const marker = L.marker([entity.z + 512, entity.x + 512], {
+      const marker = L.marker([entity.z + 512.5, entity.x + 512.5], {
         // Icon for Rocks is Unicode: 🪨
         icon: L.divIcon({
-          className: 'text-label lvl-1',
-          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;transform: translate(-0.35rem, -0.5rem);">🪨</div>`,
+          className: 'text-label',
+          iconSize: [20, 24],
+          iconAnchor: [10, 24],
+          popupAnchor: [0, -20],
+          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;;">🪨</div>`,
         }),
         title: nameWithSpacesCapitalized,
       })
@@ -291,11 +302,14 @@ onMounted(() => {
     if (entity.type.includes('bank')) {
       const name = entity.type.replace('bank', ' Bank')
       const nameWithSpaces = name.replace('chest', ' Chest')
-      const marker = L.marker([entity.z + 512, entity.x + 512], {
+      const marker = L.marker([entity.z + 512.5, entity.x + 512.5], {
         // Icon for Bank is Unicode: 💰
         icon: L.divIcon({
-          className: 'text-label lvl-1',
-          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;transform: translate(-0.35rem, -0.5rem);">💰</div>`,
+          className: 'text-label',
+          iconSize: [20, 24],
+          iconAnchor: [10, 24],
+          popupAnchor: [0, -20],
+          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;;">💰</div>`,
         }),
         title: nameWithSpaces,
       })
@@ -324,11 +338,14 @@ onMounted(() => {
       const nameWithSpacesCapitalized =
         nameWithSpaces.charAt(0).toUpperCase() + nameWithSpaces.slice(1)
 
-      const marker = L.marker([entity.z + 512, entity.x + 512], {
+      const marker = L.marker([entity.z + 512.5, entity.x + 512.5], {
         // Icon for Fire is Unicode: 🔥
         icon: L.divIcon({
-          className: 'text-label lvl-1',
-          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;transform: translate(-0.35rem, -0.5rem);">🔥</div>`,
+          className: 'text-label',
+          iconSize: [20, 24],
+          iconAnchor: [10, 24],
+          popupAnchor: [0, -20],
+          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;;">🔥</div>`,
         }),
         title: nameWithSpacesCapitalized,
       })
@@ -353,11 +370,14 @@ onMounted(() => {
     if (entity.type.includes('smithingsource')) {
       const name = 'Anvil'
 
-      const marker = L.marker([entity.z + 512, entity.x + 512], {
+      const marker = L.marker([entity.z + 512.5, entity.x + 512.5], {
         // Icon for Anvil is Unicode: 🔨
         icon: L.divIcon({
-          className: 'text-label lvl-1',
-          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;transform: translate(-0.35rem, -0.5rem);">🔨</div>`,
+          className: 'text-label',
+          iconSize: [20, 24],
+          iconAnchor: [10, 24],
+          popupAnchor: [0, -20],
+          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;;">🔨</div>`,
         }),
         title: name,
       })
@@ -381,11 +401,14 @@ onMounted(() => {
 
     if (entity.type.includes('smeltingsource')) {
       const name = 'Furnace'
-      const marker = L.marker([entity.z + 512, entity.x + 512], {
+      const marker = L.marker([entity.z + 512.5, entity.x + 512.5], {
         // Icon for Smelting is Unicode: 🏭
         icon: L.divIcon({
-          className: 'text-label lvl-1',
-          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;transform: translate(-0.35rem, -0.5rem);">🏭</div>`,
+          className: 'text-label',
+          iconSize: [20, 24],
+          iconAnchor: [10, 24],
+          popupAnchor: [0, -20],
+          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;;">🏭</div>`,
         }),
         title: name,
       })
@@ -409,11 +432,14 @@ onMounted(() => {
 
     if (entity.type.includes('kiln')) {
       const name = 'Kiln'
-      const marker = L.marker([entity.z + 512, entity.x + 512], {
+      const marker = L.marker([entity.z + 512.5, entity.x + 512.5], {
         // Icon for Kiln is Unicode: ⚱️
         icon: L.divIcon({
-          className: 'text-label lvl-1',
-          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;transform: translate(-0.35rem, -0.5rem);">⚱️</div>`,
+          className: 'text-label',
+          iconSize: [20, 24],
+          iconAnchor: [10, 24],
+          popupAnchor: [0, -20],
+          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;;">⚱️</div>`,
         }),
         title: name,
       })
@@ -438,11 +464,14 @@ onMounted(() => {
     if (entity.type.includes('heatsource')) {
       const name = 'Stove'
 
-      const marker = L.marker([entity.z + 512, entity.x + 512], {
+      const marker = L.marker([entity.z + 512.5, entity.x + 512.5], {
         // Icon for Heat Source is Unicode: 🍳
         icon: L.divIcon({
-          className: 'text-label lvl-1',
-          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;transform: translate(-0.35rem, -0.5rem);">🍳</div>`,
+          className: 'text-label',
+          iconSize: [20, 24],
+          iconAnchor: [10, 24],
+          popupAnchor: [0, -20],
+          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;;">🍳</div>`,
         }),
         title: name,
       })
@@ -470,11 +499,14 @@ onMounted(() => {
       const nameWithSpacesCapitalized =
         nameWithSpaces.charAt(0).toUpperCase() + nameWithSpaces.slice(1)
 
-      const marker = L.marker([entity.z + 512, entity.x + 512], {
+      const marker = L.marker([entity.z + 512.5, entity.x + 512.5], {
         // Icon for Fishing is Unicode: 🎣
         icon: L.divIcon({
-          className: 'text-label lvl-1',
-          html: `<div class="marker" style="font-size:1.5rem;transform: translate(-0.35rem, -0.5rem);color:white;text-shadow: 0px 0px 8px black;">🎣</div>`,
+          className: 'text-label',
+          iconSize: [20, 24],
+          iconAnchor: [10, 24],
+          popupAnchor: [0, -20],
+          html: `<div class="marker" style="font-size:1.5rem;;color:white;text-shadow: 0px 0px 8px black;">🎣</div>`,
         }),
         title: nameWithSpacesCapitalized,
       })
@@ -502,11 +534,14 @@ onMounted(() => {
       const nameWithSpacesCapitalized =
         nameWithSpaces.charAt(0).toUpperCase() + nameWithSpaces.slice(1)
 
-      const marker = L.marker([entity.z + 512, entity.x + 512], {
+      const marker = L.marker([entity.z + 512.5, entity.x + 512.5], {
         // Icon for Pumpkin is Unicode: 🎃
         icon: L.divIcon({
-          className: 'text-label lvl-1',
-          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;transform: translate(-0.35rem, -0.5rem);">🎃</div>`,
+          className: 'text-label',
+          iconSize: [20, 24],
+          iconAnchor: [10, 24],
+          popupAnchor: [0, -20],
+          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;;">🎃</div>`,
         }),
         title: nameWithSpacesCapitalized,
       })
@@ -534,11 +569,14 @@ onMounted(() => {
       const nameWithSpacesCapitalized =
         nameWithSpaces.charAt(0).toUpperCase() + nameWithSpaces.slice(1)
 
-      const marker = L.marker([entity.z + 512, entity.x + 512], {
+      const marker = L.marker([entity.z + 512.5, entity.x + 512.5], {
         // Icon for Corn is Unicode: 🌽
         icon: L.divIcon({
-          className: 'text-label lvl-1',
-          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;transform: translate(-0.35rem, -0.5rem);">🌽</div>`,
+          className: 'text-label',
+          iconSize: [20, 24],
+          iconAnchor: [10, 24],
+          popupAnchor: [0, -20],
+          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;;">🌽</div>`,
         }),
         title: nameWithSpacesCapitalized,
       })
@@ -566,11 +604,14 @@ onMounted(() => {
       const nameWithSpacesCapitalized =
         nameWithSpaces.charAt(0).toUpperCase() + nameWithSpaces.slice(1)
 
-      const marker = L.marker([entity.z + 512, entity.x + 512], {
+      const marker = L.marker([entity.z + 512.5, entity.x + 512.5], {
         // Icon for Potatoes is Unicode: 🥔
         icon: L.divIcon({
-          className: 'text-label lvl-1',
-          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;transform: translate(-0.35rem, -0.5rem);">🥔</div>`,
+          className: 'text-label',
+          iconSize: [20, 24],
+          iconAnchor: [10, 24],
+          popupAnchor: [0, -20],
+          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;;">🥔</div>`,
         }),
         title: nameWithSpacesCapitalized,
       })
@@ -598,11 +639,14 @@ onMounted(() => {
       const nameWithSpacesCapitalized =
         nameWithSpaces.charAt(0).toUpperCase() + nameWithSpaces.slice(1)
 
-      const marker = L.marker([entity.z + 512, entity.x + 512], {
+      const marker = L.marker([entity.z + 512.5, entity.x + 512.5], {
         // Icon for Onion is Unicode: 🧅
         icon: L.divIcon({
-          className: 'text-label lvl-1',
-          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;transform: translate(-0.35rem, -0.5rem);">🧅</div>`,
+          className: 'text-label',
+          iconSize: [20, 24],
+          iconAnchor: [10, 24],
+          popupAnchor: [0, -20],
+          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;;">🧅</div>`,
         }),
         title: nameWithSpacesCapitalized,
       })
@@ -629,11 +673,14 @@ onMounted(() => {
       const nameWithSpaces = name.replace(/([a-z])([A-Z])/g, '$1 $2')
       const nameWithSpacesCapitalized =
         nameWithSpaces.charAt(0).toUpperCase() + nameWithSpaces.slice(1)
-      const marker = L.marker([entity.z + 512, entity.x + 512], {
+      const marker = L.marker([entity.z + 512.5, entity.x + 512.5], {
         // Icon for Flax is Unicode: 🌾
         icon: L.divIcon({
-          className: 'text-label lvl-1',
-          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;transform: translate(-0.35rem, -0.5rem);">🌾</div>`,
+          className: 'text-label',
+          iconSize: [20, 24],
+          iconAnchor: [10, 24],
+          popupAnchor: [0, -20],
+          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;;">🌾</div>`,
         }),
         title: nameWithSpacesCapitalized,
       })
@@ -661,11 +708,14 @@ onMounted(() => {
       const nameWithSpaces = name.replace(/([a-z])([A-Z])/g, '$1 $2')
       const nameWithSpacesCapitalized =
         nameWithSpaces.charAt(0).toUpperCase() + nameWithSpaces.slice(1)
-      const marker = L.marker([entity.z + 512, entity.x + 512], {
+      const marker = L.marker([entity.z + 512.5, entity.x + 512.5], {
         // Icon for Carrot is Unicode: 🥕
         icon: L.divIcon({
-          className: 'text-label lvl-1',
-          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;transform: translate(-0.35rem, -0.5rem);">🥕</div>`,
+          className: 'text-label',
+          iconSize: [20, 24],
+          iconAnchor: [10, 24],
+          popupAnchor: [0, -20],
+          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;;">🥕</div>`,
         }),
         title: nameWithSpacesCapitalized,
       })
@@ -692,11 +742,14 @@ onMounted(() => {
       const nameWithSpaces = name.replace(/([a-z])([A-Z])/g, '$1 $2')
       const nameWithSpacesCapitalized =
         nameWithSpaces.charAt(0).toUpperCase() + nameWithSpaces.slice(1)
-      const marker = L.marker([entity.z + 512, entity.x + 512], {
+      const marker = L.marker([entity.z + 512.5, entity.x + 512.5], {
         // Icon for Red Mushroom is Unicode: 🍄
         icon: L.divIcon({
-          className: 'text-label lvl-1',
-          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;transform: translate(-0.35rem, -0.5rem);">🍄</div>`,
+          className: 'text-label',
+          iconSize: [20, 24],
+          iconAnchor: [10, 24],
+          popupAnchor: [0, -20],
+          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;;">🍄</div>`,
         }),
         title: nameWithSpacesCapitalized,
       })
@@ -723,11 +776,14 @@ onMounted(() => {
       const nameWithSpaces = name.replace(/([a-z])([A-Z])/g, '$1 $2')
       const nameWithSpacesCapitalized =
         nameWithSpaces.charAt(0).toUpperCase() + nameWithSpaces.slice(1)
-      const marker = L.marker([entity.z + 512, entity.x + 512], {
+      const marker = L.marker([entity.z + 512.5, entity.x + 512.5], {
         // Icon for Plant is Unicode: 🌱
         icon: L.divIcon({
-          className: 'text-label lvl-1',
-          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;transform: translate(-0.35rem, -0.5rem);">🌱</div>`,
+          className: 'text-label',
+          iconSize: [20, 24],
+          iconAnchor: [10, 24],
+          popupAnchor: [0, -20],
+          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;;">🌱</div>`,
         }),
         title: nameWithSpacesCapitalized,
       })
@@ -754,11 +810,14 @@ onMounted(() => {
       const nameWithSpaces = name.replace(/([a-z])([A-Z])/g, '$1 $2')
       const nameWithSpacesCapitalized =
         nameWithSpaces.charAt(0).toUpperCase() + nameWithSpaces.slice(1)
-      const marker = L.marker([entity.z + 512, entity.x + 512], {
+      const marker = L.marker([entity.z + 512.5, entity.x + 512.5], {
         // Icon for Strawberries is Unicode: 🍓
         icon: L.divIcon({
-          className: 'text-label lvl-1',
-          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;transform: translate(-0.35rem, -0.5rem);">🍓</div>`,
+          className: 'text-label',
+          iconSize: [20, 24],
+          iconAnchor: [10, 24],
+          popupAnchor: [0, -20],
+          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;;">🍓</div>`,
         }),
         title: nameWithSpacesCapitalized,
       })
@@ -786,11 +845,14 @@ onMounted(() => {
       const nameWithSpacesCapitalized =
         nameWithSpaces.charAt(0).toUpperCase() + nameWithSpaces.slice(1)
 
-      const marker = L.marker([entity.z + 512, entity.x + 512], {
+      const marker = L.marker([entity.z + 512.5, entity.x + 512.5], {
         // Icon for Watermelon is Unicode: 🍉
         icon: L.divIcon({
-          className: 'text-label lvl-1',
-          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;transform: translate(-0.35rem, -0.5rem);">🍉</div>`,
+          className: 'text-label',
+          iconSize: [20, 24],
+          iconAnchor: [10, 24],
+          popupAnchor: [0, -20],
+          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;;">🍉</div>`,
         }),
         title: nameWithSpacesCapitalized,
       })
@@ -844,11 +906,14 @@ onMounted(() => {
     if (npc.shopdef_id) {
       // Capitalize characters after spaces
       const name = npcDef.name.replace(/(?:^|\s)\S/g, (a) => a.toUpperCase())
-      const marker = L.marker([npc.y + 512, npc.x + 512], {
+      const marker = L.marker([npc.y + 512.5, npc.x + 512.5], {
         // Icon for NPC is Unicode: 🏪
         icon: L.divIcon({
-          className: 'text-label lvl-1',
-          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;transform: translate(-0.35rem, -0.5rem);">🏪</div>`,
+          className: 'text-label',
+          iconSize: [20, 24],
+          iconAnchor: [10, 24],
+          popupAnchor: [0, -20],
+          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;;">🏪</div>`,
         }),
         title: name,
       })
@@ -874,11 +939,14 @@ onMounted(() => {
     if (npc.isAlwaysAggroOverride) {
       // Capitalize characters after spaces
       const name = npcDef.name.replace(/(?:^|\s)\S/g, (a) => a.toUpperCase()) + " (Lvl. " + npcDef.combat.level + ")";
-      const marker = L.marker([npc.y + 512, npc.x + 512], {
+      const marker = L.marker([npc.y + 512.5, npc.x + 512.5], {
         // Icon for Aggro NPC is Devil: 😈
         icon: L.divIcon({
-          className: 'text-label lvl-1',
-          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;transform: translate(-0.35rem, -0.5rem);">😈</div>`,
+          className: 'text-label',
+          iconSize: [20, 24],
+          iconAnchor: [10, 24],
+          popupAnchor: [0, -20],
+          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;;">😈</div>`,
         }),
         title: name,
       })
@@ -906,11 +974,14 @@ onMounted(() => {
       // Add Regular NPC
       // Capitalize characters after spaces
       const name = npcDef.name.replace(/(?:^|\s)\S/g, (a) => a.toUpperCase())
-      const marker = L.marker([npc.y + 512, npc.x + 512], {
+      const marker = L.marker([npc.y + 512.5, npc.x + 512.5], {
         // Icon for NPC is Unicode: 👤
         icon: L.divIcon({
-          className: 'text-label lvl-1',
-          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;transform: translate(-0.35rem, -0.5rem);">👤</div>`,
+          className: 'text-label',
+          iconSize: [20, 24],
+          iconAnchor: [10, 24],
+          popupAnchor: [0, -20],
+          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;;">👤</div>`,
         }),
         title: name,
       })
@@ -936,11 +1007,14 @@ onMounted(() => {
       // Add Regular NPC
       // Capitalize characters after spaces
       const name = npcDef.name.replace(/(?:^|\s)\S/g, (a) => a.toUpperCase())
-      const marker = L.marker([npc.y + 512, npc.x + 512], {
+      const marker = L.marker([npc.y + 512.5, npc.x + 512.5], {
         // Icon for NPC is Unicode: 👤
         icon: L.divIcon({
-          className: 'text-label lvl-1',
-          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;transform: translate(-0.35rem, -0.5rem);">👤</div>`,
+          className: 'text-label',
+          iconSize: [20, 24],
+          iconAnchor: [10, 24],
+          popupAnchor: [0, -20],
+          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;;">👤</div>`,
         }),
         title: name,
       })
@@ -965,11 +1039,14 @@ onMounted(() => {
       // Add Attackable NPC
       // Capitalize characters after spaces
       const name = npcDef.name.replace(/(?:^|\s)\S/g, (a) => a.toUpperCase()) + " (Lvl. " + npcDef.combat.level + ")";
-      const marker = L.marker([npc.y + 512, npc.x + 512], {
+      const marker = L.marker([npc.y + 512.5, npc.x + 512.5], {
         // Icon for NPC is Unicode: ⚔️
         icon: L.divIcon({
-          className: 'text-label lvl-1',
-          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;transform: translate(-0.35rem, -0.5rem);">⚔️</div>`,
+          className: 'text-label',
+          iconSize: [20, 24],
+          iconAnchor: [10, 24],
+          popupAnchor: [0, -20],
+          html: `<div class="marker" style="font-size:1rem;color:white;text-shadow: 0px 0px 8px black;;">⚔️</div>`,
         }),
         title: name,
       })
@@ -1160,21 +1237,64 @@ onMounted(() => {
 
   const hideDecor = urlParams.get('hide_decor')
 
+  let playPositionMarker = null
   if (posX && posY) {
     // Set the map to the position
-    map.setView([posY, posX], 1)
+    map.setView([posY, posX], 4)
 
     // Draw a red x marker at the position
-    const marker = L.marker([posY, posX], {
+
+    playPositionMarker = L.marker([posY, posX], {
       icon: L.divIcon({
-        className: '',
-        html: `<div class="marker playerPosition" style="font-size:1.5rem;color:white;text-shadow: 0px 0px 8px black;width:48px;transform-origin:center;">❌</div>`,
+        className: 'text-label',
+        iconSize: [30, 36],
+        iconAnchor: [15, 18],
+        popupAnchor: [0, 0],
+        html: `<div class="marker playerPosition" style="font-size:1.5rem;color:white;text-shadow: 0px 0px 8px black;">❌</div>`,
       }),
       title: 'You are here',
     })
+    playPositionMarker.bindPopup('You are here');
 
-    marker.addTo(map)
+    playPositionMarker.addTo(map)
   }
+
+  window.addEventListener('message', (event) => {
+        // Check if the message is a command to set the map position
+        if (event.data.X && event.data.Y && event.data.lvl) {
+          // Change map layer based on the level
+          switch (event.data.lvl) {
+            case 'Overworld':
+              map.addLayer(overworldLayers)
+              break
+            case 'Underworld':
+              map.addLayer(underworldLayers)
+              break
+            case 'Sky':
+              map.addLayer(skyLayers)
+              break
+          }
+
+          // Remove the previous player position marker if it exists
+          if (playPositionMarker) {
+            map.removeLayer(playPositionMarker);
+          }
+
+          // Draw a red x marker at the position
+          playPositionMarker = L.marker([event.data.Y, event.data.X], {
+            icon: L.divIcon({
+              className: 'text-label',
+              iconSize: [30, 36],
+              iconAnchor: [15, 18],
+              popupAnchor: [0, 0],
+              html: `<div class="marker playerPosition" style="font-size:1.5rem;color:white;text-shadow: 0px 0px 8px black;">❌</div>`,
+            }),
+            title: 'You are here',
+          })
+          playPositionMarker.bindPopup('You are here');
+          playPositionMarker.addTo(map);
+    }
+  });
 
   if (hideDecor) {
     // Hide class footer and tag header
@@ -1262,10 +1382,5 @@ button:hover {
 button:active {
   background-color: #373737;
 }
-.leaflet-layer,
-.leaflet-control-zoom-in,
-.leaflet-control-zoom-out,
-.leaflet-control-attribution {
-  filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%) !important;
-}
+
 </style>

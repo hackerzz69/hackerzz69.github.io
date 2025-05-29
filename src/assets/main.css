@@ -54,3 +54,11 @@ display: flex;
 .leaflet-control-zoom-out {
   filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
 }
+
+.marker {
+  font-size:1rem;
+  color:white;
+  text-shadow: 0px 0px 8px black;
+  width: fit-content;
+  height: fit-content;
+}
