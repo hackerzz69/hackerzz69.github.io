@@ -1184,7 +1184,6 @@ onMounted(() => {
 
                   // Add yellow text shadow to the marker
                   layerMarker.style.textShadow = '0px 0px 16px yellow';
-                  // layerMarker.style.transform = 'translate(-0.70rem, -1rem)';
                   layerMarker.style.transition = 'all 0.5s ease';
                   layerMarker.style.fontSize = '1.25rem';
 
@@ -1192,7 +1191,6 @@ onMounted(() => {
                   setTimeout(() => {
                     layerMarker.style.textShadow = '0px 0px 8px black';
                     layerMarker.style.fontSize = '1rem';
-                    layerMarker.style.transform = 'translate(-0.35rem, -0.5rem)';
                   }, 200);
 
                   searchMarkers.push(layer);
