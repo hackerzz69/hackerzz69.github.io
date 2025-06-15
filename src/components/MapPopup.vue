@@ -445,8 +445,8 @@ onUnmounted(() => {
 /* Responsive design */
 @media (max-width: 768px) {
   .ol-popup {
-    min-width: 240px;
-    max-width: 300px;
+    min-width: 260px;
+    max-width: 320px;
   }
   
   .popup-header {
@@ -471,12 +471,93 @@ onUnmounted(() => {
   
   .popup-actions {
     padding: 10px 16px 16px;
+    gap: 8px;
+  }
+  
+  .popup-action-btn {
+    font-size: 12px;
+    padding: 8px 12px;
+    min-height: 36px; /* Touch-friendly size */
+  }
+
+  .popup-close {
+    font-size: 16px;
+    width: 24px;
+    height: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ol-popup {
+    min-width: 240px;
+    max-width: calc(100vw - 32px);
+    margin: 0 8px;
+  }
+  
+  .popup-header {
+    padding: 12px 12px 8px;
+    gap: 8px;
+  }
+  
+  .popup-type-indicator {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+  
+  .popup-link {
+    font-size: 13px;
+    line-height: 1.3;
+  }
+  
+  .popup-coords {
+    gap: 8px;
+    font-size: 10px;
+    flex-wrap: wrap;
+  }
+  
+  .popup-actions {
+    padding: 8px 12px 12px;
     gap: 6px;
+    flex-wrap: wrap;
   }
   
   .popup-action-btn {
     font-size: 11px;
+    padding: 10px 12px;
+    min-height: 44px; /* More touch-friendly */
+    flex: 1;
+    min-width: 80px;
+  }
+
+  .popup-close {
+    font-size: 18px;
+    width: 28px;
+    height: 28px;
+    top: 8px;
+    right: 8px;
+  }
+}
+
+/* Landscape orientation adjustments */
+@media (max-width: 768px) and (orientation: landscape) and (max-height: 500px) {
+  .ol-popup {
+    max-width: 280px;
+  }
+  
+  .popup-header {
+    padding: 10px 12px 8px;
+  }
+  
+  .popup-actions {
+    padding: 6px 12px 10px;
+    gap: 4px;
+  }
+  
+  .popup-action-btn {
     padding: 6px 10px;
+    min-height: 32px;
+    font-size: 11px;
   }
 }
 

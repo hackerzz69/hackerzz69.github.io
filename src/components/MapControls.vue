@@ -58,9 +58,6 @@
       <div class="control-section">
         <div class="section-header">
           <h3 class="section-title">Filters</h3>
-          <button @click="toggleAllMarkers" class="toggle-all-btn">
-            {{ allMarkersVisible ? 'Hide All' : 'Show All' }}
-          </button>
         </div>
         <div class="filter-tags">
           <button 
@@ -112,14 +109,12 @@ const emit = defineEmits<{
   layerChanged: [layerId: string]
   searchLocationSelected: [result: any]
   markerCategoryToggled: [categoryName: string, visible: boolean]
-  allMarkersToggled: [visible: boolean]
   searchQueryChanged: [query: string]
 }>()
 
 // Reactive state
 const searchQuery = ref('')
 const searchResults = ref<any[]>([])
-const allMarkersVisible = ref(true)
 const isPanelExpanded = ref(false)
 
 // All searchable items
@@ -214,12 +209,7 @@ const clearSearch = () => {
 
 const goToLocation = (result: any) => {
   emit('searchLocationSelected', result)
-  clearSearch()
-}
-
-const toggleAllMarkers = () => {
-  allMarkersVisible.value = !allMarkersVisible.value
-  emit('allMarkersToggled', allMarkersVisible.value)
+  // Don't clear search - let the user keep their search results visible
 }
 
 const toggleMarkerCategory = (categoryName: string) => {
@@ -316,6 +306,77 @@ const initializeSearchableItems = () => {
       category = 'fire'
       name = entity.type.replace('fire', ' Fire')
       name = name.replace(/(?:^|\s)\S/g, (a: string) => a.toUpperCase()).trim()
+    } else if (entity.type.includes('smithingsource')) {
+      icon = '🔨'
+      category = 'anvil'
+      name = 'Anvil'
+    } else if (entity.type.includes('smeltingsource')) {
+      icon = '🏭'
+      category = 'furnace'
+      name = 'Furnace'
+    } else if (entity.type.includes('kiln')) {
+      icon = '⚱️'
+      category = 'kiln'
+      name = 'Kiln'
+    } else if (entity.type.includes('heatsource')) {
+      icon = '🍳'
+      category = 'stove'
+      name = 'Stove'
+    } else if (entity.type.includes('fishing')) {
+      icon = '🎣'
+      category = 'fishing'
+      name = entity.type.replace('fishing', ' Fishing')
+      name = name.replace(/(?:^|\s)\S/g, (a: string) => a.toUpperCase()).trim()
+    } else if (entity.type.includes('pumpkin')) {
+      icon = '🎃'
+      category = 'harvestable'
+      name = entity.type.replace('pumpkin', ' Pumpkin')
+      name = name.replace(/(?:^|\s)\S/g, (a: string) => a.toUpperCase()).trim()
+    } else if (entity.type.includes('corn')) {
+      icon = '🌽'
+      category = 'harvestable'
+      name = entity.type.replace('corn', ' Corn')
+      name = name.replace(/(?:^|\s)\S/g, (a: string) => a.toUpperCase()).trim()
+    } else if (entity.type.includes('potatoes')) {
+      icon = '🥔'
+      category = 'harvestable'
+      name = entity.type.replace('potatoes', ' Potatoes')
+      name = name.replace(/(?:^|\s)\S/g, (a: string) => a.toUpperCase()).trim()
+    } else if (entity.type.includes('onion')) {
+      icon = '🧅'
+      category = 'harvestable'
+      name = entity.type.replace('onion', ' Onion')
+      name = name.replace(/(?:^|\s)\S/g, (a: string) => a.toUpperCase()).trim()
+    } else if (entity.type.includes('flax')) {
+      icon = '🌾'
+      category = 'harvestable'
+      name = entity.type.replace('flax', ' Flax')
+      name = name.replace(/(?:^|\s)\S/g, (a: string) => a.toUpperCase()).trim()
+    } else if (entity.type.includes('carrot')) {
+      icon = '🥕'
+      category = 'harvestable'
+      name = entity.type.replace('carrot', ' Carrot')
+      name = name.replace(/(?:^|\s)\S/g, (a: string) => a.toUpperCase()).trim()
+    } else if (entity.type.includes('redmushroom')) {
+      icon = '🍄'
+      category = 'harvestable'
+      name = entity.type.replace('redmushroom', 'Red Mushroom')
+      name = name.replace(/(?:^|\s)\S/g, (a: string) => a.toUpperCase()).trim()
+    } else if (entity.type.includes('plant') && entity.type !== 'plant') {
+      icon = '🌿'
+      category = 'harvestable'
+      name = entity.type.replace('plant', ' Plant')
+      name = name.replace(/(?:^|\s)\S/g, (a: string) => a.toUpperCase()).trim()
+    } else if (entity.type.includes('strawberries')) {
+      icon = '🍓'
+      category = 'harvestable'
+      name = entity.type.replace('strawberries', 'Strawberries')
+      name = name.replace(/(?:^|\s)\S/g, (a: string) => a.toUpperCase()).trim()
+    } else if (entity.type.includes('watermelon')) {
+      icon = '🍉'
+      category = 'harvestable'
+      name = entity.type.replace('watermelon', 'Watermelon')
+      name = name.replace(/(?:^|\s)\S/g, (a: string) => a.toUpperCase()).trim()
     }
     
     // Add to searchable items
@@ -330,15 +391,6 @@ const initializeSearchableItems = () => {
     })
   })
 }
-
-// Watch for changes in allMarkersVisible to update individual category states
-watch(allMarkersVisible, (newValue) => {
-  props.markerCategories.forEach(category => {
-    if (category.visible !== newValue) {
-      category.visible = newValue
-    }
-  })
-})
 
 onMounted(() => {
   initializeSearchableItems()
@@ -379,7 +431,10 @@ onMounted(() => {
   color: var(--theme-accent);
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 100;
+  background: rgba(26, 26, 26, 0.98);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--theme-border-light);
 }
 
 .section-icon {
@@ -797,5 +852,190 @@ onMounted(() => {
   font-weight: bold;
   min-width: 16px;
   text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .unified-controls {
+    border-radius: 8px;
+    margin: 0;
+    max-height: calc(100vh - 80px);
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .search-input-container {
+    padding: 6px 12px 0 12px;
+  }
+
+  .search-input {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+
+  .clear-search {
+    right: 24px;
+    margin-top: 6px;
+  }
+
+  .search-results {
+    padding: 0 12px 8px;
+    max-height: 120px;
+  }
+
+  .layer-buttons {
+    padding: 6px 12px 8px 12px;
+    gap: 4px;
+  }
+
+  .layer-btn {
+    padding: 10px 8px;
+    font-size: 12px;
+  }
+
+  .section-header {
+    padding: 6px 12px 3px 12px;
+  }
+
+  .section-title {
+    font-size: 13px;
+  }
+
+  .filter-tags {
+    padding: 0 12px 12px;
+    gap: 6px;
+  }
+
+  .filter-tag {
+    padding: 8px 10px;
+    font-size: 11px;
+  }
+
+  .filter-icon {
+    font-size: 14px;
+  }
+
+  .filter-name {
+    font-size: 11px;
+  }
+
+  .marker-count {
+    font-size: 9px;
+    min-width: 14px;
+  }
+
+  .panel-toggle-container {
+    padding: 4px 12px 8px;
+  }
+
+  .panel-toggle-btn {
+    padding: 10px 12px;
+    font-size: 11px;
+  }
+
+  .search-result-item {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+
+  .result-icon {
+    font-size: 14px;
+  }
+
+  .result-name {
+    font-size: 12px;
+  }
+
+  .result-layer {
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .unified-controls {
+    border-radius: 6px;
+    max-height: calc(100vh - 60px);
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .layer-buttons {
+    flex-direction: column;
+    gap: 4px;
+    padding: 6px 8px 8px 8px;
+  }
+
+  .layer-btn {
+    padding: 12px 8px;
+    font-size: 13px;
+    width: 100%;
+  }
+
+  .search-input-container {
+    padding: 4px 8px 0 8px;
+  }
+
+  .search-input {
+    padding: 10px 12px;
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+
+  .clear-search {
+    right: 20px;
+  }
+
+  .section-header {
+    padding: 6px 8px 3px 8px;
+  }
+
+  .filter-tags {
+    padding: 0 8px 8px;
+    gap: 4px;
+  }
+
+  .filter-tag {
+    padding: 10px 8px;
+    min-height: 44px; /* Touch-friendly size */
+  }
+
+  .panel-toggle-container {
+    padding: 4px 8px 6px;
+  }
+
+  .panel-toggle-btn {
+    padding: 12px;
+    min-height: 44px;
+  }
+
+  .search-results {
+    padding: 0 8px 6px;
+  }
+
+  .search-result-item {
+    padding: 12px 8px;
+    min-height: 44px;
+  }
+}
+
+/* Landscape orientation optimizations */
+@media (max-width: 768px) and (orientation: landscape) {
+  .layer-buttons {
+    flex-direction: row;
+  }
+
+  .layer-btn {
+    padding: 8px 6px;
+    font-size: 11px;
+  }
+
+  .filter-tags {
+    gap: 4px;
+  }
+
+  .filter-tag {
+    padding: 6px 8px;
+    min-height: auto;
+  }
 }
 </style>

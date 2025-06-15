@@ -75,6 +75,7 @@ const popupPosition = ref<[number, number] | null>(null)
 // Search filtering state
 const activeSearchQuery = ref('')
 const filteredMarkerIds = ref<Set<string>>(new Set())
+const originalCategoryStates = ref<Record<string, boolean>>({})
 
 // Performance optimization variables
 let hoverTimeout: number | null = null
@@ -139,6 +140,54 @@ const updateMarkerCounts = () => {
   markerCategories.value.forEach(category => {
     const currentLayerMarkers = levelMarkers[selectedLayer.value]
     category.count = currentLayerMarkers[category.name]?.length || 0
+  })
+}
+
+// Function to apply current filter states to the layer
+const applyFilterStatesToLayer = () => {
+  markerCategories.value.forEach(category => {
+    const currentLayerMarkers = levelMarkers[selectedLayer.value]
+    if (currentLayerMarkers[category.name]) {
+      // Handle locations separately (they use location label layers)
+      if (category.name === 'Locations') {
+        const layer = locationLabelLayers[selectedLayer.value]
+        const source = layer.getSource()
+        if (source) {
+          // Clear all features from this category first
+          currentLayerMarkers[category.name].forEach((feature: Feature) => {
+            if (source.hasFeature(feature)) {
+              source.removeFeature(feature)
+            }
+          })
+          
+          // Add features back only if category is visible
+          if (category.visible) {
+            currentLayerMarkers[category.name].forEach((feature: Feature) => {
+              source.addFeature(feature)
+            })
+          }
+        }
+      } else {
+        // Handle other markers (they use regular marker layers)
+        const layer = markerLayers[selectedLayer.value]
+        const source = layer.getSource()
+        if (source) {
+          // Clear all features from this category first
+          currentLayerMarkers[category.name].forEach((feature: Feature) => {
+            if (source.hasFeature(feature)) {
+              source.removeFeature(feature)
+            }
+          })
+          
+          // Add features back only if category is visible
+          if (category.visible) {
+            currentLayerMarkers[category.name].forEach((feature: Feature) => {
+              source.addFeature(feature)
+            })
+          }
+        }
+      }
+    }
   })
 }
 
@@ -301,16 +350,21 @@ const filterMarkersBasedOnSearch = (searchQuery: string) => {
   activeSearchQuery.value = searchQuery.toLowerCase().trim()
   
   if (!activeSearchQuery.value) {
-    // No search query, show all markers based on category visibility
+    // No search query, restore original category states
+    restoreOriginalCategoryStates()
     showAllMarkersBasedOnCategories()
     return
   }
+  
+  // Save original category states before search filtering
+  saveOriginalCategoryStates()
   
   // Hide all markers first
   hideAllMarkers()
   
   // Find matching features and show only those on the current layer
   const matchingIds = new Set<string>()
+  const categoriesWithResults = new Set<string>()
   
   // Search through current layer only for visibility
   const currentLayerMarkers = levelMarkers[selectedLayer.value] || {}
@@ -326,6 +380,7 @@ const filterMarkersBasedOnSearch = (searchQuery: string) => {
           category.toLowerCase().includes(activeSearchQuery.value) ||
           feature === pinnedFeature) {
         matchingIds.add(feature.getId() as string || `${feature.get('name')}-${category}`)
+        categoriesWithResults.add(category)
         
         // Show this specific feature on the current layer
         const isLocation = feature.get('isLocation')
@@ -337,6 +392,9 @@ const filterMarkersBasedOnSearch = (searchQuery: string) => {
       }
     })
   })
+  
+  // Update filter categories based on search results
+  updateFilterCategoriesBasedOnSearch(categoriesWithResults)
   
   filteredMarkerIds.value = matchingIds
 }
@@ -360,17 +418,14 @@ const hideAllMarkers = () => {
 }
 
 const showAllMarkersBasedOnCategories = () => {
-  // Restore markers based on category visibility settings
-  markerCategories.value.forEach(category => {
-    if (category.visible) {
-      handleMarkerCategoryToggled(category.name, true)
-    }
-  })
+  // Apply filter states to show markers based on category visibility settings
+  applyFilterStatesToLayer()
 }
 
 const clearSearchFilter = () => {
   activeSearchQuery.value = ''
   filteredMarkerIds.value.clear()
+  restoreOriginalCategoryStates()
   showAllMarkersBasedOnCategories()
 }
 
@@ -411,6 +466,16 @@ const handleLayerChanged = (layerId: string) => {
         updatePinnedFeatureVisuals(pinnedMarker.x + 512.5, pinnedMarker.y + 512.5)
       }
     }, 100)
+  }
+  
+  // If we have an active search, re-apply the search state
+  if (activeSearchQuery.value) {
+    filterMarkersBasedOnSearch(activeSearchQuery.value)
+  } else {
+    // If no search is active, apply current filter states to the new layer
+    setTimeout(() => {
+      applyFilterStatesToLayer()
+    }, 50)
   }
 }
 
@@ -475,14 +540,6 @@ const handleMarkerCategoryToggled = (categoryName: string, visible: boolean) => 
       }
     }
   }
-}
-
-const handleAllMarkersToggled = (visible: boolean) => {
-  markerCategories.value.forEach(category => {
-    if (category.visible !== visible) {
-      handleMarkerCategoryToggled(category.name, visible)
-    }
-  })
 }
 
 // Popup event handlers
@@ -615,7 +672,7 @@ onMounted(() => {
       if (clickableFeature) {
         const name = clickableFeature.get('name')
         if (name) {
-          const geometry = clickableFeature.getGeometry()
+          const geometry = clickableFeature.get('geometry')
           if (geometry && geometry.getType() === 'Point') {
             const coordinates = (geometry as Point).getCoordinates()
             showPopup(name, coordinates as [number, number])
@@ -700,22 +757,14 @@ onMounted(() => {
     if (!levelMarkers[level][group]) levelMarkers[level][group] = []
     levelMarkers[level][group].push(feature)
     
-    // Add feature to the appropriate vector layer
-    const layer = markerLayers[level]
-    if (layer) {
-      layer.getSource()?.addFeature(feature)
-    }
+    // Don't automatically add to layer - let filter states control visibility
   }
 
   function addLocationItem(feature: Feature, level: string, group: string) {
     if (!levelMarkers[level][group]) levelMarkers[level][group] = []
     levelMarkers[level][group].push(feature)
     
-    // Add feature to the location label layer (always on top)
-    const layer = locationLabelLayers[level]
-    if (layer) {
-      layer.getSource()?.addFeature(feature)
-    }
+    // Don't automatically add to layer - let filter states control visibility
   }
 
   // Enhanced marker creation with better styling and categorization
@@ -738,7 +787,7 @@ onMounted(() => {
       'Obelisks': { color: '#dda0dd', strokeColor: '#9370db', fontSize: '1rem', priority: 'medium' },
       'Ores': { color: '#d2691e', strokeColor: '#8b4513', fontSize: '1rem', priority: 'low' },
       'Fires': { color: '#ff4500', strokeColor: '#cc3700', fontSize: '1rem', priority: 'low' },
-      'Anvils': { color: '#c0c0c0', strokeColor: '#696969', fontSize: '1rem', priority: 'medium' },
+      'Anvils': { color: '#e6e6fa', strokeColor: '#2f4f4f', fontSize: '1rem', priority: 'medium' },
       'Furnaces': { color: '#ff8c00', strokeColor: '#cc7000', fontSize: '1rem', priority: 'medium' },
       'Kilns': { color: '#cd853f', strokeColor: '#8b5a2b', fontSize: '1rem', priority: 'low' },
       'Stoves': { color: '#ffa500', strokeColor: '#cc8400', fontSize: '1rem', priority: 'low' },
@@ -928,6 +977,9 @@ onMounted(() => {
     
     // Update marker counts
     updateMarkerCounts()
+    
+    // Apply current filter states to the new layer (this ensures only visible categories show markers)
+    applyFilterStatesToLayer()
     
     // Reapply pinned feature styling if there's a pinned item
     reapplyPinnedFeatureStyle()
@@ -1374,6 +1426,9 @@ onMounted(() => {
   // Initialize marker counts
   updateMarkerCounts()
   
+  // Apply initial filter states to show only visible categories
+  applyFilterStatesToLayer()
+  
   // Set loading to false after everything is initialized
   setTimeout(() => {
     isLoading.value = false
@@ -1386,6 +1441,33 @@ onUnmounted(() => {
     clearTimeout(hoverTimeout)
   }
 })
+
+const saveOriginalCategoryStates = () => {
+  if (Object.keys(originalCategoryStates.value).length === 0) {
+    markerCategories.value.forEach(category => {
+      originalCategoryStates.value[category.name] = category.visible
+    })
+  }
+}
+
+const restoreOriginalCategoryStates = () => {
+  if (Object.keys(originalCategoryStates.value).length > 0) {
+    markerCategories.value.forEach(category => {
+      const originalState = originalCategoryStates.value[category.name]
+      if (originalState !== undefined) {
+        category.visible = originalState
+      }
+    })
+    originalCategoryStates.value = {}
+  }
+}
+
+const updateFilterCategoriesBasedOnSearch = (categoriesWithResults: Set<string>) => {
+  // During search, update filter categories to show only those with results
+  markerCategories.value.forEach(category => {
+    category.visible = categoriesWithResults.has(category.name)
+  })
+}
 </script>
 
 <template>
@@ -1405,7 +1487,6 @@ onUnmounted(() => {
         @layer-changed="handleLayerChanged"
         @search-location-selected="handleSearchLocationSelected"
         @marker-category-toggled="handleMarkerCategoryToggled"
-        @all-markers-toggled="handleAllMarkersToggled"
         @search-query-changed="filterMarkersBasedOnSearch"
       />
     </div>
@@ -1448,5 +1529,50 @@ onUnmounted(() => {
   width: 280px;
   max-height: calc(100vh - 120px);
   z-index: 1001;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  #map {
+    height: calc(100vh - 60px);
+  }
+
+  .map-controls-container {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    left: 8px;
+    width: auto;
+    max-height: calc(100vh - 100px);
+    max-width: calc(100vw - 16px);
+    z-index: 1001;
+    overflow: hidden;
+  }
+}
+
+@media (max-width: 480px) {
+  #map {
+    height: calc(100vh - 50px);
+  }
+
+  .map-controls-container {
+    top: 4px;
+    right: 4px;
+    left: 4px;
+    max-height: calc(100vh - 80px);
+    max-width: calc(100vw - 8px);
+    overflow: hidden;
+  }
+}
+
+/* Landscape orientation on mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+  .map-controls-container {
+    width: 300px;
+    max-width: 300px;
+    right: 8px;
+    left: auto;
+    max-height: calc(100vh - 60px);
+  }
 }
 </style>

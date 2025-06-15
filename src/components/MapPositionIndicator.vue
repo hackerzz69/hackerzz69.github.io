@@ -224,10 +224,131 @@ const emit = defineEmits<{
 
 /* Responsive design */
 @media (max-width: 768px) {
-  .coordinates-display {
+  .enhanced-coords {
     left: 8px;
     bottom: 8px;
+    padding: 12px;
+    min-width: 160px;
+    max-width: calc(100vw - 16px);
+    border-radius: 8px;
+    box-sizing: border-box;
+  }
+
+  .coord-header {
+    margin-bottom: 6px;
+  }
+
+  .coord-title {
     font-size: 11px;
+  }
+
+  .coord-icon {
+    font-size: 12px;
+  }
+
+  .coord-values {
+    gap: 8px;
+  }
+
+  .coord-group {
+    gap: 4px;
+  }
+
+  .coord-label {
+    font-size: 10px;
+  }
+
+  .coord-value {
+    font-size: 11px;
+  }
+
+  .layer-name {
+    font-size: 11px;
+  }
+
+  .layer-icon {
+    font-size: 12px;
+  }
+
+  .remove-pin-btn {
+    width: 16px;
+    height: 16px;
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .enhanced-coords {
+    left: 4px;
+    bottom: 4px;
+    padding: 10px;
+    min-width: 140px;
+    max-width: calc(100vw - 8px);
+    border-radius: 6px;
+    box-sizing: border-box;
+  }
+
+  .coord-header {
+    margin-bottom: 4px;
+  }
+
+  .coord-title {
+    font-size: 10px;
+  }
+
+  .coord-icon {
+    font-size: 11px;
+  }
+
+  .coord-values {
+    gap: 6px;
+  }
+
+  .coord-group {
+    gap: 3px;
+  }
+
+  .coord-label {
+    font-size: 9px;
+  }
+
+  .coord-value {
+    font-size: 10px;
+  }
+
+  .layer-name {
+    font-size: 10px;
+  }
+
+  .layer-icon {
+    font-size: 11px;
+  }
+
+  .remove-pin-btn {
+    width: 14px;
+    height: 14px;
+    font-size: 9px;
+  }
+}
+
+/* Landscape orientation on mobile - move to top */
+@media (max-width: 768px) and (orientation: landscape) and (max-height: 500px) {
+  .enhanced-coords {
+    bottom: auto;
+    top: 8px;
+    left: 8px;
+    max-width: calc(50vw - 16px);
+  }
+}
+
+/* Very small screens - ensure it doesn't overlap with controls */
+@media (max-width: 480px) and (max-height: 600px) {
+  .enhanced-coords {
+    bottom: 8px;
+    left: 4px;
+    right: auto;
+    max-width: calc(100vw - 8px);
+    transform: none;
   }
 }
 </style>
