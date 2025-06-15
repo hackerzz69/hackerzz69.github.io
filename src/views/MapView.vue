@@ -29,6 +29,10 @@ const locationLabelLayers: Record<string, VectorLayer<VectorSource>> = {
 }
 
 import { ref, onMounted, onUnmounted, watch, computed, reactive } from 'vue'
+import LoadingSpinner from '@/components/LoadingSpinner.vue'
+import MapControls from '@/components/MapControls.vue'
+import MapPositionIndicator from '@/components/MapPositionIndicator.vue'
+import MapPopup from '@/components/MapPopup.vue'
 import locations from '@/assets/markerInformation/Locations.json'
 import entitiesData from '@/assets/markerInformation/worldEntities.json'
 import npcs from '@/assets/markerInformation/NPCs.json'
@@ -44,7 +48,6 @@ import ImageStatic from 'ol/source/ImageStatic'
 import Feature from 'ol/Feature'
 import Point from 'ol/geom/Point'
 import { Style, Text, Fill, Stroke, Icon } from 'ol/style'
-import { fromLonLat } from 'ol/proj'
 import { defaults as defaultInteractions } from 'ol/interaction'
 
 let map: Map
@@ -55,11 +58,12 @@ let skyLayers: Group
 // Enhanced reactive state
 const selectedLayer = ref('Overworld')
 const isLoading = ref(true)
-const searchQuery = ref('')
-const searchResults = ref<any[]>([])
-const allMarkersVisible = ref(true)
 const mouseCoords = reactive({ x: 0, y: 0 })
-const isPanelExpanded = ref(false)
+
+// Popup state
+const popupVisible = ref(false)
+const popupContent = ref('')
+const popupPosition = ref<[number, number] | null>(null)
 
 // Performance optimization variables
 let hoverTimeout: number | null = null
@@ -109,75 +113,25 @@ const markerCategories = ref([
   { name: 'Aggro NPCs', icon: '😈', visible: true, count: 0 }
 ])
 
-// All searchable items
-let searchableItems: any[] = []
+// All searchable items - moved to component
 
-// Enhanced search with better filtering and result grouping
-const handleSearch = () => {
-  if (!searchQuery.value.trim()) {
-    searchResults.value = []
-    return
-  }
-  
-  const query = searchQuery.value.toLowerCase()
-  const results = searchableItems
-    .filter(item => {
-      const nameMatch = item.name.toLowerCase().includes(query)
-      const typeMatch = item.type?.toLowerCase().includes(query)
-      const layerMatch = item.layer.toLowerCase().includes(query)
-      return nameMatch || typeMatch || layerMatch
-    })
-    .map(item => ({
-      ...item,
-      // Calculate relevance score for better sorting
-      relevance: calculateRelevance(item, query)
-    }))
-    .sort((a, b) => {
-      // Sort by relevance first, then by type priority, then alphabetically
-      if (b.relevance !== a.relevance) return b.relevance - a.relevance
-      
-      const typePriority = { location: 3, shop: 2, npc: 1, resource: 0 }
-      const aPriority = typePriority[a.type as keyof typeof typePriority] || 0
-      const bPriority = typePriority[b.type as keyof typeof typePriority] || 0
-      
-      if (bPriority !== aPriority) return bPriority - aPriority
-      return a.name.localeCompare(b.name)
-    })
-    .slice(0, 12) // Show more results
-  
-  searchResults.value = results
+const getCurrentLayerInfo = () => {
+  return layers.value.find(layer => layer.id === selectedLayer.value) || layers.value[0]
 }
 
-const calculateRelevance = (item: any, query: string): number => {
-  const name = item.name.toLowerCase()
-  let score = 0
-  
-  // Exact match gets highest score
-  if (name === query) score += 100
-  // Start of name match gets high score
-  else if (name.startsWith(query)) score += 80
-  // Word boundary match gets medium score  
-  else if (name.includes(' ' + query)) score += 60
-  // Contains match gets base score
-  else if (name.includes(query)) score += 40
-  
-  // Boost important types
-  if (item.type === 'location') score += 20
-  if (item.type === 'shop') score += 15
-  if (item.type === 'npc') score += 10
-  
-  // Boost current layer
-  if (item.layer === selectedLayer.value) score += 10
-  
-  return score
+const updateMarkerCounts = () => {
+  markerCategories.value.forEach(category => {
+    const currentLayerMarkers = levelMarkers[selectedLayer.value]
+    category.count = currentLayerMarkers[category.name]?.length || 0
+  })
 }
 
-const clearSearch = () => {
-  searchQuery.value = ''
-  searchResults.value = []
+// Event handlers for the MapSearchFilter component
+const handleLayerChanged = (layerId: string) => {
+  selectedLayer.value = layerId
 }
 
-const goToLocation = (result: any) => {
+const handleSearchLocationSelected = (result: any) => {
   if (result.layer !== selectedLayer.value) {
     selectedLayer.value = result.layer
   }
@@ -187,60 +141,13 @@ const goToLocation = (result: any) => {
     map?.getView().setCenter([result.x, result.y])
     map?.getView().setZoom(6)
   }, 100)
-  
-  // Clear search
-  clearSearch()
 }
 
-const toggleAllMarkers = () => {
-  allMarkersVisible.value = !allMarkersVisible.value
-  markerCategories.value.forEach(category => {
-    const wasVisible = category.visible
-    category.visible = allMarkersVisible.value
-    
-    // Only call toggleMarkerCategory if the state actually changed
-    if (wasVisible !== category.visible) {
-      const currentLayerMarkers = levelMarkers[selectedLayer.value]
-      if (currentLayerMarkers[category.name]) {
-        // Handle locations separately (they use location label layers)
-        if (category.name === 'Locations') {
-          const layer = locationLabelLayers[selectedLayer.value]
-          const source = layer.getSource()
-          if (source) {
-            currentLayerMarkers[category.name].forEach((feature: Feature) => {
-              if (category.visible) {
-                if (!source.hasFeature(feature)) {
-                  source.addFeature(feature)
-                }
-              } else {
-                source.removeFeature(feature)
-              }
-            })
-          }
-        } else {
-          // Handle other markers (they use regular marker layers)
-          const layer = markerLayers[selectedLayer.value]
-          const source = layer.getSource()
-          if (source) {
-            currentLayerMarkers[category.name].forEach((feature: Feature) => {
-              if (category.visible) {
-                if (!source.hasFeature(feature)) {
-                  source.addFeature(feature)
-                }
-              } else {
-                source.removeFeature(feature)
-              }
-            })
-          }
-        }
-      }
-    }
-  })
-}
-
-const toggleMarkerCategory = (categoryName: string) => {
+const handleMarkerCategoryToggled = (categoryName: string, visible: boolean) => {
   const category = markerCategories.value.find(cat => cat.name === categoryName)
   if (!category) return
+  
+  category.visible = visible
   
   const currentLayerMarkers = levelMarkers[selectedLayer.value]
   if (currentLayerMarkers[categoryName]) {
@@ -250,7 +157,7 @@ const toggleMarkerCategory = (categoryName: string) => {
       const source = layer.getSource()
       if (source) {
         currentLayerMarkers[categoryName].forEach((feature: Feature) => {
-          if (!category.visible) {
+          if (visible) {
             if (!source.hasFeature(feature)) {
               source.addFeature(feature)
             }
@@ -265,7 +172,7 @@ const toggleMarkerCategory = (categoryName: string) => {
       const source = layer.getSource()
       if (source) {
         currentLayerMarkers[categoryName].forEach((feature: Feature) => {
-          if (!category.visible) {
+          if (visible) {
             if (!source.hasFeature(feature)) {
               source.addFeature(feature)
             }
@@ -278,66 +185,29 @@ const toggleMarkerCategory = (categoryName: string) => {
   }
 }
 
-const getCurrentLayerInfo = () => {
-  return layers.value.find(layer => layer.id === selectedLayer.value) || layers.value[0]
-}
-
-const updateMarkerCounts = () => {
+const handleAllMarkersToggled = (visible: boolean) => {
   markerCategories.value.forEach(category => {
-    const currentLayerMarkers = levelMarkers[selectedLayer.value]
-    category.count = currentLayerMarkers[category.name]?.length || 0
-  })
-}
-
-const togglePanelExpansion = () => {
-  isPanelExpanded.value = !isPanelExpanded.value
-}
-// Initialize searchable items
-const initializeSearchableItems = () => {
-  searchableItems = []
-  
-  // Add locations
-  locations.locations.forEach((location: any) => {
-    const layer = location.labelType === 0 ? 'Underworld' : 
-                  location.labelType === 1 ? 'Overworld' : 'Sky'
-    searchableItems.push({
-      id: `location-${location.name}`,
-      name: location.name,
-      icon: '📍',
-      layer,
-      x: location.x + 512.5,
-      y: location.y + 512.5,
-      type: 'location'
-    })
-  })
-  
-  // Add NPCs
-  npcs.npcs.forEach((npc: any) => {
-    const npcDef = npcDefinitions.npcDefs.find((def: any) => npc.npcdef_id === def._id)
-    if (npcDef?.name) {
-      const layer = npc.mapLevel === 0 ? 'Underworld' : 
-                    npc.mapLevel === 1 ? 'Overworld' : 'Sky'
-      const name = typeof npcDef.name === 'string' ? 
-        npcDef.name.replace(/(?:^|\s)\S/g, (a: string) => a.toUpperCase()) : ''
-      
-      searchableItems.push({
-        id: `npc-${npc.x}-${npc.y}`,
-        name,
-        icon: npc.shopdef_id ? '🏪' : npc.isAlwaysAggroOverride ? '😈' : 
-              npcDef.combat ? '⚔️' : '👤',
-        layer,
-        x: npc.x + 512.5,
-        y: npc.y + 512.5,
-        type: 'npc'
-      })
+    if (category.visible !== visible) {
+      handleMarkerCategoryToggled(category.name, visible)
     }
   })
 }
 
+// Popup event handlers
+const showPopup = (content: string, position: [number, number]) => {
+  popupContent.value = content
+  popupPosition.value = position
+  popupVisible.value = true
+}
+
+const hidePopup = () => {
+  popupVisible.value = false
+  popupContent.value = ''
+  popupPosition.value = null
+}
+// Event handlers for the MapSearchFilter component
+
 onMounted(() => {
-  // Initialize searchable items
-  initializeSearchableItems()
-  
   // Set bounds for a 1024x1024 map
   const bounds = [0, 0, 1024, 1024]
   const center = [512, 512]
@@ -447,6 +317,13 @@ onMounted(() => {
         if (geometry && geometry.getType() === 'Point') {
           const coordinates = (geometry as Point).getCoordinates()
           showPopup(name, coordinates as [number, number])
+          
+          // Center the map on the clicked marker
+          map.getView().animate({
+            center: coordinates,
+            duration: 500,
+            zoom: Math.max(map.getView().getZoom() || 4, 5)
+          })
         }
       }
     } else {
@@ -771,697 +648,253 @@ onMounted(() => {
     }
   })
 
-  // Add entity overlays (trees, obelisks, etc.)
+  // Entity type mapping configuration for cleaner code
+  const entityTypeConfig = [
+    {
+      match: (type: string) => (type.includes('tree') || type.includes('cherryblossom')) && type !== 'treestump',
+      icon: '🌳',
+      category: 'Trees',
+      nameFormatter: (type: string) => {
+        let name = type.replace('tree', ' Tree').replace('blossom', ' Blossom')
+        return formatEntityName(name)
+      }
+    },
+    {
+      match: (type: string) => type.includes('obelisk'),
+      icon: '🗿',
+      category: 'Obelisks',
+      nameFormatter: (type: string) => formatEntityName(type.replace('obelisk', ' Obelisk'))
+    },
+    {
+      match: (type: string) => type.includes('rocks'),
+      icon: '🪨',
+      category: 'Ores',
+      nameFormatter: (type: string) => formatEntityName(type.replace('rocks', ' Rock'))
+    },
+    {
+      match: (type: string) => type.includes('bank'),
+      icon: '💰',
+      category: 'Banks',
+      nameFormatter: (type: string) => type.replace('bank', ' Bank').replace('chest', ' Chest')
+    },
+    {
+      match: (type: string) => type.includes('fire'),
+      icon: '🔥',
+      category: 'Fires',
+      nameFormatter: (type: string) => formatEntityName(type.replace('fire', ' Fire'))
+    },
+    {
+      match: (type: string) => type.includes('smithingsource'),
+      icon: '🔨',
+      category: 'Anvils',
+      nameFormatter: () => 'Anvil'
+    },
+    {
+      match: (type: string) => type.includes('smeltingsource'),
+      icon: '🏭',
+      category: 'Furnaces',
+      nameFormatter: () => 'Furnace'
+    },
+    {
+      match: (type: string) => type.includes('kiln'),
+      icon: '⚱️',
+      category: 'Kilns',
+      nameFormatter: () => 'Kiln'
+    },
+    {
+      match: (type: string) => type.includes('heatsource'),
+      icon: '🍳',
+      category: 'Stoves',
+      nameFormatter: () => 'Stove'
+    },
+    {
+      match: (type: string) => type.includes('fishing'),
+      icon: '🎣',
+      category: 'Fishing Spots',
+      nameFormatter: (type: string) => formatEntityName(type.replace('fishing', ' Fishing'))
+    },
+    // Harvestables - each with appropriate emoji
+    {
+      match: (type: string) => type.includes('pumpkin'),
+      icon: '🎃',
+      category: 'Harvestables',
+      nameFormatter: (type: string) => formatEntityName(type.replace('pumpkin', ' Pumpkin'))
+    },
+    {
+      match: (type: string) => type.includes('corn'),
+      icon: '🌽',
+      category: 'Harvestables',
+      nameFormatter: (type: string) => formatEntityName(type.replace('corn', ' Corn'))
+    },
+    {
+      match: (type: string) => type.includes('potatoes'),
+      icon: '🥔',
+      category: 'Harvestables',
+      nameFormatter: (type: string) => formatEntityName(type.replace('potatoes', ' Potatoes'))
+    },
+    {
+      match: (type: string) => type.includes('onion'),
+      icon: '🧅',
+      category: 'Harvestables',
+      nameFormatter: (type: string) => formatEntityName(type.replace('onion', ' Onion'))
+    },
+    {
+      match: (type: string) => type.includes('flax'),
+      icon: '🌾',
+      category: 'Harvestables',
+      nameFormatter: (type: string) => formatEntityName(type.replace('flax', ' Flax'))
+    },
+    {
+      match: (type: string) => type.includes('carrot'),
+      icon: '🥕',
+      category: 'Harvestables',
+      nameFormatter: (type: string) => formatEntityName(type.replace('carrot', ' Carrot'))
+    },
+    {
+      match: (type: string) => type.includes('redmushroom'),
+      icon: '🍄',
+      category: 'Harvestables',
+      nameFormatter: (type: string) => formatEntityName(type.replace('redmushroom', 'Red Mushroom'))
+    },
+    {
+      match: (type: string) => type.includes('plant') && type !== 'plant',
+      icon: '🌿',
+      category: 'Harvestables',
+      nameFormatter: (type: string) => formatEntityName(type.replace('plant', ' Plant'))
+    },
+    {
+      match: (type: string) => type.includes('strawberries'),
+      icon: '🍓',
+      category: 'Harvestables',
+      nameFormatter: (type: string) => formatEntityName(type.replace('strawberries', 'Strawberries'))
+    },
+    {
+      match: (type: string) => type.includes('watermelon'),
+      icon: '🍉',
+      category: 'Harvestables',
+      nameFormatter: (type: string) => formatEntityName(type.replace('watermelon', 'Watermelon'))
+    }
+  ]
+
+  // Helper function to format entity names consistently
+  function formatEntityName(name: string): string {
+    const nameWithSpaces = name.replace(/([a-z])([A-Z])/g, '$1 $2')
+    return nameWithSpaces.charAt(0).toUpperCase() + nameWithSpaces.slice(1)
+  }
+
+  // Helper function to add entity to appropriate layer based on level
+  function addEntityToLayer(feature: Feature, entityLevel: number, category: string) {
+    const layerMap = {
+      0: 'Underworld',
+      1: 'Overworld', 
+      2: 'Sky'
+    }
+    const layerName = layerMap[entityLevel as keyof typeof layerMap]
+    if (layerName) {
+      addItem(feature, layerName, category)
+    }
+  }
+
+  // Process entities with the new streamlined approach
   const worldEntities = (entitiesData as any).worldEntities || []
   worldEntities.forEach((entity: any) => {
-    if (
-      (entity.type.includes('tree') || entity.type.includes('cherryblossom')) &&
-      entity.type != 'treestump'
-    ) {
-      let name = entity.type.replace('tree', ' Tree')
-      name = name.replace('blossom', ' Blossom')
-      const nameWithSpaces = name.replace(/([a-z])([A-Z])/g, '$1 $2')
-      const nameWithSpacesCapitalized =
-        nameWithSpaces.charAt(0).toUpperCase() + nameWithSpaces.slice(1)
-
-      const feature = createMarkerFeature([entity.x + 512.5, entity.z + 512.5], '🌳', nameWithSpacesCapitalized, 'Trees')
-
-      switch (entity.lvl) {
-        case 1:
-          addItem(feature, 'Overworld', 'Trees')
-          break
-        case 0:
-          addItem(feature, 'Underworld', 'Trees')
-          break
-        case 2:
-          addItem(feature, 'Sky', 'Trees')
-          break
-      }
-    }
-
-    if (entity.type.includes('obelisk')) {
-      const name = entity.type.replace('obelisk', ' Obelisk')
-      const nameWithSpaces = name.replace(/([a-z])([A-Z])/g, '$1 $2')
-      const nameWithSpacesCapitalized =
-        nameWithSpaces.charAt(0).toUpperCase() + nameWithSpaces.slice(1)
-      
-      const feature = createMarkerFeature([entity.x + 512.5, entity.z + 512.5], '🗿', nameWithSpacesCapitalized, 'Obelisks')
-
-      switch (entity.lvl) {
-        case 1:
-          addItem(feature, 'Overworld', 'Obelisks')
-          break
-        case 0:
-          addItem(feature, 'Underworld', 'Obelisks')
-          break
-        case 2:
-          addItem(feature, 'Sky', 'Obelisks')
-          break
-      }
-    }
-
-    if (entity.type.includes('rocks')) {
-      const name = entity.type.replace('rocks', ' Rock')
-      const nameWithSpaces = name.replace(/([a-z])([A-Z])/g, '$1 $2')
-      const nameWithSpacesCapitalized =
-        nameWithSpaces.charAt(0).toUpperCase() + nameWithSpaces.slice(1)
-
-      const feature = createMarkerFeature([entity.x + 512.5, entity.z + 512.5], '🪨', nameWithSpacesCapitalized, 'Ores')
-
-      switch (entity.lvl) {
-        case 1:
-          addItem(feature, 'Overworld', 'Ores')
-          break
-        case 0:
-          addItem(feature, 'Underworld', 'Ores')
-          break
-        case 2:
-          addItem(feature, 'Sky', 'Ores')
-          break
-      }
-    }
-
-    if (entity.type.includes('bank')) {
-      const name = entity.type.replace('bank', ' Bank')
-      const nameWithSpaces = name.replace('chest', ' Chest')
-      const feature = createMarkerFeature([entity.x + 512.5, entity.z + 512.5], '💰', nameWithSpaces, 'Banks')
-
-      switch (entity.lvl) {
-        case 1:
-          addItem(feature, 'Overworld', 'Banks')
-          break
-        case 0:
-          addItem(feature, 'Underworld', 'Banks')
-          break
-        case 2:
-          addItem(feature, 'Sky', 'Banks')
-          break
-      }
-    }
-
-    if (entity.type.includes('fire')) {
-      const name = entity.type.replace('fire', ' Fire')
-      const nameWithSpaces = name.replace(/([a-z])([A-Z])/g, '$1 $2')
-      const nameWithSpacesCapitalized =
-        nameWithSpaces.charAt(0).toUpperCase() + nameWithSpaces.slice(1)
-
-      const feature = createMarkerFeature([entity.x + 512.5, entity.z + 512.5], '🔥', nameWithSpacesCapitalized, 'Fires')
-      
-
-      switch (entity.lvl) {
-        case 1:
-          addItem(feature, 'Overworld', 'Fires')
-          break
-        case 0:
-          addItem(feature, 'Underworld', 'Fires')
-          break
-        case 2:
-          addItem(feature, 'Sky', 'Fires')
-          break
-      }
-    }
-
-    if (entity.type.includes('smithingsource')) {
-      const name = 'Anvil'
-
-      const feature = createMarkerFeature([entity.x + 512.5, entity.z + 512.5], '🔨', name, 'Anvils')
-      
-
-      switch (entity.lvl) {
-        case 1:
-          addItem(feature, 'Overworld', 'Anvils')
-          break
-        case 0:
-          addItem(feature, 'Underworld', 'Anvils')
-          break
-        case 2:
-          addItem(feature, 'Sky', 'Anvils')
-          break
-      }
-    }
-
-    if (entity.type.includes('smeltingsource')) {
-      const name = 'Furnace'
-      const feature = createMarkerFeature([entity.x + 512.5, entity.z + 512.5], '🏭', name, 'Furnaces')
-      
-
-      switch (entity.lvl) {
-        case 1:
-          addItem(feature, 'Overworld', 'Furnaces')
-          break
-        case 0:
-          addItem(feature, 'Underworld', 'Furnaces')
-          break
-        case 2:
-          addItem(feature, 'Sky', 'Furnaces')
-          break
-      }
-    }
-
-    if (entity.type.includes('kiln')) {
-      const name = 'Kiln'
-      const feature = createMarkerFeature([entity.x + 512.5, entity.z + 512.5], '⚱️', name, 'Kilns')
-      
-
-      switch (entity.lvl) {
-        case 1:
-          addItem(feature, 'Overworld', 'Kilns')
-          break
-        case 0:
-          addItem(feature, 'Underworld', 'Kilns')
-          break
-        case 2:
-          addItem(feature, 'Sky', 'Kilns')
-          break
-      }
-    }
-
-    if (entity.type.includes('heatsource')) {
-      const name = 'Stove'
-
-      const feature = createMarkerFeature([entity.x + 512.5, entity.z + 512.5], '🍳', name, 'Stoves')
-      
-
-      switch (entity.lvl) {
-        case 1:
-          addItem(feature, 'Overworld', 'Stoves')
-          break
-        case 0:
-          addItem(feature, 'Underworld', 'Stoves')
-          break
-        case 2:
-          addItem(feature, 'Sky', 'Stoves')
-          break
-      }
-    }
-
-    if (entity.type.includes('fishing')) {
-      const name = entity.type.replace('fishing', ' Fishing')
-      const nameWithSpaces = name.replace(/([a-z])([A-Z])/g, '$1 $2')
-      const nameWithSpacesCapitalized =
-        nameWithSpaces.charAt(0).toUpperCase() + nameWithSpaces.slice(1)
-
-      const feature = createMarkerFeature([entity.x + 512.5, entity.z + 512.5], '🎣', nameWithSpacesCapitalized, 'Fishing Spots')
-      
-
-      switch (entity.lvl) {
-        case 1:
-          addItem(feature, 'Overworld', 'Fishing Spots')
-          break
-        case 0:
-          addItem(feature, 'Underworld', 'Fishing Spots')
-          break
-        case 2:
-          addItem(feature, 'Sky', 'Fishing Spots')
-          break
-      }
-    }
-
-    if (entity.type.includes('pumpkin')) {
-      const name = entity.type.replace('pumpkin', ' Pumpkin')
-      const nameWithSpaces = name.replace(/([a-z])([A-Z])/g, '$1 $2')
-      const nameWithSpacesCapitalized =
-        nameWithSpaces.charAt(0).toUpperCase() + nameWithSpaces.slice(1)
-
-      const feature = createMarkerFeature([entity.x + 512.5, entity.z + 512.5], "🌾", nameWithSpacesCapitalized, 'Harvestables')
-      
-
-      switch (entity.lvl) {
-        case 1:
-          addItem(feature, 'Overworld', 'Harvestables')
-          break
-        case 0:
-          addItem(feature, 'Underworld', 'Harvestables')
-          break
-        case 2:
-          addItem(feature, 'Sky', 'Harvestables')
-          break
-      }
-    }
-
-    if (entity.type.includes('corn')) {
-      const name = entity.type.replace('corn', ' Corn')
-      const nameWithSpaces = name.replace(/([a-z])([A-Z])/g, '$1 $2')
-      const nameWithSpacesCapitalized =
-        nameWithSpaces.charAt(0).toUpperCase() + nameWithSpaces.slice(1)
-
-      const feature = createMarkerFeature([entity.x + 512.5, entity.z + 512.5], "🌾", nameWithSpacesCapitalized, 'Harvestables')
-      
-
-      switch (entity.lvl) {
-        case 1:
-          addItem(feature, 'Overworld', 'Harvestables')
-          break
-        case 0:
-          addItem(feature, 'Underworld', 'Harvestables')
-          break
-        case 2:
-          addItem(feature, 'Sky', 'Harvestables');
-          break
-      }
-    }
-
-    if (entity.type.includes('potatoes')) {
-      const name = entity.type.replace('potatoes', ' Potatoes')
-      const nameWithSpaces = name.replace(/([a-z])([A-Z])/g, '$1 $2')
-      const nameWithSpacesCapitalized =
-        nameWithSpaces.charAt(0).toUpperCase() + nameWithSpaces.slice(1)
-
-      const feature = createMarkerFeature([entity.x + 512.5, entity.z + 512.5], "🌾", nameWithSpacesCapitalized, 'Harvestables')
-      
-
-      switch (entity.lvl) {
-        case 1:
-          addItem(feature, 'Overworld', 'Harvestables')
-          break
-        case 0:
-          addItem(feature, 'Underworld', 'Harvestables')
-          break
-        case 2:
-          addItem(feature, 'Sky', 'Harvestables')
-          break
-      }
-    }
-
-    if (entity.type.includes('onion')) {
-      const name = entity.type.replace('onion', ' Onion')
-      const nameWithSpaces = name.replace(/([a-z])([A-Z])/g, '$1 $2')
-      const nameWithSpacesCapitalized =
-        nameWithSpaces.charAt(0).toUpperCase() + nameWithSpaces.slice(1)
-
-      const feature = createMarkerFeature([entity.x + 512.5, entity.z + 512.5], "🌾", nameWithSpacesCapitalized, 'Harvestables')
-      
-
-      switch (entity.lvl) {
-        case 1:
-          addItem(feature, 'Overworld', 'Harvestables')
-          break
-        case 0:
-          addItem(feature, 'Underworld', 'Harvestables')
-          break
-        case 2:
-          addItem(feature, 'Sky', 'Harvestables')
-          break
-      }
-    }
-
-    if (entity.type.includes('flax')) {
-      const name = entity.type.replace('flax', ' Flax')
-      const nameWithSpaces = name.replace(/([a-z])([A-Z])/g, '$1 $2')
-      const nameWithSpacesCapitalized =
-        nameWithSpaces.charAt(0).toUpperCase() + nameWithSpaces.slice(1)
-      const feature = createMarkerFeature([entity.x + 512.5, entity.z + 512.5], "🌾", nameWithSpacesCapitalized, 'Harvestables')
-      
-
-      switch (entity.lvl) {
-        case 1:
-          addItem(feature, 'Overworld', 'Harvestables')
-          break
-        case 0:
-          addItem(feature, 'Underworld', 'Harvestables')
-          break
-        case 2:
-          addItem(feature, 'Sky', 'Harvestables')
-          break
-      }
-    }
-
-    if (entity.type.includes('carrot')) {
-      const name = entity.type.replace('carrot', ' Carrot')
-      const nameWithSpaces = name.replace(/([a-z])([A-Z])/g, '$1 $2')
-      const nameWithSpacesCapitalized =
-        nameWithSpaces.charAt(0).toUpperCase() + nameWithSpaces.slice(1)
-      const feature = createMarkerFeature([entity.x + 512.5, entity.z + 512.5], "🌾", nameWithSpacesCapitalized, 'Harvestables')
-      
-
-      switch (entity.lvl) {
-        case 1:
-          addItem(feature, 'Overworld', 'Harvestables')
-          break
-        case 0:
-          addItem(feature, 'Underworld', 'Harvestables')
-          break
-        case 2:
-          addItem(feature, 'Sky', 'Harvestables')
-          break
-      }
-    }
-
-    if (entity.type.includes('redmushroom')) {
-      const name = entity.type.replace('redmushroom', 'Red Mushroom')
-      const nameWithSpaces = name.replace(/([a-z])([A-Z])/g, '$1 $2')
-      const nameWithSpacesCapitalized =
-        nameWithSpaces.charAt(0).toUpperCase() + nameWithSpaces.slice(1)
-      const feature = createMarkerFeature([entity.x + 512.5, entity.z + 512.5], "🌾", nameWithSpacesCapitalized, 'Harvestables')
-      
-
-      switch (entity.lvl) {
-        case 1:
-          addItem(feature, 'Overworld', 'Harvestables')
-          break
-        case 0:
-          addItem(feature, 'Underworld', 'Harvestables')
-          break
-        case 2:
-          addItem(feature, 'Sky', 'Harvestables')
-          break
-      }
-    }
-
-    if (entity.type.includes('plant') && entity.type != 'plant') {
-      const name = entity.type.replace('plant', ' Plant')
-      const nameWithSpaces = name.replace(/([a-z])([A-Z])/g, '$1 $2')
-      const nameWithSpacesCapitalized =
-        nameWithSpaces.charAt(0).toUpperCase() + nameWithSpaces.slice(1)
-      const feature = createMarkerFeature([entity.x + 512.5, entity.z + 512.5], "🌾", nameWithSpacesCapitalized, 'Harvestables')
-      
-
-      switch (entity.lvl) {
-        case 1:
-          addItem(feature, 'Overworld', 'Harvestables')
-          break
-        case 0:
-          addItem(feature, 'Underworld', 'Harvestables')
-          break
-        case 2:
-          addItem(feature, 'Sky', 'Harvestables')
-          break
-      }
-    }
-
-    if (entity.type.includes('strawberries')) {
-      const name = entity.type.replace('strawberries', 'Strawberries')
-      const nameWithSpaces = name.replace(/([a-z])([A-Z])/g, '$1 $2')
-      const nameWithSpacesCapitalized =
-        nameWithSpaces.charAt(0).toUpperCase() + nameWithSpaces.slice(1)
-      const feature = createMarkerFeature([entity.x + 512.5, entity.z + 512.5], "🌾", nameWithSpacesCapitalized, 'Harvestables')
-      
-
-      switch (entity.lvl) {
-        case 1:
-          addItem(feature, 'Overworld', 'Harvestables')
-          break
-        case 0:
-          addItem(feature, 'Underworld', 'Harvestables')
-          break
-        case 2:
-          addItem(feature, 'Sky', 'Harvestables')
-          break
-      }
-    }
-
-    if (entity.type.includes('watermelon')) {
-      const name = entity.type.replace('watermelon', 'Watermelon')
-      const nameWithSpaces = name.replace(/([a-z])([A-Z])/g, '$1 $2')
-      const nameWithSpacesCapitalized =
-        nameWithSpaces.charAt(0).toUpperCase() + nameWithSpaces.slice(1)
-
-      const feature = createMarkerFeature([entity.x + 512.5, entity.z + 512.5], "🌾", nameWithSpacesCapitalized, 'Harvestables')
-      
-
-      switch (entity.lvl) {
-        case 1:
-          addItem(feature, 'Overworld', 'Harvestables')
-          break
-        case 0:
-          addItem(feature, 'Underworld', 'Harvestables')
-          break
-        case 2:
-          addItem(feature, 'Sky', 'Harvestables')
-          break
-      }
+    // Find matching configuration for this entity type
+    const config = entityTypeConfig.find(cfg => cfg.match(entity.type))
+    
+    if (config) {
+      const name = config.nameFormatter(entity.type)
+      const feature = createMarkerFeature(
+        [entity.x + 512.5, entity.z + 512.5], 
+        config.icon, 
+        name, 
+        config.category
+      )
+      addEntityToLayer(feature, entity.lvl, config.category)
     }
   })
 
-  // Popup overlay setup (after map is initialized)
-  const popupElement = document.createElement('div')
-  popupElement.className = 'ol-popup'
-  let popupContent = ''
-  popupElement.innerHTML = ''
-  const popupOverlay = new Overlay({
-    element: popupElement,
-    positioning: 'bottom-center',
-    stopEvent: true,
-    offset: [0, -25],
-    autoPan: {
-      animation: {
-        duration: 250,
-      },
+  // NPC type configuration for cleaner processing
+  const npcTypeConfig = [
+    {
+      condition: (npc: any, npcDef: any) => Boolean(npc.shopdef_id),
+      icon: '🏪',
+      category: 'Shops',
+      nameFormatter: (npcDef: any) => 
+        typeof npcDef.name === 'string' ? 
+        npcDef.name.replace(/(?:^|\s)\S/g, (a: string) => a.toUpperCase()) : ''
     },
-  })
-  map.addOverlay(popupOverlay)
-
-  // Enhanced popup system with rich content and animations
-  function showPopup(content: string, position: [number, number]) {
-    popupContent = content
-    
-    // Calculate display coordinates (relative to map center)
-    const displayX = Math.round(position[0] - 512.5)
-    const displayY = Math.round(position[1] - 512.5)
-    
-    // Create wiki URL from content
-    const wikiName = content.replace(/\s+/g, '_').replace(/[()]/g, '').replace(/Lvl\._\d+/g, '').trim()
-    const wikiUrl = `https://highspell.wiki/w/${wikiName}`
-    
-    // Determine marker category and info based on content
-    const isNPC = content.includes('(Lvl.')
-    const isShop = content.toLowerCase().includes('shop') || content.toLowerCase().includes('store')
-    const isLocation = !content.includes('🌳') && !content.includes('🪨') && !isNPC && !isShop
-    
-    // Enhanced popup with rich content
-    popupElement.innerHTML = `
-      <div class="popup-content enhanced-popup">
-        <div class="popup-header">
-          <div class="popup-type-indicator ${isNPC ? 'npc' : isShop ? 'shop' : isLocation ? 'location' : 'resource'}">
-            ${isNPC ? '👤' : isShop ? '🏪' : isLocation ? '📍' : '🔧'}
-          </div>
-          <div class="popup-info">
-            <a href="${wikiUrl}" target="_blank" rel="noopener noreferrer" class="popup-link">
-              ${content}
-            </a>
-            <div class="popup-coords">
-              <span class="coord-group">
-                <span class="coord-label">X:</span> 
-                <span class="coord-value">${displayX}</span>
-              </span>
-              <span class="coord-group">
-                <span class="coord-label">Y:</span> 
-                <span class="coord-value">${displayY}</span>
-              </span>
-            </div>
-          </div>
-        </div>
-        <div class="popup-actions">
-          <button class="popup-action-btn center-btn" onclick="this.dispatchEvent(new CustomEvent('center-map', {bubbles: true}))">
-            📍 Center
-          </button>
-          <button class="popup-action-btn share-btn" onclick="this.dispatchEvent(new CustomEvent('share-location', {bubbles: true}))">
-            📤 Share
-          </button>
-          <button class="popup-close" type="button">&times;</button>
-        </div>
-      </div>
-    `
-    
-    // Add event listeners for new actions
-    const centerBtn = popupElement.querySelector('.center-btn') as HTMLElement
-    const shareBtn = popupElement.querySelector('.share-btn') as HTMLElement
-    
-    if (centerBtn) {
-      centerBtn.addEventListener('center-map', () => {
-        map?.getView().animate({
-          center: position,
-          zoom: Math.max(map.getView().getZoom() || 4, 6),
-          duration: 500
-        })
-      })
-    }
-    
-    if (shareBtn) {
-      shareBtn.addEventListener('share-location', () => {
-        const shareUrl = `${window.location.origin}${window.location.pathname}?pos_x=${displayX}&pos_y=${displayY}&lvl=${selectedLayer.value}`
-        navigator.clipboard?.writeText(shareUrl).then(() => {
-          shareBtn.innerHTML = '✓ Copied!'
-          setTimeout(() => {
-            shareBtn.innerHTML = '📤 Share'
-          }, 2000)
-        })
-      })
-    }
-    
-    popupOverlay.setPosition(position)
-    popupElement.style.display = 'block'
-    popupElement.style.opacity = '0'
-    popupElement.style.transform = 'translate(-50%, -100%) translateY(20px) scale(0.8)'
-    
-    // Enhanced popup appearance animation
-    requestAnimationFrame(() => {
-      popupElement.style.transition = 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)'
-      popupElement.style.opacity = '1'
-      popupElement.style.transform = 'translate(-50%, -100%) translateY(0) scale(1)'
-    })
-    
-    const closeBtn = popupElement.querySelector('.popup-close') as HTMLElement | null
-    if (closeBtn) {
-      closeBtn.onclick = (e) => {
-        e.stopPropagation()
-        hidePopup()
+    {
+      condition: (npc: any) => Boolean(npc.isAlwaysAggroOverride),
+      icon: '😈', 
+      category: 'Aggro NPCs',
+      nameFormatter: (npcDef: any) => {
+        const name = typeof npcDef.name === 'string' ? 
+          npcDef.name.replace(/(?:^|\s)\S/g, (a: string) => a.toUpperCase()) : ''
+        const level = npcDef.combat?.level ? ` (Lvl. ${npcDef.combat.level})` : ''
+        return name + level
       }
+    },
+    {
+      condition: (npc: any, npcDef: any) => Boolean(npcDef?.combat),
+      icon: '⚔️',
+      category: 'Attackable NPCs', 
+      nameFormatter: (npcDef: any) => {
+        const name = typeof npcDef.name === 'string' ? 
+          npcDef.name.replace(/(?:^|\s)\S/g, (a: string) => a.toUpperCase()) : ''
+        const level = npcDef.combat?.level ? ` (Lvl. ${npcDef.combat.level})` : ''
+        return name + level
+      }
+    },
+    {
+      condition: () => true, // Default case - regular NPC
+      icon: '👤',
+      category: 'NPCs',
+      nameFormatter: (npcDef: any) => 
+        typeof npcDef.name === 'string' ? 
+        npcDef.name.replace(/(?:^|\s)\S/g, (a: string) => a.toUpperCase()) : ''
     }
-  }
-  function hidePopup() {
-    if (popupElement.style.display !== 'none') {
-      popupElement.style.transition = 'all 0.15s ease-in'
-      popupElement.style.opacity = '0'
-      popupElement.style.transform = 'translate(-50%, -100%) translateY(-10px) scale(0.9)'
-      
-      setTimeout(() => {
-        popupOverlay.setPosition(undefined)
-        popupElement.style.display = 'none'
-      }, 150)
-    }
-  }
-  map.on('click', function (evt: any) {
-    if (evt.originalEvent.target === map.getTargetElement()) {
-      hidePopup()
-    }
-  })
+  ]
 
+  // Helper function to add NPC to appropriate layer based on map level
+  function addNPCToLayer(feature: Feature, mapLevel: number, category: string) {
+    const layerMap = {
+      0: 'Underworld',
+      1: 'Overworld',
+      2: 'Sky'
+    }
+    const layerName = layerMap[mapLevel as keyof typeof layerMap]
+    if (layerName) {
+      addItem(feature, layerName, category)
+    }
+  }
+
+  // Process NPCs with streamlined approach
   npcs.npcs.forEach((npc: any) => {
     const npcDef = npcDefinitions.npcDefs.find((def: any) => npc.npcdef_id === def._id) as any
     if (!npcDef) return
 
-    // Find the item in the npcDefinitions.npcDefs JSON array where npc._id == npcDef._id
-    // const npcDef = npcDefinitions.npcDefs.find((npcDef) => npc.npcdef_id === npcDef._id)
-
-    // Check if NPC has a value for "shopdef_id"
-    if (npc.shopdef_id) {
-      // Capitalize characters after spaces
-      const name = typeof npcDef.name === 'string' ? npcDef.name.replace(/(?:^|\s)\S/g, (a: string) => a.toUpperCase()) : ''
-      const feature = createMarkerFeature([npc.x + 512.5, npc.y + 512.5], '🏪', name, 'Shops')
-      
-
-      // Bind Type to Marker Tooltip
-      // Example type: polartree
-      // Example Popup: "Polar Tree"
-      switch (npc.mapLevel) {
-        case 1:
-          addItem(feature, 'Overworld', 'Shops')
-          break
-        case 0:
-          addItem(feature, 'Underworld', 'Shops')
-          break
-        case 2:
-          addItem(feature, 'Sky', 'Shops')
-          break
+    // Find the first matching configuration (order matters - more specific conditions first)
+    const config = npcTypeConfig.find(cfg => cfg.condition(npc, npcDef))
+    
+    if (config) {
+      const name = config.nameFormatter(npcDef)
+      if (name) { // Only create marker if name is valid
+        const feature = createMarkerFeature(
+          [npc.x + 512.5, npc.y + 512.5], 
+          config.icon, 
+          name, 
+          config.category
+        )
+        addNPCToLayer(feature, npc.mapLevel, config.category)
       }
-      return
-    }
-
-    if (npc.isAlwaysAggroOverride) {
-      // Capitalize characters after spaces
-      const name =
-        (typeof npcDef.name === 'string' ? npcDef.name.replace(/(?:^|\s)\S/g, (a: string) => a.toUpperCase()) : '') +
-        (npcDef.combat && npcDef.combat.level ? ' (Lvl. ' + npcDef.combat.level + ')' : '')
-      const feature = createMarkerFeature([npc.x + 512.5, npc.y + 512.5], '😈', name, 'Aggro NPCs')
-      
-
-      // Bind Type to Marker Tooltip
-      // Example type: polartree
-      // Example Popup: "Polar Tree"
-      switch (npc.mapLevel) {
-        case 1:
-          addItem(feature, 'Overworld', 'Aggro NPCs')
-          break
-        case 0:
-          addItem(feature, 'Underworld', 'Aggro NPCs')
-          break
-        case 2:
-          addItem(feature, 'Sky', 'Aggro NPCs')
-          break
-      }
-      return
-    }
-
-    // Check if npcDef has a definition for "combat"
-    if (!npcDef) {
-      // Add Regular NPC
-      // Capitalize characters after spaces
-      const name = typeof npcDef.name === 'string' ? npcDef.name.replace(/(?:^|\s)\S/g, (a: string) => a.toUpperCase()) : ''
-      const feature = createMarkerFeature([npc.x + 512.5, npc.y + 512.5], '👤', name, 'NPCs')
-      
-
-      // Bind Type to Marker Tooltip
-      // Example type: polartree
-      // Example Popup: "Polar Tree"
-      switch (npc.mapLevel) {
-        case 1:
-          addItem(feature, 'Overworld', 'NPCs')
-          break
-        case 0:
-          addItem(feature, 'Underworld', 'NPCs')
-          break
-        case 2:
-          addItem(feature, 'Sky', 'NPCs')
-          break
-      }
-      return
-    }
-    // Check if npcDef has a value for "combat"
-    if (!npcDef.combat) {
-      // Add Regular NPC
-      // Capitalize characters after spaces
-      const name = typeof npcDef.name === 'string' ? npcDef.name.replace(/(?:^|\s)\S/g, (a: string) => a.toUpperCase()) : ''
-      const feature = createMarkerFeature([npc.x + 512.5, npc.y + 512.5], '👤', name, 'NPCs')
-      
-
-      // Bind Type to Marker Tooltip
-      // Example type: polartree
-      // Example Popup: "Polar Tree"
-      switch (npc.mapLevel) {
-        case 1:
-          addItem(feature, 'Overworld', 'NPCs')
-          break
-        case 0:
-          addItem(feature, 'Underworld', 'NPCs')
-          break
-        case 2:
-          addItem(feature, 'Sky', 'NPCs')
-          break
-      }
-      return
-    }
-    if (npcDef.combat) {
-      // Add Attackable NPC
-      // Capitalize characters after spaces
-      const name =
-        (typeof npcDef.name === 'string' ? npcDef.name.replace(/(?:^|\s)\S/g, (a: string) => a.toUpperCase()) : '') +
-        (npcDef.combat.level ? ' (Lvl. ' + npcDef.combat.level + ')' : '')
-      const feature = createMarkerFeature([npc.x + 512.5, npc.y + 512.5], '⚔️', name, 'Attackable NPCs')
-      
-
-      // Bind Type to Marker Tooltip
-      // Example type: polartree
-      // Example Popup: "Polar Tree"
-      switch (npc.mapLevel) {
-        case 1:
-          addItem(feature, 'Overworld', 'Attackable NPCs')
-          break
-        case 0:
-          addItem(feature, 'Underworld', 'Attackable NPCs')
-          break
-        case 2:
-          addItem(feature, 'Sky', 'Attackable NPCs')
-          break
-      }
-      return
     }
   })
 
   // Animate marker movement (for player position)
-  function animateMarker(marker: Overlay, toLonLat: [number, number], duration = 1000) {
+  function animateMarker(marker: Overlay, toCoords: [number, number], duration = 1000) {
     const from = marker.getPosition()
-    const to = fromLonLat(toLonLat)
+    // Convert coordinates to map coordinates (same as other markers)
+    const to = [toCoords[0], toCoords[1]]
     const startTime = performance.now()
     function animate(time: number) {
       const elapsed = time - startTime
@@ -1476,6 +909,48 @@ onMounted(() => {
     requestAnimationFrame(animate)
   }
 
+  // Create player position marker (reusable function)
+  function createPlayerMarker(x: number, y: number): Overlay {
+    // Convert coordinates to map coordinates
+    const mapX = x
+    const mapY = y
+    
+    // Create player position marker element with spinning animation
+    const markerElement = document.createElement('div')
+    markerElement.className = 'text-label'
+    markerElement.innerHTML = `<div class="marker playerPosition">
+      <span style="
+        display: inline-block;
+        font-size:1.5rem;
+        color:red;
+        text-shadow: 0px 0px 8px black;
+        animation: spin 10s linear infinite;
+        transform-origin: center;
+      ">❌</span>
+    </div>`
+    markerElement.title = 'You are here'
+    
+    // Add CSS keyframes for spinning animation if not already present
+    if (!document.querySelector('#player-marker-styles')) {
+      const style = document.createElement('style')
+      style.id = 'player-marker-styles'
+      style.textContent = `
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+      `
+      document.head.appendChild(style)
+    }
+    
+    // Create and return overlay
+    return new Overlay({
+      position: [mapX, mapY],
+      element: markerElement,
+      positioning: 'center-center'
+    })
+  }
+
   // Handle URL params for initial view/marker
   const urlParams = new URLSearchParams(window.location.search)
   const level = urlParams.get('lvl')
@@ -1483,25 +958,26 @@ onMounted(() => {
   const posY = urlParams.get('pos_y')
   const hideDecor = urlParams.get('hide_decor')
   let playPositionMarker: Overlay | null = null
+  
   if (posX && posY) {
-    map.getView().setCenter(fromLonLat([+posX, +posY]))
-    playPositionMarker = new Overlay({
-      position: fromLonLat([+posX, +posY]),
-      element: document.createElement('div'),
-      
+    // Create player marker using the reusable function
+    playPositionMarker = createPlayerMarker(+posX, +posY)
+    
+    // Set map center to the player position with higher zoom and smooth animation
+    map.getView().animate({
+      center: [+posX, +posY],
+      zoom: 20, // Increased zoom level for better visibility
+      duration: 1500 // Smooth zoom animation
     })
-  }
-
-  // Fix playPositionMarker.getElement() possibly undefined
-  if (playPositionMarker && playPositionMarker.getElement()) {
-    playPositionMarker.getElement()!.className = 'text-label'
-    playPositionMarker.getElement()!.innerHTML = `<div class="marker playerPosition" style="font-size:1.5rem;color:white;text-shadow: 0px 0px 8px black;">❌</div>`
-    playPositionMarker.getElement()!.title = 'You are here'
+    
+    // Add overlay to map
     map.addOverlay(playPositionMarker)
+    
+    // Set layer if specified in URL
+    if (level && ['Overworld', 'Underworld', 'Sky'].includes(level)) {
+      selectedLayer.value = level
+    }
   }
-
-  // --- Move setBaseLayer and onLayerChange inside onMounted ---
-  // Removed duplicate: function setBaseLayer(newLayer: Group) { ... }
 
   // Watch for layer changes
   watch(selectedLayer, (newVal) => {
@@ -1529,21 +1005,41 @@ onMounted(() => {
     setBaseLayer(overworldLayers)
   }
 
+  // Handle real-time player movement messages
   window.addEventListener('message', (event: any) => {
     if (event.data.X && event.data.Y && event.data.lvl) {
-      switch (event.data.lvl) {
-        case 'Overworld':
-          setBaseLayer(overworldLayers)
-          break
-        case 'Underworld':
-          setBaseLayer(underworldLayers)
-          break
-        case 'Sky':
-          setBaseLayer(skyLayers)
-          break
+      // Switch to the appropriate layer
+      const layerName = event.data.lvl
+      if (['Overworld', 'Underworld', 'Sky'].includes(layerName)) {
+        selectedLayer.value = layerName
+        switch (layerName) {
+          case 'Overworld':
+            setBaseLayer(overworldLayers)
+            break
+          case 'Underworld':
+            setBaseLayer(underworldLayers)
+            break
+          case 'Sky':
+            setBaseLayer(skyLayers)
+            break
+        }
       }
+      
+      // Handle player marker
       if (playPositionMarker) {
+        // Animate existing marker to new position
         animateMarker(playPositionMarker, [event.data.X, event.data.Y])
+      } else {
+        // Create new player marker if it doesn't exist and zoom in
+        playPositionMarker = createPlayerMarker(event.data.X, event.data.Y)
+        map.addOverlay(playPositionMarker)
+        
+        // Zoom into the player's position when marker is first created
+        map.getView().animate({
+          center: [event.data.X + 512.5, event.data.Y + 512.5],
+          zoom: 8, // Zoom in for better visibility
+          duration: 1500 // Smooth zoom animation
+        })
       }
     }
   })
@@ -1555,8 +1051,12 @@ onMounted(() => {
     if (footer) footer.style.display = 'none'
     if (header) header.style.display = 'none'
     if (joinUs) joinUs.style.display = 'none'
-    const main = document.querySelector('main') as HTMLElement | null
-    if (main) main.style.height = '100vh'
+    // Set map height to full viewport
+    const mapElement = document.getElementById('map')
+    if (mapElement) {
+      mapElement.style.height = '100vh'
+      mapElement.style.width = '100vw'
+    }
   }
 
   // Initialize marker counts
@@ -1577,177 +1077,52 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <main>
-    <!-- Loading overlay -->
-    <div v-if="isLoading" class="loading-overlay">
-      <div class="loading-spinner">
-        <div class="spinner"></div>
-        <p>Loading map...</p>
-      </div>
-    </div>
+  <!-- Loading overlay -->
+  <LoadingSpinner :visible="isLoading" message="Loading map..." />
 
-    <!-- Map container (clean, no child elements) -->
-    <div id="map"></div>
-
-    <!-- UI Controls positioned outside the map -->
+  <!-- Map container with UI elements inside -->
+  <div id="map">
+    <!-- UI Controls positioned inside the map -->
     <!-- Enhanced Layer Controls -->
     <div class="map-controls-container">
-      <!-- Unified Control Panel -->
-      <div class="control-panel unified-controls">
-        <!-- Search Section (Always Visible) -->
-        <div class="control-section search-section">
-          <div class="search-input-container">
-            <input 
-              v-model="searchQuery"
-              type="text" 
-              placeholder="Search locations, NPCs..."
-              class="search-input"
-              @input="handleSearch"
-            />
-            <button v-if="searchQuery" @click="clearSearch" class="clear-search">×</button>
-          </div>
-          <div v-if="searchResults.length > 0" class="search-results">
-            <div 
-              v-for="result in searchResults.slice(0, 6)" 
-              :key="result.id"
-              @click="goToLocation(result)"
-              class="search-result-item"
-            >
-              <span class="result-icon">{{ result.icon }}</span>
-              <span class="result-name">{{ result.name }}</span>
-              <span class="result-layer">{{ result.layer }}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Layer Selection Section (Always Visible) -->
-        <div class="control-section">
-          <div class="section-header">
-            <h3 class="section-title">Map Layers</h3>
-          </div>
-          <div class="layer-buttons">
-            <button 
-              v-for="layer in layers" 
-              :key="layer.id"
-              @click="selectedLayer = layer.id"
-              :class="['layer-btn', { active: selectedLayer === layer.id }]"
-            >
-              {{ layer.name }}
-            </button>
-          </div>
-          
-          <!-- Expand/Collapse Button -->
-          <div class="panel-toggle-container">
-            <button @click="togglePanelExpansion" class="panel-toggle-btn">
-              <span class="toggle-icon">{{ isPanelExpanded ? '−' : '+' }}</span>
-              <span class="toggle-text">{{ isPanelExpanded ? 'Hide Filters' : 'Show Filters' }}</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Advanced Options (Collapsible) -->
-        <div v-if="isPanelExpanded" class="advanced-options">
-          <!-- Filters Section -->
-          <div class="control-section">
-            <div class="section-header">
-              <h3 class="section-title">Filters</h3>
-              <button @click="toggleAllMarkers" class="toggle-all-btn">
-                {{ allMarkersVisible ? 'Hide All' : 'Show All' }}
-              </button>
-            </div>
-            <div class="filter-tags">
-              <button 
-                v-for="category in markerCategories" 
-                :key="category.name"
-                @click="toggleMarkerCategory(category.name); category.visible = !category.visible"
-                :class="['filter-tag', { active: category.visible }]"
-                :data-category="category.name"
-              >
-                <span class="filter-icon">{{ category.icon }}</span>
-                <span class="filter-name">{{ category.name }}</span>
-                <span class="marker-count">{{ category.count }}</span>
-              </button>
-            </div>
-          </div>
-
-        </div>
-      </div>
+      <!-- Search and Filter Component -->
+      <MapControls 
+        :selected-layer="selectedLayer"
+        :layers="layers"
+        :marker-categories="markerCategories"
+        @layer-changed="handleLayerChanged"
+        @search-location-selected="handleSearchLocationSelected"
+        @marker-category-toggled="handleMarkerCategoryToggled"
+        @all-markers-toggled="handleAllMarkersToggled"
+      />
     </div>
 
-    <!-- Enhanced Coordinates Display with more info -->
-    <div class="coordinates-display enhanced-coords">
-      <div class="coord-header">
-        <span class="coord-icon">📍</span>
-        <span class="coord-title">Position</span>
-      </div>
-      <div class="coord-values">
-        <div class="coord-group">
-          <span class="coord-label">X:</span>
-          <span class="coord-value">{{ mouseCoords.x }}</span>
-        </div>
-        <div class="coord-group">
-          <span class="coord-label">Y:</span>
-          <span class="coord-value">{{ mouseCoords.y }}</span>
-        </div>
-      </div>
-      <div class="layer-indicator">
-        <span class="layer-icon">{{ getCurrentLayerInfo().icon }}</span>
-        <span class="layer-name">{{ getCurrentLayerInfo().name }}</span>
-      </div>
-    </div>
-  </main>
+    <!-- Position Indicator Component -->
+    <MapPositionIndicator 
+      :coordinates="mouseCoords"
+      :current-layer="getCurrentLayerInfo()"
+    />
+
+    <!-- Popup Component -->
+    <MapPopup
+      :map="map"
+      :content="popupContent"
+      :position="popupPosition"
+      :visible="popupVisible"
+      :selected-layer="selectedLayer"
+      @close="hidePopup"
+    />
+  </div>
 </template>
 
 <style scoped>
 /* Using consistent website theme colors */
 
-/* Main layout */
-main {
-  text-align: center;
-  height: calc(100vh - 75px);
-  position: relative;
-}
-
 #map {
-  height: 100%;
+  height: calc(100vh - 75px);
   width: 100%;
   position: relative;
   z-index: 1;
-}
-
-/* Loading overlay */
-.loading-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(26, 26, 26, 0.9);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  backdrop-filter: blur(4px);
-}
-
-.loading-spinner {
-  text-align: center;
-  color: var(--theme-text-primary);
-}
-
-.spinner {
-  width: 50px;
-  height: 50px;
-  border: 4px solid var(--theme-accent-transparent-30);
-  border-top: 4px solid var(--theme-accent);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 16px;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
 }
 
 /* Enhanced controls container - Compressed */
@@ -1760,502 +1135,6 @@ main {
   z-index: 1001;
 }
 
-/* Unified control panel */
-.unified-controls {
-  background: rgba(26, 26, 26, 0.96);
-  backdrop-filter: blur(12px);
-  border-radius: 12px; /* Reduced from 16px */
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); /* Reduced shadow */
-  border: 1px solid var(--theme-border);
-  overflow: hidden;
-  transition: all 0.3s ease;
-  max-height: calc(100vh - 120px);
-  overflow-y: auto;
-}
-
-/* Control sections */
-.control-section {
-  border-bottom: 1px solid var(--theme-border-light);
-  padding: 0;
-}
-
-.control-section:last-child {
-  border-bottom: none;
-}
-
-.section-header {
-  padding: 8px 16px 4px 16px; /* Reduced padding */
-  display: flex;
-  align-items: center;
-  gap: 8px; /* Reduced gap */
-  color: var(--theme-accent);
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.section-icon {
-  font-size: 16px; /* Reduced from 18px */
-}
-
-.section-title {
-  font-size: 14px; /* Reduced from 15px */
-  font-weight: 700;
-  margin: 0;
-  flex: 1;
-  color: var(--theme-accent);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.section-content {
-  padding: 16px;
-}
-
-/* Layer controls - Compressed */
-.layer-buttons {
-  display: flex;
-  flex-direction: row;
-  gap: 6px; /* Reduced from 8px */
-  padding: 8px 16px 12px 16px; /* Reduced padding */
-}
-
-.layer-btn {
-  padding: 8px 12px; /* Reduced padding */
-  border: 2px solid var(--theme-border);
-  border-radius: 8px; /* Reduced from 10px */
-  background: var(--theme-background-mute);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 13px; /* Reduced from 14px */
-  font-weight: 600;
-  color: var(--theme-text-primary);
-  text-align: center;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Reduced shadow */
-  flex: 1;
-  white-space: nowrap;
-}
-
-.layer-btn:hover {
-  border-color: var(--theme-accent);
-  background: var(--theme-accent-transparent-10);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.layer-btn.active {
-  border-color: var(--theme-accent);
-  background: var(--theme-accent);
-  color: var(--theme-text-dark);
-  font-weight: 700;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-}
-
-/* Search panel - Compressed */
-.search-section {
-  border-bottom: 1px solid var(--theme-border);
-}
-
-.search-input-container {
-  position: relative;
-  margin-bottom: 6px; /* Reduced from 8px */
-  padding: 8px 16px 0 16px; /* Reduced padding */
-}
-
-.search-input {
-  width: 100%;
-  padding: 10px 14px; /* Reduced padding */
-  border: 2px solid var(--theme-border);
-  border-radius: 8px; /* Reduced from 12px */
-  font-size: 13px; /* Reduced from 14px */
-  transition: all 0.3s ease;
-  background: var(--theme-background-mute);
-  color: var(--theme-text-primary);
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); /* Reduced shadow */
-}
-
-.search-input:focus {
-  outline: none;
-  border-color: var(--theme-accent);
-  box-shadow: 0 0 0 3px var(--theme-accent-transparent-10), inset 0 2px 4px rgba(0, 0, 0, 0.1);
-  background: var(--theme-background-soft);
-}
-
-.search-input::placeholder {
-  color: var(--theme-text-muted);
-}
-
-.clear-search {
-  position: absolute;
-  right: 28px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  font-size: 20px;
-  color: var(--theme-text-muted);
-  cursor: pointer;
-  padding: 0;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: color 0.2s ease;
-  margin-top: 8px;
-}
-
-.clear-search:hover {
-  color: var(--theme-accent);
-}
-
-.search-results {
-  max-height: 180px; /* Reduced from 200px */
-  overflow-y: auto;
-  padding: 0 16px 12px; /* Reduced padding */
-}
-
-/* Panel Toggle Button - Compressed */
-.panel-toggle-container {
-  padding: 6px 16px 12px; /* Reduced padding */
-  border-top: 1px solid var(--theme-border-light);
-  margin-top: 6px; /* Reduced from 8px */
-}
-
-.panel-toggle-btn {
-  width: 100%;
-  padding: 8px 12px; /* Reduced padding */
-  border: 2px solid var(--theme-border);
-  border-radius: 8px; /* Reduced from 10px */
-  background: var(--theme-background-mute);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 12px; /* Reduced from 13px */
-  font-weight: 600;
-  color: var(--theme-text-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px; /* Reduced from 8px */
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Reduced shadow */
-}
-
-.panel-toggle-btn:hover {
-  border-color: var(--theme-accent);
-  background: var(--theme-accent-transparent-10);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.toggle-icon {
-  font-size: 14px; /* Reduced from 16px */
-  font-weight: bold;
-  color: var(--theme-accent);
-}
-
-.toggle-text {
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-/* Advanced Options Container */
-.advanced-options {
-  animation: slideDown 0.3s ease-out;
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.search-result-item {
-  display: flex;
-  align-items: center;
-  gap: 8px; /* Reduced from 12px */
-  padding: 8px 12px; /* Reduced padding */
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border-bottom: 1px solid var(--theme-border-light);
-  color: var(--theme-text-primary);
-  border-radius: 6px; /* Reduced from 8px */
-  margin-bottom: 4px; /* Reduced from 6px */
-  background: var(--theme-background-mute);
-}
-
-.search-result-item:hover {
-  background: var(--theme-accent-transparent-10);
-  transform: translateX(4px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.search-result-item:last-child {
-  border-bottom: none;
-  margin-bottom: 0;
-}
-
-.result-icon {
-  font-size: 16px;
-  width: 20px;
-  text-align: center;
-}
-
-.result-name {
-  flex: 1;
-  font-weight: 500;
-  color: var(--theme-text-primary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.result-layer {
-  font-size: 11px;
-  color: var(--theme-text-dark);
-  background: var(--theme-accent-transparent-60);
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-weight: 500;
-}
-
-/* Markers section */
-.toggle-all-btn {
-  padding: 8px 16px;
-  font-size: 12px;
-  background: var(--theme-accent);
-  border: none;
-  border-radius: 8px;
-  color: var(--theme-text-dark);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-weight: 700;
-  margin-left: auto;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
-.toggle-all-btn:hover {
-  background: var(--theme-accent-light);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-/* Filter controls with enhanced category indicators - Compressed */
-.filter-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px; /* Reduced from 8px */
-  padding: 8px 16px 12px 16px; /* Reduced padding */
-}
-
-.filter-tag {
-  padding: 6px 10px; /* Reduced padding */
-  border: 2px solid var(--theme-border);
-  border-radius: 20px; /* Reduced from 24px */
-  background: var(--theme-background-mute);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 11px; /* Reduced from 12px */
-  font-weight: 500;
-  color: var(--theme-text-muted);
-  white-space: nowrap;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Reduced shadow */
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 4px; /* Reduced from 6px */
-}
-
-.filter-tag:hover {
-  border-color: var(--theme-accent-transparent-40);
-  background: var(--theme-accent-transparent-10);
-  color: var(--theme-text-primary);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.filter-tag.active {
-  border-color: var(--theme-accent-transparent-40);
-  background: var(--theme-accent-transparent-10);
-  color: var(--theme-text-primary);
-  font-weight: 600;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
-}
-
-/* Category-specific colors for better contrast */
-.filter-tag[data-category="Banks"] {
-  --category-color: #ffd700;
-  --category-bg: rgba(255, 215, 0, 0.1);
-  --category-border: rgba(255, 215, 0, 0.3);
-}
-
-.filter-tag[data-category="Shops"] {
-  --category-color: #00ff7f;
-  --category-bg: rgba(0, 255, 127, 0.1);
-  --category-border: rgba(0, 255, 127, 0.3);
-}
-
-.filter-tag[data-category="NPCs"] {
-  --category-color: #87ceeb;
-  --category-bg: rgba(135, 206, 235, 0.1);
-  --category-border: rgba(135, 206, 235, 0.3);
-}
-
-.filter-tag[data-category="Attackable NPCs"] {
-  --category-color: #ff6347;
-  --category-bg: rgba(255, 99, 71, 0.1);
-  --category-border: rgba(255, 99, 71, 0.3);
-}
-
-.filter-tag[data-category="Aggro NPCs"] {
-  --category-color: #ff1493;
-  --category-bg: rgba(255, 20, 147, 0.1);
-  --category-border: rgba(255, 20, 147, 0.3);
-}
-
-.filter-tag[data-category="Trees"] {
-  --category-color: #90ee90;
-  --category-bg: rgba(144, 238, 144, 0.1);
-  --category-border: rgba(144, 238, 144, 0.3);
-}
-
-.filter-tag[data-category="Obelisks"] {
-  --category-color: #dda0dd;
-  --category-bg: rgba(221, 160, 221, 0.1);
-  --category-border: rgba(221, 160, 221, 0.3);
-}
-
-.filter-tag[data-category="Ores"] {
-  --category-color: #d2691e;
-  --category-bg: rgba(210, 105, 30, 0.1);
-  --category-border: rgba(210, 105, 30, 0.3);
-}
-
-.filter-tag[data-category="Fires"] {
-  --category-color: #ff4500;
-  --category-bg: rgba(255, 69, 0, 0.1);
-  --category-border: rgba(255, 69, 0, 0.3);
-}
-
-.filter-tag[data-category="Anvils"] {
-  --category-color: #c0c0c0;
-  --category-bg: rgba(192, 192, 192, 0.1);
-  --category-border: rgba(192, 192, 192, 0.3);
-}
-
-.filter-tag[data-category="Furnaces"] {
-  --category-color: #ff8c00;
-  --category-bg: rgba(255, 140, 0, 0.1);
-  --category-border: rgba(255, 140, 0, 0.3);
-}
-
-.filter-tag[data-category="Kilns"] {
-  --category-color: #cd853f;
-  --category-bg: rgba(205, 133, 63, 0.1);
-  --category-border: rgba(205, 133, 63, 0.3);
-}
-
-.filter-tag[data-category="Stoves"] {
-  --category-color: #ffa500;
-  --category-bg: rgba(255, 165, 0, 0.1);
-  --category-border: rgba(255, 165, 0, 0.3);
-}
-
-.filter-tag[data-category="Fishing Spots"] {
-  --category-color: #00bfff;
-  --category-bg: rgba(0, 191, 255, 0.1);
-  --category-border: rgba(0, 191, 255, 0.3);
-}
-
-.filter-tag[data-category="Harvestables"] {
-  --category-color: #adff2f;
-  --category-bg: rgba(173, 255, 47, 0.1);
-  --category-border: rgba(173, 255, 47, 0.3);
-}
-
-.filter-tag[data-category="Locations"] {
-  --category-color: #ffffff;
-  --category-bg: rgba(255, 255, 255, 0.1);
-  --category-border: rgba(255, 255, 255, 0.3);
-}
-
-.filter-tag.active[data-category] {
-  background: var(--category-bg);
-  border-color: var(--category-border);
-  color: var(--category-color);
-}
-
-.filter-tag:hover[data-category] {
-  background: var(--category-bg);
-  border-color: var(--category-border);
-  color: var(--category-color);
-}
-
-/* Marker count indicator */
-.marker-count {
-  background: var(--category-color, var(--theme-accent));
-  color: var(--theme-text-dark);
-  font-size: 10px;
-  font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 8px;
-  min-width: 18px;
-  text-align: center;
-  line-height: 1.2;
-}
-
-.filter-tag:not(.active) .marker-count {
-  background: var(--theme-text-muted);
-  color: var(--theme-background-soft);
-}
-
-/* Filter tag components */
-.filter-icon {
-  font-size: 14px;
-  flex-shrink: 0;
-}
-
-.filter-name {
-  flex: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-weight: 500;
-}
-
-.filter-tag.active .filter-name {
-  font-weight: 600;
-}
-
-/* Custom scrollbars for the unified panel */
-.unified-controls::-webkit-scrollbar,
-.search-results::-webkit-scrollbar {
-  width: 6px;
-}
-
-.unified-controls::-webkit-scrollbar-track,
-.search-results::-webkit-scrollbar-track {
-  background: var(--theme-accent-transparent-10);
-  border-radius: 3px;
-}
-
-.unified-controls::-webkit-scrollbar-thumb,
-.search-results::-webkit-scrollbar-thumb {
-  background: var(--theme-accent-transparent-40);
-  border-radius: 3px;
-}
-
-.unified-controls::-webkit-scrollbar-thumb:hover,
-.search-results::-webkit-scrollbar-thumb:hover {
-  background: var(--theme-accent-transparent-60);
-}
-
 /* Responsive design */
 @media (max-width: 768px) {
   .map-controls-container {
@@ -2263,107 +1142,6 @@ main {
     right: 8px;
     top: 8px;
   }
-  
-  
-  .coordinates-display {
-    left: 8px;
-    bottom: 8px;
-    font-size: 11px;
-  }
-}
-/* Enhanced coordinates display */
-.enhanced-coords {
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-  background: rgba(26, 26, 26, 0.95);
-  color: var(--theme-text-primary);
-  padding: 16px;
-  border-radius: 12px;
-  font-family: 'Inter', sans-serif;
-  z-index: 1001;
-  backdrop-filter: blur(8px);
-  border: 2px solid var(--theme-border);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-  min-width: 180px;
-  transition: all 0.3s ease;
-}
-
-.enhanced-coords:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
-}
-
-.coord-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 12px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--theme-border-light);
-}
-
-.coord-icon {
-  font-size: 16px;
-}
-
-.coord-title {
-  font-weight: 700;
-  font-size: 14px;
-  color: var(--theme-accent);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.coord-values {
-  display: flex;
-  gap: 20px;
-  margin-bottom: 12px;
-}
-
-.coord-group {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-}
-
-.coord-label {
-  font-size: 11px;
-  color: var(--theme-text-muted);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.coord-value {
-  font-weight: 800;
-  font-size: 18px;
-  color: var(--theme-accent-light);
-  font-family: 'Courier New', monospace;
-  background: var(--theme-accent-transparent-10);
-  padding: 4px 8px;
-  border-radius: 6px;
-  min-width: 50px;
-  text-align: center;
-}
-
-.layer-indicator {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding-top: 8px;
-  border-top: 1px solid var(--theme-border-light);
-}
-
-.layer-icon {
-  font-size: 14px;
-}
-
-.layer-name {
-  font-size: 12px;
-  color: var(--theme-text-muted);
-  font-weight: 600;
 }
 
 /* Map markers with enhanced hover effects and text shadows */
@@ -2377,7 +1155,7 @@ main {
 
 :global(.map-marker *) {
   pointer-events: auto !important;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5) !important;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 :global(.text-label) {
@@ -2387,13 +1165,13 @@ main {
 
 :global(.text-label > *) {
   pointer-events: auto !important;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6) !important;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
 }
 
 :global(.marker) {
   pointer-events: auto !important;
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5) !important;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 :global(.map-marker:hover) {
@@ -2403,13 +1181,13 @@ main {
 }
 
 :global(.map-marker:hover *) {
-  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7) !important;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
 }
 
 :global(.marker:hover) {
   filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
   transform: scale(1.1);
-  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7) !important;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
 }
 
 :global(.text-label:hover) {
@@ -2418,7 +1196,7 @@ main {
 }
 
 :global(.text-label:hover > *) {
-  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8) !important;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
 }
 
 :global(.marker) {
@@ -2426,10 +1204,10 @@ main {
   left: 50% !important;
   top: 50% !important;
   transform: translate(-50%, -50%) !important;
-  font-size: 1em !important;
-  line-height: 1 !important;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5) !important;
-  user-select: none !important;
+  font-size: 1em;
+  line-height: 1;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  user-select: none;
 }
 
 :global(.text-label) {
@@ -2438,10 +1216,10 @@ main {
   top: 50% !important;
   transform: translate(-50%, -50%) !important;
   pointer-events: auto !important;
-  user-select: none !important;
+  user-select: none;
 }
 
-/* Enhanced popup styles with rich content */
+/* Map markers with enhanced hover effects and text shadows */
 :global(.ol-popup) {
   position: absolute;
   background: var(--theme-background-soft);
@@ -2722,29 +1500,6 @@ main {
   
   .result-name {
     color: var(--white);
-  }
-  
-  /* Dark theme popup styles */
-  :global(.ol-popup) {
-    background: var(--dark-grey) !important;
-    border-color: rgba(245, 158, 11, 0.3) !important;
-  }
-  
-  :global(.ol-popup::after) {
-    border-top-color: var(--dark-grey) !important;
-  }
-  
-  :global(.ol-popup::before) {
-    border-top-color: rgba(245, 158, 11, 0.3) !important;
-  }
-  
-  :global(.popup-content) {
-    background: var(--dark-grey) !important;
-    color: var(--white) !important;
-  }
-  
-  :global(.popup-link) {
-    color: var(--map-primary-light) !important;
   }
 
 /* Animation classes */

@@ -1,0 +1,510 @@
+<template>
+  <div ref="popupElement" class="ol-popup" style="display: none;">
+    <div class="popup-content enhanced-popup">
+      <div class="popup-header">
+        <div :class="['popup-type-indicator', popupTypeClass]">
+          {{ popupIcon }}
+        </div>
+        <div class="popup-info">
+          <a 
+            :href="wikiUrl" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            class="popup-link"
+          >
+            {{ content }}
+          </a>
+          <div class="popup-coords">
+            <span class="coord-group">
+              <span class="coord-label">X:</span> 
+              <span class="coord-value">{{ displayCoords.x }}</span>
+            </span>
+            <span class="coord-group">
+              <span class="coord-label">Y:</span> 
+              <span class="coord-value">{{ displayCoords.y }}</span>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="popup-actions">
+        <button class="popup-action-btn center-btn" @click="centerMap">
+          📍 Center
+        </button>
+        <button class="popup-action-btn share-btn" @click="shareLocation">
+          {{ shareButtonText }}
+        </button>
+        <button class="popup-close" type="button" @click="closePopup">&times;</button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+import type { Map } from 'ol'
+import Overlay from 'ol/Overlay'
+
+// Props
+interface Props {
+  map: Map | undefined
+  content: string
+  position: [number, number] | null
+  visible: boolean
+  selectedLayer: string
+}
+
+const props = defineProps<Props>()
+
+// Emits
+const emit = defineEmits<{
+  close: []
+}>()
+
+// Refs
+const popupElement = ref<HTMLDivElement>()
+const shareButtonText = ref('📤 Share')
+
+// State
+let popupOverlay: Overlay | null = null
+
+// Computed
+const displayCoords = computed(() => {
+  if (!props.position) return { x: 0, y: 0 }
+  return {
+    x: Math.round(props.position[0] - 512.5),
+    y: Math.round(props.position[1] - 512.5)
+  }
+})
+
+const wikiUrl = computed(() => {
+  const wikiName = props.content.replace(/\s+/g, '_').replace(/[()]/g, '').replace(/Lvl\._\d+/g, '').trim()
+  return `https://highspell.wiki/w/${wikiName}`
+})
+
+const isNPC = computed(() => props.content.includes('(Lvl.'))
+const isShop = computed(() => 
+  props.content.toLowerCase().includes('shop') || 
+  props.content.toLowerCase().includes('store')
+)
+const isLocation = computed(() => 
+  !props.content.includes('🌳') && 
+  !props.content.includes('🪨') && 
+  !isNPC.value && 
+  !isShop.value
+)
+
+const popupTypeClass = computed(() => {
+  if (isNPC.value) return 'npc'
+  if (isShop.value) return 'shop'
+  if (isLocation.value) return 'location'
+  return 'resource'
+})
+
+const popupIcon = computed(() => {
+  if (isNPC.value) return '👤'
+  if (isShop.value) return '🏪'
+  if (isLocation.value) return '📍'
+  return '🔧'
+})
+
+// Methods
+const centerMap = () => {
+  if (props.map && props.position) {
+    props.map.getView().animate({
+      center: props.position,
+      zoom: Math.max(props.map.getView().getZoom() || 4, 6),
+      duration: 500
+    })
+  }
+}
+
+const shareLocation = async () => {
+  if (!props.position) return
+  
+  const shareUrl = `${window.location.origin}${window.location.pathname}?pos_x=${displayCoords.value.x}&pos_y=${displayCoords.value.y}&lvl=${props.selectedLayer}`
+  
+  try {
+    await navigator.clipboard.writeText(shareUrl)
+    shareButtonText.value = '✓ Copied!'
+    setTimeout(() => {
+      shareButtonText.value = '📤 Share'
+    }, 2000)
+  } catch (err) {
+    console.error('Failed to copy to clipboard:', err)
+  }
+}
+
+const closePopup = () => {
+  emit('close')
+}
+
+const showPopup = () => {
+  if (!popupElement.value || !props.position) return
+  
+  popupOverlay?.setPosition(props.position)
+  popupElement.value.style.display = 'block'
+  popupElement.value.style.opacity = '0'
+  popupElement.value.style.transform = 'translate(-50%, -100%) translateY(20px) scale(0.8)'
+  
+  // Enhanced popup appearance animation
+  requestAnimationFrame(() => {
+    if (popupElement.value) {
+      popupElement.value.style.transition = 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)'
+      popupElement.value.style.opacity = '1'
+      popupElement.value.style.transform = 'translate(-50%, -100%) translateY(0) scale(1)'
+    }
+  })
+}
+
+const hidePopup = () => {
+  if (!popupElement.value) return
+  
+  if (popupElement.value.style.display !== 'none') {
+    popupElement.value.style.transition = 'all 0.15s ease-in'
+    popupElement.value.style.opacity = '0'
+    popupElement.value.style.transform = 'translate(-50%, -100%) translateY(-10px) scale(0.9)'
+    
+    setTimeout(() => {
+      popupOverlay?.setPosition(undefined)
+      if (popupElement.value) {
+        popupElement.value.style.display = 'none'
+      }
+    }, 150)
+  }
+}
+
+// Watch for visibility changes
+watch(() => props.visible, (newVisible) => {
+  if (newVisible) {
+    showPopup()
+  } else {
+    hidePopup()
+  }
+})
+
+// Watch for position changes when popup is already visible
+watch(() => props.position, (newPosition) => {
+  if (props.visible && newPosition && popupOverlay) {
+    popupOverlay.setPosition(newPosition)
+  }
+})
+
+// Setup overlay when map is available
+watch(() => props.map, (newMap) => {
+  if (newMap && popupElement.value && !popupOverlay) {
+    popupOverlay = new Overlay({
+      element: popupElement.value,
+      positioning: 'bottom-center',
+      stopEvent: true,
+      offset: [0, -25],
+      autoPan: {
+        animation: {
+          duration: 250,
+        },
+      },
+    })
+    newMap.addOverlay(popupOverlay)
+  }
+})
+
+onMounted(() => {
+  // Setup overlay if map is already available
+  if (props.map && popupElement.value && !popupOverlay) {
+    popupOverlay = new Overlay({
+      element: popupElement.value,
+      positioning: 'bottom-center',
+      stopEvent: true,
+      offset: [0, -25],
+      autoPan: {
+        animation: {
+          duration: 250,
+        },
+      },
+    })
+    props.map.addOverlay(popupOverlay)
+  }
+})
+
+onUnmounted(() => {
+  if (popupOverlay && props.map) {
+    props.map.removeOverlay(popupOverlay)
+  }
+})
+</script>
+
+<style>
+/* Enhanced popup styles with rich content */
+.ol-popup {
+  position: absolute;
+  background: var(--theme-background-soft);
+  border-radius: 16px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+  padding: 0;
+  min-width: 280px;
+  max-width: 400px;
+  font-size: 14px;
+  pointer-events: auto;
+  z-index: 2000;
+  border: 2px solid var(--theme-border);
+  backdrop-filter: blur(16px);
+  overflow: visible;
+  margin-bottom: 16px;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.ol-popup::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 16px solid transparent;
+  border-right: 16px solid transparent;
+  border-top: 16px solid var(--theme-background-soft);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}
+
+.ol-popup::before {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 18px solid transparent;
+  border-right: 18px solid transparent;
+  border-top: 18px solid var(--theme-border);
+  z-index: -1;
+}
+
+.enhanced-popup {
+  background: var(--theme-background-soft);
+  color: var(--theme-text-primary);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.popup-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 20px 20px 16px;
+  background: linear-gradient(135deg, var(--theme-background-soft) 0%, var(--theme-background-mute) 100%);
+  border-bottom: 1px solid var(--theme-border-light);
+}
+
+.popup-type-indicator {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+  background: var(--theme-accent-transparent-20);
+  border: 2px solid var(--theme-accent-transparent-40);
+  transition: all 0.2s ease;
+}
+
+.popup-type-indicator.npc {
+  background: #3b82f6;
+  border-color: #60a5fa;
+  color: white;
+}
+
+.popup-type-indicator.shop {
+  background: #10b981;
+  border-color: #34d399;
+  color: white;
+}
+
+.popup-type-indicator.location {
+  background: #f59e0b;
+  border-color: #fbbf24;
+  color: white;
+}
+
+.popup-type-indicator.resource {
+  background: #8b5cf6;
+  border-color: #a78bfa;
+  color: white;
+}
+
+.popup-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.popup-link {
+  color: var(--theme-accent);
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.3;
+  text-decoration: none;
+  display: block;
+  margin-bottom: 8px;
+  word-break: break-word;
+  transition: all 0.2s ease;
+}
+
+.popup-link:hover {
+  color: var(--theme-accent-light);
+  text-decoration: underline;
+  transform: translateX(2px);
+}
+
+.popup-coords {
+  display: flex;
+  gap: 16px;
+  color: var(--theme-text-muted);
+  font-size: 12px;
+  font-weight: 500;
+  font-family: 'Courier New', monospace;
+  background: var(--theme-background-mute);
+  padding: 6px 10px;
+  border-radius: 6px;
+  margin-top: 4px;
+}
+
+.coord-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.coord-label {
+  color: var(--theme-text-muted);
+  font-weight: 600;
+}
+
+.coord-value {
+  color: var(--theme-accent);
+  font-weight: 700;
+}
+
+.popup-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px 20px;
+  gap: 8px;
+  background: var(--theme-background-mute);
+}
+
+.popup-action-btn {
+  background: var(--theme-accent-transparent-20);
+  border: 2px solid var(--theme-accent-transparent-40);
+  border-radius: 8px;
+  color: var(--theme-text-primary);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 12px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.popup-action-btn:hover {
+  background: var(--theme-accent-transparent-40);
+  border-color: var(--theme-accent);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.popup-close {
+  background: var(--theme-background-mute);
+  border: 2px solid var(--theme-border);
+  font-size: 18px;
+  color: var(--theme-text-muted);
+  cursor: pointer;
+  padding: 6px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  font-weight: normal;
+  line-height: 1;
+}
+
+.popup-close:hover {
+  background: #ef4444;
+  border-color: #f87171;
+  color: white;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .ol-popup {
+    min-width: 240px;
+    max-width: 300px;
+  }
+  
+  .popup-header {
+    padding: 16px 16px 12px;
+    gap: 10px;
+  }
+  
+  .popup-type-indicator {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+  
+  .popup-link {
+    font-size: 14px;
+  }
+  
+  .popup-coords {
+    gap: 12px;
+    font-size: 11px;
+  }
+  
+  .popup-actions {
+    padding: 10px 16px 16px;
+    gap: 6px;
+  }
+  
+  .popup-action-btn {
+    font-size: 11px;
+    padding: 6px 10px;
+  }
+}
+
+/* Dark theme popup styles */
+@media (prefers-color-scheme: dark) {
+  .ol-popup {
+    background: var(--dark-grey, rgba(26, 26, 26, 0.95)) !important;
+    border-color: rgba(245, 158, 11, 0.3) !important;
+  }
+  
+  .ol-popup::after {
+    border-top-color: var(--dark-grey, rgba(26, 26, 26, 0.95)) !important;
+  }
+  
+  .ol-popup::before {
+    border-top-color: rgba(245, 158, 11, 0.3) !important;
+  }
+  
+  .popup-content {
+    background: var(--dark-grey, rgba(26, 26, 26, 0.95)) !important;
+    color: var(--white, #ffffff) !important;
+  }
+  
+  .popup-link {
+    color: var(--map-primary-light, #fbbf24) !important;
+  }
+}
+</style>
