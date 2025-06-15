@@ -60,10 +60,21 @@ const selectedLayer = ref('Overworld')
 const isLoading = ref(true)
 const mouseCoords = reactive({ x: 0, y: 0 })
 
+// Highlite Map Plugin state
+const isHighliteMode = ref(false)
+const playerMarker = reactive({ x: 0, y: 0 })
+const pinnedMarker = reactive({ x: 0, y: 0, isPinned: false })
+let pinnedFeature: Feature | null = null
+let arrowOverlay: Overlay | null = null
+
 // Popup state
 const popupVisible = ref(false)
 const popupContent = ref('')
 const popupPosition = ref<[number, number] | null>(null)
+
+// Search filtering state
+const activeSearchQuery = ref('')
+const filteredMarkerIds = ref<Set<string>>(new Set())
 
 // Performance optimization variables
 let hoverTimeout: number | null = null
@@ -119,6 +130,11 @@ const getCurrentLayerInfo = () => {
   return layers.value.find(layer => layer.id === selectedLayer.value) || layers.value[0]
 }
 
+// Computed property to return either player marker or mouse coordinates
+const displayCoordinates = computed(() => {
+  return isHighliteMode.value ? playerMarker : mouseCoords
+})
+
 const updateMarkerCounts = () => {
   markerCategories.value.forEach(category => {
     const currentLayerMarkers = levelMarkers[selectedLayer.value]
@@ -126,9 +142,276 @@ const updateMarkerCounts = () => {
   })
 }
 
+// Helper functions for pinned feature visuals
+const updatePinnedFeatureVisuals = (mapX: number, mapY: number) => {
+  // Clear previous pinned feature styling
+  clearPinnedFeatureVisuals()
+  
+  // Find the feature at the pinned coordinates
+  const pixel = map.getPixelFromCoordinate([mapX, mapY])
+  if (pixel) {
+    const features = map.getFeaturesAtPixel(pixel)
+    if (features.length > 0) {
+      // Find the first non-location feature (same logic as click handler)
+      const targetFeature = features.find(feature => 
+        'get' in feature && !feature.get('isLocation')
+      )
+      
+      if (targetFeature && 'setStyle' in targetFeature && 'get' in targetFeature) {
+        pinnedFeature = targetFeature as Feature
+        // Create an enhanced style for the pinned feature
+        const originalStyle = pinnedFeature.get('defaultStyle')
+        if (originalStyle) {
+          const enhancedStyle = originalStyle.clone()
+          const textStyle = enhancedStyle.getText()
+          if (textStyle) {
+            // Scale up the feature - get original font and increase size
+            const originalFont = textStyle.getFont() || 'bold 1rem Inter'
+            const scaledFont = originalFont.replace(/(\d+(?:\.\d+)?)(\w+)/, (_match: string, size: string, unit: string) => {
+              const newSize = parseFloat(size) * 1.8 // Scale up by 1.8x
+              return `${newSize}${unit}`
+            })
+            textStyle.setFont(scaledFont)
+            textStyle.setStroke(new Stroke({ 
+              color: '#ff6b35', 
+              width: 4 
+            }))
+            textStyle.setFill(new Fill({ color: '#ffeb3b' }))
+          }
+          pinnedFeature.setStyle(enhancedStyle)
+        }
+        
+        // Create an arrow pointing to the pinned feature
+        createArrowOverlay(mapX, mapY)
+      }
+    }
+  }
+}
+
+const clearPinnedFeatureVisuals = () => {
+  // Reset pinned feature style to default
+  if (pinnedFeature && 'setStyle' in pinnedFeature && 'get' in pinnedFeature) {
+    const defaultStyle = pinnedFeature.get('defaultStyle')
+    if (defaultStyle) {
+      pinnedFeature.setStyle(defaultStyle)
+    }
+    
+    // Check if the feature's category is currently hidden, and if so, remove it from the layer
+    const featureCategory = pinnedFeature.get('category')
+    const category = markerCategories.value.find(cat => cat.name === featureCategory)
+    if (category && !category.visible) {
+      // Feature's category is hidden, so remove it from the layer
+      const isLocation = pinnedFeature.get('isLocation')
+      const layer = isLocation ? locationLabelLayers[selectedLayer.value] : markerLayers[selectedLayer.value]
+      const source = layer.getSource()
+      if (source && source.hasFeature(pinnedFeature)) {
+        source.removeFeature(pinnedFeature)
+      }
+    }
+  }
+  pinnedFeature = null
+  
+  // Remove arrow overlay
+  if (arrowOverlay && map) {
+    map.removeOverlay(arrowOverlay)
+    arrowOverlay = null
+  }
+}
+
+// Function to reapply pinned feature styling (used when layer changes)
+const reapplyPinnedFeatureStyle = () => {
+  if (isHighliteMode.value && pinnedMarker.isPinned) {
+    // If we have a pinned feature reference and it's still valid, reapply styling directly
+    if (pinnedFeature && 'setStyle' in pinnedFeature && 'get' in pinnedFeature) {
+      const originalStyle = pinnedFeature.get('defaultStyle')
+      if (originalStyle) {
+        const enhancedStyle = originalStyle.clone()
+        const textStyle = enhancedStyle.getText()
+        if (textStyle) {
+          // Scale up the feature - get original font and increase size
+          const originalFont = textStyle.getFont() || 'bold 1rem Inter'
+          const scaledFont = originalFont.replace(/(\d+(?:\.\d+)?)(\w+)/, (_match: string, size: string, unit: string) => {
+            const newSize = parseFloat(size) * 1.8 // Scale up by 1.8x
+            return `${newSize}${unit}`
+          })
+          textStyle.setFont(scaledFont)
+          textStyle.setStroke(new Stroke({ 
+            color: '#ff6b35', 
+            width: 4 
+          }))
+          textStyle.setFill(new Fill({ color: '#ffeb3b' }))
+        }
+        pinnedFeature.setStyle(enhancedStyle)
+      }
+      
+      // Recreate arrow if it was removed
+      if (!arrowOverlay) {
+        createArrowOverlay(pinnedMarker.x + 512.5, pinnedMarker.y + 512.5)
+      }
+    } else {
+      // Feature reference was lost, re-find and re-apply
+      updatePinnedFeatureVisuals(pinnedMarker.x + 512.5, pinnedMarker.y + 512.5)
+    }
+  }
+}
+
+const createArrowOverlay = (mapX: number, mapY: number) => {
+  // Create arrow element
+  const arrowElement = document.createElement('div')
+  arrowElement.style.cssText = `
+    width: 12px;
+    height: 12px;
+    background: #ff0000;
+    clip-path: polygon(50% 100%, 0% 0%, 100% 0%);
+    position: absolute;
+    animation: pulse 2s infinite;
+    pointer-events: none;
+    z-index: 1000;
+  `
+  
+  // Add pulse animation if it doesn't exist
+  if (!document.getElementById('arrow-pulse-animation')) {
+    const style = document.createElement('style')
+    style.id = 'arrow-pulse-animation'
+    style.textContent = `
+      @keyframes pulse {
+        0% { transform: translate(-50%, -100%) scale(1); opacity: 1; }
+        50% { transform: translate(-50%, -100%) scale(1.2); opacity: 0.7; }
+        100% { transform: translate(-50%, -100%) scale(1); opacity: 1; }
+      }
+    `
+    document.head.appendChild(style)
+  }
+  
+  // Create overlay positioned relative to the map coordinate system
+  arrowOverlay = new Overlay({
+    element: arrowElement,
+    position: [mapX, mapY], // Position at the exact coordinate
+    positioning: 'bottom-center', // Position arrow bottom-center relative to the coordinate
+    offset: [0, -15], // Offset upward by 15 pixels to position above the marker
+    stopEvent: false,
+    insertFirst: false
+  })
+  
+  map.addOverlay(arrowOverlay)
+}
+
+// Search filtering functions
+const filterMarkersBasedOnSearch = (searchQuery: string) => {
+  activeSearchQuery.value = searchQuery.toLowerCase().trim()
+  
+  if (!activeSearchQuery.value) {
+    // No search query, show all markers based on category visibility
+    showAllMarkersBasedOnCategories()
+    return
+  }
+  
+  // Hide all markers first
+  hideAllMarkers()
+  
+  // Find matching features and show only those on the current layer
+  const matchingIds = new Set<string>()
+  
+  // Search through current layer only for visibility
+  const currentLayerMarkers = levelMarkers[selectedLayer.value] || {}
+  Object.entries(currentLayerMarkers).forEach(([category, features]) => {
+    features.forEach((feature: Feature) => {
+      const name = feature.get('name')?.toLowerCase() || ''
+      const featureCategory = feature.get('category')?.toLowerCase() || ''
+      const icon = feature.get('icon') || ''
+      
+      // Check if feature matches search query or is the pinned feature
+      if (name.includes(activeSearchQuery.value) || 
+          featureCategory.includes(activeSearchQuery.value) ||
+          category.toLowerCase().includes(activeSearchQuery.value) ||
+          feature === pinnedFeature) {
+        matchingIds.add(feature.getId() as string || `${feature.get('name')}-${category}`)
+        
+        // Show this specific feature on the current layer
+        const isLocation = feature.get('isLocation')
+        const layer = isLocation ? locationLabelLayers[selectedLayer.value] : markerLayers[selectedLayer.value]
+        const source = layer.getSource()
+        if (source && !source.hasFeature(feature)) {
+          source.addFeature(feature)
+        }
+      }
+    })
+  })
+  
+  filteredMarkerIds.value = matchingIds
+}
+
+const hideAllMarkers = () => {
+  // Hide all regular markers
+  Object.values(markerLayers).forEach(layer => {
+    const source = layer.getSource()
+    if (source) {
+      source.clear()
+    }
+  })
+  
+  // Hide all location labels
+  Object.values(locationLabelLayers).forEach(layer => {
+    const source = layer.getSource()
+    if (source) {
+      source.clear()
+    }
+  })
+}
+
+const showAllMarkersBasedOnCategories = () => {
+  // Restore markers based on category visibility settings
+  markerCategories.value.forEach(category => {
+    if (category.visible) {
+      handleMarkerCategoryToggled(category.name, true)
+    }
+  })
+}
+
+const clearSearchFilter = () => {
+  activeSearchQuery.value = ''
+  filteredMarkerIds.value.clear()
+  showAllMarkersBasedOnCategories()
+}
+
+// Function to pin a location (used in highlite mode)
+const pinLocation = (x: number, y: number) => {
+  if (isHighliteMode.value) {
+    pinnedMarker.x = x
+    pinnedMarker.y = y
+    pinnedMarker.isPinned = true
+    
+    // Find and highlight the pinned feature
+    updatePinnedFeatureVisuals(x + 512.5, y + 512.5)
+  }
+}
+
+// Function to remove pin
+const removePin = () => {
+  if (isHighliteMode.value) {
+    pinnedMarker.isPinned = false
+    pinnedMarker.x = 0
+    pinnedMarker.y = 0
+    
+    // Remove visual enhancements
+    clearPinnedFeatureVisuals()
+  }
+}
+
 // Event handlers for the MapSearchFilter component
 const handleLayerChanged = (layerId: string) => {
   selectedLayer.value = layerId
+  
+  // Clear pinned feature visuals when changing layers
+  if (isHighliteMode.value && pinnedMarker.isPinned) {
+    clearPinnedFeatureVisuals()
+    // Re-apply visuals if the pinned marker is on the new layer
+    setTimeout(() => {
+      if (pinnedMarker.isPinned) {
+        updatePinnedFeatureVisuals(pinnedMarker.x + 512.5, pinnedMarker.y + 512.5)
+      }
+    }, 100)
+  }
 }
 
 const handleSearchLocationSelected = (result: any) => {
@@ -136,10 +419,13 @@ const handleSearchLocationSelected = (result: any) => {
     selectedLayer.value = result.layer
   }
   
-  // Center map on the location
+  // Center map on the location with smooth animation
   setTimeout(() => {
-    map?.getView().setCenter([result.x, result.y])
-    map?.getView().setZoom(6)
+    map?.getView().animate({
+      center: [result.x, result.y],
+      zoom: Math.max(map?.getView().getZoom() || 4, 24), // Zoom to at least level 7
+      duration: 800 // Smooth 0.8 second animation
+    })
   }, 100)
 }
 
@@ -162,7 +448,10 @@ const handleMarkerCategoryToggled = (categoryName: string, visible: boolean) => 
               source.addFeature(feature)
             }
           } else {
-            source.removeFeature(feature)
+            // Don't remove pinned features even when category is hidden
+            if (feature !== pinnedFeature) {
+              source.removeFeature(feature)
+            }
           }
         })
       }
@@ -177,7 +466,10 @@ const handleMarkerCategoryToggled = (categoryName: string, visible: boolean) => 
               source.addFeature(feature)
             }
           } else {
-            source.removeFeature(feature)
+            // Don't remove pinned features even when category is hidden
+            if (feature !== pinnedFeature) {
+              source.removeFeature(feature)
+            }
           }
         })
       }
@@ -208,6 +500,10 @@ const hidePopup = () => {
 // Event handlers for the MapSearchFilter component
 
 onMounted(() => {
+  // Check for highliteMapPlugin URL parameter
+  const searchParams = new URLSearchParams(window.location.search)
+  isHighliteMode.value = searchParams.get('highliteMapPlugin') === 'true'
+  
   // Set bounds for a 1024x1024 map
   const bounds = [0, 0, 1024, 1024]
   const center = [512, 512]
@@ -246,10 +542,10 @@ onMounted(() => {
       // Enhanced hover effects for all marker types
       const features = map.getFeaturesAtPixel(evt.pixel)
       
-      // Reset all features to default style first
+      // Reset all features to default style first (except pinned feature)
       Object.values(locationLabelLayers).forEach(layer => {
         layer.getSource()?.getFeatures().forEach(feature => {
-          if (feature.get('isLocation')) {
+          if (feature.get('isLocation') && feature !== pinnedFeature) {
             const defaultStyle = feature.get('defaultStyle')
             if (defaultStyle) {
               feature.setStyle(defaultStyle)
@@ -260,7 +556,7 @@ onMounted(() => {
       
       Object.values(markerLayers).forEach(layer => {
         layer.getSource()?.getFeatures().forEach(feature => {
-          if (!feature.get('isLocation')) {
+          if (!feature.get('isLocation') && feature !== pinnedFeature) {
             const defaultStyle = feature.get('defaultStyle')
             if (defaultStyle) {
               feature.setStyle(defaultStyle)
@@ -274,8 +570,8 @@ onMounted(() => {
         const hoveredFeatures = features.slice(0, 3) // Limit to top 3 features to avoid performance issues
         
         hoveredFeatures.forEach(featureLike => {
-          // Check if it's an actual Feature (not RenderFeature)
-          if ('setStyle' in featureLike && 'get' in featureLike) {
+          // Check if it's an actual Feature (not RenderFeature) and not the pinned feature
+          if ('setStyle' in featureLike && 'get' in featureLike && featureLike !== pinnedFeature) {
             const feature = featureLike as Feature
             const hoverStyle = feature.get('hoverStyle')
             if (hoverStyle) {
@@ -310,20 +606,27 @@ onMounted(() => {
   map.on('singleclick', function (evt) {
     const features = map.getFeaturesAtPixel(evt.pixel)
     if (features.length > 0) {
-      const feature = features[0]
-      const name = feature.get('name')
-      if (name) {
-        const geometry = feature.getGeometry()
-        if (geometry && geometry.getType() === 'Point') {
-          const coordinates = (geometry as Point).getCoordinates()
-          showPopup(name, coordinates as [number, number])
-          
-          // Center the map on the clicked marker
-          map.getView().animate({
-            center: coordinates,
-            duration: 500,
-            zoom: Math.max(map.getView().getZoom() || 4, 5)
-          })
+      // Find the first clickable feature (not a location text marker)
+      const clickableFeature = features.find(feature => {
+        // Skip location text markers - they should not be clickable
+        return !feature.get('isLocation')
+      })
+      
+      if (clickableFeature) {
+        const name = clickableFeature.get('name')
+        if (name) {
+          const geometry = clickableFeature.getGeometry()
+          if (geometry && geometry.getType() === 'Point') {
+            const coordinates = (geometry as Point).getCoordinates()
+            showPopup(name, coordinates as [number, number])
+            
+            // Center the map on the clicked marker
+            map.getView().animate({
+              center: coordinates,
+              duration: 500,
+              zoom: Math.max(map.getView().getZoom() || 4, 5)
+            })
+          }
         }
       }
     } else {
@@ -625,6 +928,9 @@ onMounted(() => {
     
     // Update marker counts
     updateMarkerCounts()
+    
+    // Reapply pinned feature styling if there's a pinned item
+    reapplyPinnedFeatureStyle()
   }
 
   // Add base layer
@@ -1041,6 +1347,12 @@ onMounted(() => {
           duration: 1500 // Smooth zoom animation
         })
       }
+      
+      // Update player coordinates for highlite mode
+      if (isHighliteMode.value) {
+        playerMarker.x = event.data.X
+        playerMarker.y = event.data.Y
+      }
     }
   })
 
@@ -1094,13 +1406,17 @@ onUnmounted(() => {
         @search-location-selected="handleSearchLocationSelected"
         @marker-category-toggled="handleMarkerCategoryToggled"
         @all-markers-toggled="handleAllMarkersToggled"
+        @search-query-changed="filterMarkersBasedOnSearch"
       />
     </div>
 
     <!-- Position Indicator Component -->
     <MapPositionIndicator 
-      :coordinates="mouseCoords"
+      :coordinates="displayCoordinates"
       :current-layer="getCurrentLayerInfo()"
+      :is-highlite-mode="isHighliteMode"
+      :pinned-marker="pinnedMarker"
+      @remove-pin="removePin"
     />
 
     <!-- Popup Component -->
@@ -1110,14 +1426,14 @@ onUnmounted(() => {
       :position="popupPosition"
       :visible="popupVisible"
       :selected-layer="selectedLayer"
+      :is-highlite-mode="isHighliteMode"
       @close="hidePopup"
+      @pin-location="pinLocation"
     />
   </div>
 </template>
 
 <style scoped>
-/* Using consistent website theme colors */
-
 #map {
   height: calc(100vh - 75px);
   width: 100%;
@@ -1125,397 +1441,12 @@ onUnmounted(() => {
   z-index: 1;
 }
 
-/* Enhanced controls container - Compressed */
 .map-controls-container {
   position: absolute;
   top: 16px;
   right: 16px;
-  width: 280px; /* Reduced from 360px */
+  width: 280px;
   max-height: calc(100vh - 120px);
   z-index: 1001;
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-  .map-controls-container {
-    width: 320px;
-    right: 8px;
-    top: 8px;
-  }
-}
-
-/* Map markers with enhanced hover effects and text shadows */
-:global(.map-marker) {
-  transition: all 0.2s ease !important;
-  position: relative !important;
-  z-index: 999 !important;
-  pointer-events: none !important;
-  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.3));
-}
-
-:global(.map-marker *) {
-  pointer-events: auto !important;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-:global(.text-label) {
-  pointer-events: none !important;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
-}
-
-:global(.text-label > *) {
-  pointer-events: auto !important;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
-}
-
-:global(.marker) {
-  pointer-events: auto !important;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-:global(.map-marker:hover) {
-  z-index: 1000 !important;
-  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.5));
-  transform: scale(1.05);
-}
-
-:global(.map-marker:hover *) {
-  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
-}
-
-:global(.marker:hover) {
-  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
-  transform: scale(1.1);
-  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
-}
-
-:global(.text-label:hover) {
-  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.6));
-  transform: scale(1.05);
-}
-
-:global(.text-label:hover > *) {
-  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
-}
-
-:global(.marker) {
-  position: absolute !important;
-  left: 50% !important;
-  top: 50% !important;
-  transform: translate(-50%, -50%) !important;
-  font-size: 1em;
-  line-height: 1;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-  user-select: none;
-}
-
-:global(.text-label) {
-  position: absolute !important;
-  left: 50% !important;
-  top: 50% !important;
-  transform: translate(-50%, -50%) !important;
-  pointer-events: auto !important;
-  user-select: none;
-}
-
-/* Map markers with enhanced hover effects and text shadows */
-:global(.ol-popup) {
-  position: absolute;
-  background: var(--theme-background-soft);
-  border-radius: 16px;
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
-  padding: 0;
-  min-width: 280px;
-  max-width: 400px;
-  font-size: 14px;
-  pointer-events: auto;
-  z-index: 2000;
-  border: 2px solid var(--theme-border);
-  backdrop-filter: blur(16px);
-  overflow: visible;
-  margin-bottom: 16px;
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-:global(.ol-popup::after) {
-  content: '';
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 16px solid transparent;
-  border-right: 16px solid transparent;
-  border-top: 16px solid var(--theme-background-soft);
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
-}
-
-:global(.ol-popup::before) {
-  content: '';
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 18px solid transparent;
-  border-right: 18px solid transparent;
-  border-top: 18px solid var(--theme-border);
-  z-index: -1;
-}
-
-:global(.enhanced-popup) {
-  background: var(--theme-background-soft);
-  color: var(--theme-text-primary);
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
-}
-
-:global(.popup-header) {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 20px 20px 16px;
-  background: linear-gradient(135deg, var(--theme-background-soft) 0%, var(--theme-background-mute) 100%);
-  border-bottom: 1px solid var(--theme-border-light);
-}
-
-:global(.popup-type-indicator) {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  flex-shrink: 0;
-  background: var(--theme-accent-transparent-20);
-  border: 2px solid var(--theme-accent-transparent-40);
-  transition: all 0.2s ease;
-}
-
-:global(.popup-type-indicator.npc) {
-  background: #3b82f6;
-  border-color: #60a5fa;
-  color: white;
-}
-
-:global(.popup-type-indicator.shop) {
-  background: #10b981;
-  border-color: #34d399;
-  color: white;
-}
-
-:global(.popup-type-indicator.location) {
-  background: #f59e0b;
-  border-color: #fbbf24;
-  color: white;
-}
-
-:global(.popup-type-indicator.resource) {
-  background: #8b5cf6;
-  border-color: #a78bfa;
-  color: white;
-}
-
-:global(.popup-info) {
-  flex: 1;
-  min-width: 0;
-}
-
-:global(.popup-link) {
-  color: var(--theme-accent);
-  font-weight: 700;
-  font-size: 16px;
-  line-height: 1.3;
-  text-decoration: none;
-  display: block;
-  margin-bottom: 8px;
-  word-break: break-word;
-  transition: all 0.2s ease;
-}
-
-:global(.popup-link:hover) {
-  color: var(--theme-accent-light);
-  text-decoration: underline;
-  transform: translateX(2px);
-}
-
-:global(.popup-coords) {
-  display: flex;
-  gap: 16px;
-  color: var(--theme-text-muted);
-  font-size: 12px;
-  font-weight: 500;
-  font-family: 'Courier New', monospace;
-  background: var(--theme-background-mute);
-  padding: 6px 10px;
-  border-radius: 6px;
-  margin-top: 4px;
-}
-
-:global(.coord-group) {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-:global(.coord-label) {
-  color: var(--theme-text-muted);
-  font-weight: 600;
-}
-
-:global(.coord-value) {
-  color: var(--theme-accent);
-  font-weight: 700;
-}
-
-:global(.popup-actions) {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 20px 20px;
-  gap: 8px;
-  background: var(--theme-background-mute);
-}
-
-:global(.popup-action-btn) {
-  background: var(--theme-accent-transparent-20);
-  border: 2px solid var(--theme-accent-transparent-40);
-  border-radius: 8px;
-  color: var(--theme-text-primary);
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 8px 12px;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-:global(.popup-action-btn:hover) {
-  background: var(--theme-accent-transparent-40);
-  border-color: var(--theme-accent);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-:global(.popup-close) {
-  background: var(--theme-background-mute);
-  border: 2px solid var(--theme-border);
-  font-size: 18px;
-  color: var(--theme-text-muted);
-  cursor: pointer;
-  padding: 6px;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
-  font-weight: normal;
-  line-height: 1;
-}
-
-:global(.popup-close:hover) {
-  background: #ef4444;
-  border-color: #f87171;
-  color: white;
-  transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-  .map-controls-container {
-    width: 320px;
-    right: 8px;
-    top: 8px;
-  }
-  
-  .enhanced-coords {
-    left: 8px;
-    bottom: 8px;
-    padding: 12px;
-    min-width: 150px;
-  }
-  
-  .coord-values {
-    gap: 12px;
-  }
-  
-  .coord-value {
-    font-size: 16px;
-    min-width: 40px;
-  }
-}
-
-@media (max-width: 480px) {
-  .map-controls-container {
-    width: 280px;
-  }
-  
-  .control-panel {
-    font-size: 13px;
-  }
-  
-  .layer-btn {
-    padding: 8px 12px;
-    font-size: 13px;
-  }
-  
-  .filter-tag {
-    font-size: 11px;
-    padding: 5px 10px;
-  }
-  
-  .enhanced-coords {
-    padding: 10px;
-    min-width: 130px;
-  }
-  
-  .coord-title {
-    font-size: 12px;
-  }
-  
-  .coord-value {
-    font-size: 14px;
-    padding: 2px 6px;
-  }
-}
-  
-  .category-name {
-    color: var(--white);
-  }
-  
-  .search-result-item {
-    color: var(--white);
-  }
-  
-  .result-name {
-    color: var(--white);
-  }
-
-/* Animation classes */
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-
-.fade-enter-from, .fade-leave-to {
-  opacity: 0;
-}
-
-.slide-enter-active, .slide-leave-active {
-  transition: transform 0.3s ease;
-}
-
-.slide-enter-from, .slide-leave-to {
-  transform: translateX(100%);
 }
 </style>

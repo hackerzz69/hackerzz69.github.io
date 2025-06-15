@@ -85,6 +85,7 @@ import { ref, watch, onMounted } from 'vue'
 import locations from '@/assets/markerInformation/Locations.json'
 import npcs from '@/assets/markerInformation/NPCs.json'
 import npcDefinitions from '@/assets/markerInformation/NPCDefs.json'
+import entitiesData from '@/assets/markerInformation/worldEntities.json'
 
 // Props
 interface Props {
@@ -112,6 +113,7 @@ const emit = defineEmits<{
   searchLocationSelected: [result: any]
   markerCategoryToggled: [categoryName: string, visible: boolean]
   allMarkersToggled: [visible: boolean]
+  searchQueryChanged: [query: string]
 }>()
 
 // Reactive state
@@ -125,17 +127,22 @@ let searchableItems: any[] = []
 
 // Enhanced search with better filtering and result grouping
 const handleSearch = () => {
-  if (!searchQuery.value.trim()) {
+  const query = searchQuery.value.trim()
+  
+  // Emit search query change to parent (MapView)
+  emit('searchQueryChanged', query)
+  
+  if (!query) {
     searchResults.value = []
     return
   }
   
-  const query = searchQuery.value.toLowerCase()
+  const queryLower = query.toLowerCase()
   const results = searchableItems
     .filter(item => {
-      const nameMatch = item.name.toLowerCase().includes(query)
-      const typeMatch = item.type?.toLowerCase().includes(query)
-      const layerMatch = item.layer.toLowerCase().includes(query)
+      const nameMatch = item.name.toLowerCase().includes(queryLower)
+      const typeMatch = item.type?.toLowerCase().includes(queryLower)
+      const layerMatch = item.layer.toLowerCase().includes(queryLower)
       return nameMatch || typeMatch || layerMatch
     })
     .map(item => ({
@@ -147,7 +154,17 @@ const handleSearch = () => {
       // Sort by relevance first, then by type priority, then alphabetically
       if (b.relevance !== a.relevance) return b.relevance - a.relevance
       
-      const typePriority = { location: 3, shop: 2, npc: 1, resource: 0 }
+      const typePriority = { 
+        location: 5, 
+        shop: 4, 
+        npc: 3, 
+        tree: 2, 
+        obelisk: 2, 
+        bank: 2, 
+        ore: 1, 
+        fire: 1, 
+        resource: 0 
+      }
       const aPriority = typePriority[a.type as keyof typeof typePriority] || 0
       const bPriority = typePriority[b.type as keyof typeof typePriority] || 0
       
@@ -176,6 +193,11 @@ const calculateRelevance = (item: any, query: string): number => {
   if (item.type === 'location') score += 20
   if (item.type === 'shop') score += 15
   if (item.type === 'npc') score += 10
+  if (item.type === 'tree') score += 8
+  if (item.type === 'obelisk') score += 8
+  if (item.type === 'bank') score += 8
+  if (item.type === 'ore') score += 5
+  if (item.type === 'fire') score += 5
   
   // Boost current layer
   if (item.layer === props.selectedLayer) score += 10
@@ -186,6 +208,8 @@ const calculateRelevance = (item: any, query: string): number => {
 const clearSearch = () => {
   searchQuery.value = ''
   searchResults.value = []
+  // Emit empty search query to clear filters
+  emit('searchQueryChanged', '')
 }
 
 const goToLocation = (result: any) => {
@@ -249,6 +273,61 @@ const initializeSearchableItems = () => {
         type: 'npc'
       })
     }
+  })
+  
+  // Add world entities (trees, obelisks, ores, etc.)
+  const worldEntities = (entitiesData as any).worldEntities || []
+  worldEntities.forEach((entity: any) => {
+    // Skip treestumps and burnt trees entirely - they shouldn't appear in search
+    if (entity.type.includes('stump') || entity.type.includes('burnt')) {
+      return
+    }
+    
+    const layer = entity.lvl === 0 ? 'Underworld' : 
+                  entity.lvl === 1 ? 'Overworld' : 'Sky'
+    
+    let icon = '📍'
+    let category = 'resource'
+    let name = entity.type
+    
+    // Determine icon, category, and formatted name based on entity type
+    if (entity.type.includes('tree') || entity.type.includes('cherryblossom')) {
+      icon = '🌳'
+      category = 'tree'
+      name = entity.type.replace('tree', ' Tree').replace('blossom', ' Blossom')
+      name = name.replace(/(?:^|\s)\S/g, (a: string) => a.toUpperCase()).trim()
+    } else if (entity.type.includes('obelisk')) {
+      icon = '🗿'
+      category = 'obelisk'
+      name = entity.type.replace('obelisk', ' Obelisk')
+      name = name.replace(/(?:^|\s)\S/g, (a: string) => a.toUpperCase()).trim()
+    } else if (entity.type.includes('rocks')) {
+      icon = '🪨'
+      category = 'ore'
+      name = entity.type.replace('rocks', ' Rock')
+      name = name.replace(/(?:^|\s)\S/g, (a: string) => a.toUpperCase()).trim()
+    } else if (entity.type.includes('bank')) {
+      icon = '💰'
+      category = 'bank'
+      name = entity.type.replace('bank', ' Bank').replace('chest', ' Chest')
+      name = name.replace(/(?:^|\s)\S/g, (a: string) => a.toUpperCase()).trim()
+    } else if (entity.type.includes('fire')) {
+      icon = '🔥'
+      category = 'fire'
+      name = entity.type.replace('fire', ' Fire')
+      name = name.replace(/(?:^|\s)\S/g, (a: string) => a.toUpperCase()).trim()
+    }
+    
+    // Add to searchable items
+    searchableItems.push({
+      id: `entity-${entity.x}-${entity.z}-${entity.type}`,
+      name,
+      icon,
+      layer,
+      x: entity.x + 512.5,
+      y: entity.z + 512.5,
+      type: category
+    })
   })
 }
 

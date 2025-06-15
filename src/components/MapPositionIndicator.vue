@@ -1,8 +1,9 @@
 <template>
   <div class="coordinates-display enhanced-coords">
+    <!-- Player Position (in highlite mode) or Mouse Position (normal mode) -->
     <div class="coord-header">
       <span class="coord-icon">📍</span>
-      <span class="coord-title">Position</span>
+      <span class="coord-title">{{ isHighliteMode ? 'Player' : 'Position' }}</span>
     </div>
     <div class="coord-values">
       <div class="coord-group">
@@ -14,6 +15,28 @@
         <span class="coord-value">{{ coordinates.y }}</span>
       </div>
     </div>
+    
+    <!-- Pinned Position (only in highlite mode when something is pinned) -->
+    <div v-if="isHighliteMode && pinnedMarker?.isPinned" class="pinned-coords">
+      <div class="coord-header pinned-header">
+        <span class="coord-icon">📌</span>
+        <span class="coord-title">Pinned</span>
+        <button class="remove-pin-btn" @click="emit('removePin')" title="Remove Pin">
+          ✕
+        </button>
+      </div>
+      <div class="coord-values">
+        <div class="coord-group">
+          <span class="coord-label">X:</span>
+          <span class="coord-value">{{ pinnedMarker.x }}</span>
+        </div>
+        <div class="coord-group">
+          <span class="coord-label">Y:</span>
+          <span class="coord-value">{{ pinnedMarker.y }}</span>
+        </div>
+      </div>
+    </div>
+    
     <div class="layer-indicator">
       <span class="layer-icon">{{ currentLayer.icon }}</span>
       <span class="layer-name">{{ currentLayer.name }}</span>
@@ -35,9 +58,20 @@ interface Props {
     color: string
     description: string
   }
+  isHighliteMode?: boolean
+  pinnedMarker?: {
+    x: number
+    y: number
+    isPinned: boolean
+  }
 }
 
 const props = defineProps<Props>()
+
+// Emits
+const emit = defineEmits<{
+  removePin: []
+}>()
 </script>
 
 <style scoped>
@@ -116,6 +150,58 @@ const props = defineProps<Props>()
   border-radius: 6px;
   min-width: 50px;
   text-align: center;
+}
+
+.pinned-coords {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--theme-border-light);
+}
+
+.pinned-header {
+  margin-bottom: 8px;
+}
+
+.pinned-header .coord-icon {
+  color: #ff6b35;
+}
+
+.pinned-header .coord-title {
+  color: #ff6b35;
+}
+
+.pinned-coords .coord-value {
+  color: #ff6b35;
+  background: rgba(255, 107, 53, 0.1);
+}
+
+.pinned-header {
+  position: relative;
+}
+
+.remove-pin-btn {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(239, 68, 68, 0.8);
+  border: none;
+  border-radius: 4px;
+  color: white;
+  font-size: 10px;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: bold;
+}
+
+.remove-pin-btn:hover {
+  background: rgba(239, 68, 68, 1);
+  transform: translateY(-50%) scale(1.1);
 }
 
 .layer-indicator {

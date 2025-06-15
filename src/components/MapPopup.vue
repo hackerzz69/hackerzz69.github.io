@@ -30,8 +30,12 @@
         <button class="popup-action-btn center-btn" @click="centerMap">
           📍 Center
         </button>
-        <button class="popup-action-btn share-btn" @click="shareLocation">
-          {{ shareButtonText }}
+        <button 
+          v-if="isHighliteMode"
+          class="popup-action-btn pin-btn" 
+          @click="pinLocation"
+        >
+          📌 Pin
         </button>
         <button class="popup-close" type="button" @click="closePopup">&times;</button>
       </div>
@@ -51,6 +55,7 @@ interface Props {
   position: [number, number] | null
   visible: boolean
   selectedLayer: string
+  isHighliteMode: boolean
 }
 
 const props = defineProps<Props>()
@@ -58,11 +63,11 @@ const props = defineProps<Props>()
 // Emits
 const emit = defineEmits<{
   close: []
+  pinLocation: [x: number, y: number]
 }>()
 
 // Refs
 const popupElement = ref<HTMLDivElement>()
-const shareButtonText = ref('📤 Share')
 
 // State
 let popupOverlay: Overlay | null = null
@@ -118,24 +123,16 @@ const centerMap = () => {
   }
 }
 
-const shareLocation = async () => {
-  if (!props.position) return
-  
-  const shareUrl = `${window.location.origin}${window.location.pathname}?pos_x=${displayCoords.value.x}&pos_y=${displayCoords.value.y}&lvl=${props.selectedLayer}`
-  
-  try {
-    await navigator.clipboard.writeText(shareUrl)
-    shareButtonText.value = '✓ Copied!'
-    setTimeout(() => {
-      shareButtonText.value = '📤 Share'
-    }, 2000)
-  } catch (err) {
-    console.error('Failed to copy to clipboard:', err)
-  }
-}
-
 const closePopup = () => {
   emit('close')
+}
+
+const pinLocation = () => {
+  if (props.position) {
+    const x = Math.round(props.position[0] - 512.5)
+    const y = Math.round(props.position[1] - 512.5)
+    emit('pinLocation', x, y)
+  }
 }
 
 const showPopup = () => {
@@ -390,7 +387,7 @@ onUnmounted(() => {
 .popup-actions {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   padding: 12px 20px 20px;
   gap: 8px;
   background: var(--theme-background-mute);
