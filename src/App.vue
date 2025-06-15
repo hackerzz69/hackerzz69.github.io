@@ -16,12 +16,14 @@ import { RouterLink, RouterView } from 'vue-router'
       <!-- Drop Down Menu -->
     </nav>
   </header>
-  <RouterView />
-  <div class="footer">
-    <div id="copyright">
-      <span>© 2025 Highlite. All rights reserved.</span>
-      <span>Made with ❤️ by the Highlite Team</span>
-    </div>
+  
+  <main>
+    <RouterView />
+  </main>
+  
+  <div id="copyright">
+    <span>© 2025 Highlite. All rights reserved.</span>
+    <span>Made with ❤️ by the Highlite Team</span>
   </div>
 
   <div class="joinUs">
@@ -37,7 +39,16 @@ header {
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
-  background-color: #1a1a1a;
+  background-color: var(--theme-background);
+  border-bottom: 1px solid var(--theme-border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+main {
+  flex: 1;
+  overflow-x: hidden;
 }
 
 /* Navbar Dropdown Element */
@@ -46,17 +57,19 @@ nav {
   gap: 1rem;
 }
 nav .navItem {
-  color: #fff;
+  color: var(--theme-text-primary);
   text-decoration: none;
   padding: 0.5rem 1rem;
   border-radius: 4px;
+  transition: all 0.3s ease;
 }
 nav .navItem:hover {
-  background-color: #444343;
-  transition: background-color 0.3s ease;
+  background-color: var(--theme-background-mute);
+  color: var(--theme-accent);
 }
 nav .router-link-active {
-  background-color: #373737;
+  background-color: var(--theme-accent);
+  color: var(--theme-text-dark);
 }
 
 #logo {
@@ -66,16 +79,56 @@ nav .router-link-active {
 
 #logo h2 {
   margin-left: 0.5rem;
-  color: #fff;
+  color: var(--theme-text-primary);
 
-  /* Highlight Effect */
+  /* Highlight Effect using theme accent color */
   text-shadow:
-    0 0 5px rgba(242, 255, 0, 0.8),
-    0 0 10px rgba(210, 208, 75, 0.6),
-    0 0 15px rgba(199, 193, 23, 0.4),
-    0 0 20px rgba(186, 238, 15, 0.2);
+    0 0 5px var(--theme-accent-muted),
+    0 0 10px var(--theme-accent-muted),
+    0 0 15px var(--theme-accent-muted),
+    0 0 20px var(--theme-accent-muted);
   font-size: 1.5rem;
   font-weight: bold;
   text-transform: uppercase;
+}
+
+/* Responsive navigation */
+@media (max-width: 768px) {
+  header {
+    padding: 0.5rem;
+    flex-wrap: wrap;
+  }
+  
+  nav {
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  
+  nav .navItem {
+    padding: 0.4rem 0.8rem;
+    font-size: 14px;
+  }
+  
+  #logo img {
+    width: 35px;
+  }
+}
+
+@media (max-width: 480px) {
+  header {
+    flex-direction: column;
+    padding: 0.5rem;
+    gap: 0.5rem;
+  }
+  
+  nav {
+    justify-content: center;
+    width: 100%;
+  }
+  
+  nav .navItem {
+    padding: 0.3rem 0.6rem;
+    font-size: 13px;
+  }
 }
 </style>

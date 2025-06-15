@@ -39,51 +39,52 @@ main::before {
   filter: blur(5px); /* Optional: add a blur effect */
 }
 main {
-  color: white;
+  color: var(--theme-text-primary);
 }
 button {
-  background-color: #222121;
-  color: white;
-  border: none;
+  background-color: var(--theme-background-soft);
+  color: var(--theme-text-primary);
+  border: 1px solid var(--theme-border);
   padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
 }
 button:hover {
-  background-color: #444343;
+  background-color: var(--theme-accent);
+  color: var(--theme-text-dark);
+  border-color: var(--theme-accent);
 }
 button:active {
-  background-color: #373737;
+  background-color: var(--theme-accent-dark);
 }
 .contentHolder {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
+  min-height: calc(100vh - 120px);
   padding: 20px;
+  box-sizing: border-box;
 }
 .contentHolder h2 {
   font-size: 2rem;
   margin-bottom: 20px;
+  color: var(--theme-text-primary);
 }
 .contentHolder p {
   font-size: 1.2rem;
   max-width: 800px;
   margin-bottom: 20px;
+  color: var(--theme-text-secondary);
 }
 .contentHolder a {
   text-decoration: none;
 }
-main {
-  padding-top: 0px;
-  padding-bottom: 0px;
-  margin-top: -120px;
-}
 .content {
-  background: #00000096;
+  background: var(--theme-background-mute);
+  border: 1px solid var(--theme-border);
   border-radius: 5px;
   padding: 10px;
 }

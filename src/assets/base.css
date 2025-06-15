@@ -1,54 +1,71 @@
-/* color palette from <https://github.com/vuejs/theme> */
+/* Consistent UI theme colors */
 :root {
+  /* Base colors */
+  --theme-background: #1a1a1a;
+  --theme-background-soft: #222222;
+  --theme-background-mute: #2a2a2a;
+  --theme-background-light: #333333;
+  
+  /* Accent colors */
+  --theme-accent: #F9F449;
+  --theme-accent-dark: #e6e03a;
+  --theme-accent-light: #fbf65c;
+  --theme-accent-muted: rgba(249, 244, 73, 0.8);
+  --theme-accent-transparent-10: rgba(249, 244, 73, 0.1);
+  --theme-accent-transparent-20: rgba(249, 244, 73, 0.2);
+  --theme-accent-transparent-30: rgba(249, 244, 73, 0.3);
+  --theme-accent-transparent-40: rgba(249, 244, 73, 0.4);
+  --theme-accent-transparent-60: rgba(249, 244, 73, 0.6);
+  
+  /* Text colors */
+  --theme-text-primary: #ffffff;
+  --theme-text-secondary: rgba(255, 255, 255, 0.8);
+  --theme-text-muted: rgba(255, 255, 255, 0.6);
+  --theme-text-dark: #1a1a1a;
+  
+  /* Border and divider colors */
+  --theme-border: rgba(255, 255, 255, 0.1);
+  --theme-border-light: rgba(255, 255, 255, 0.05);
+  --theme-divider: rgba(255, 255, 255, 0.15);
+  
+  /* Legacy Vue theme compatibility */
   --vt-c-white: #ffffff;
   --vt-c-white-soft: #f8f8f8;
   --vt-c-white-mute: #f2f2f2;
 
-  --vt-c-black: #181818;
-  --vt-c-black-soft: #222222;
-  --vt-c-black-mute: #282828;
+  --vt-c-black: var(--theme-background);
+  --vt-c-black-soft: var(--theme-background-soft);
+  --vt-c-black-mute: var(--theme-background-mute);
 
-  --vt-c-indigo: #2c3e50;
+  --vt-c-indigo: var(--theme-accent);
 
-  --vt-c-divider-light-1: rgba(60, 60, 60, 0.29);
-  --vt-c-divider-light-2: rgba(60, 60, 60, 0.12);
-  --vt-c-divider-dark-1: rgba(84, 84, 84, 0.65);
-  --vt-c-divider-dark-2: rgba(84, 84, 84, 0.48);
+  --vt-c-divider-light-1: var(--theme-divider);
+  --vt-c-divider-light-2: var(--theme-border);
+  --vt-c-divider-dark-1: var(--theme-divider);
+  --vt-c-divider-dark-2: var(--theme-border);
 
-  --vt-c-text-light-1: var(--vt-c-indigo);
-  --vt-c-text-light-2: rgba(60, 60, 60, 0.66);
-  --vt-c-text-dark-1: var(--vt-c-white);
-  --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
+  --vt-c-text-light-1: var(--theme-text-primary);
+  --vt-c-text-light-2: var(--theme-text-secondary);
+  --vt-c-text-dark-1: var(--theme-text-primary);
+  --vt-c-text-dark-2: var(--theme-text-secondary);
 }
 
 /* semantic color variables for this project */
 :root {
-  --color-background: var(--vt-c-white);
-  --color-background-soft: var(--vt-c-white-soft);
-  --color-background-mute: var(--vt-c-white-mute);
+  --color-background: var(--theme-background);
+  --color-background-soft: var(--theme-background-soft);
+  --color-background-mute: var(--theme-background-mute);
 
-  --color-border: var(--vt-c-divider-light-2);
-  --color-border-hover: var(--vt-c-divider-light-1);
+  --color-border: var(--theme-border);
+  --color-border-hover: var(--theme-divider);
 
-  --color-heading: var(--vt-c-text-light-1);
-  --color-text: var(--vt-c-text-light-1);
+  --color-heading: var(--theme-text-primary);
+  --color-text: var(--theme-text-primary);
 
   --section-gap: 160px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-background: var(--vt-c-black);
-    --color-background-soft: var(--vt-c-black-soft);
-    --color-background-mute: var(--vt-c-black-mute);
-
-    --color-border: var(--vt-c-divider-dark-2);
-    --color-border-hover: var(--vt-c-divider-dark-1);
-
-    --color-heading: var(--vt-c-text-dark-1);
-    --color-text: var(--vt-c-text-dark-2);
-  }
-}
+/* Remove light theme media query and make dark theme default */
 
 *,
 *::before,
@@ -56,6 +73,10 @@
   box-sizing: border-box;
   margin: 0;
   font-weight: normal;
+}
+
+html {
+  overflow-x: hidden;
 }
 
 body {
@@ -83,4 +104,47 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Responsive design utilities */
+.container {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 1rem;
+  box-sizing: border-box;
+}
+
+/* Mobile-first responsive breakpoints */
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+  
+  .container {
+    padding: 0 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 13px;
+  }
+  
+  .container {
+    padding: 0 0.25rem;
+  }
+}
+
+/* Utility classes to prevent overflow */
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.overflow-x-hidden {
+  overflow-x: hidden;
+}
+
+.overflow-y-auto {
+  overflow-y: auto;
 }
