@@ -523,56 +523,48 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fortawesome/fontawesome-common-types@npm:6.7.2":
-  version: 6.7.2
-  resolution: "@fortawesome/fontawesome-common-types@npm:6.7.2"
-  checksum: 10c0/0785df560542d9c08a0ba07bb7a39902274a3cd65c018672eb2520a99efccce18bdb7f7f4b1c6089763bc5627bf0f0837c3af963a8427eaeb535bd57c820a723
-  languageName: node
-  linkType: hard
-
-"@fortawesome/fontawesome-svg-core@npm:^6.7.2":
-  version: 6.7.2
-  resolution: "@fortawesome/fontawesome-svg-core@npm:6.7.2"
+"@iconify/icons-logos@npm:^1.2.36":
+  version: 1.2.36
+  resolution: "@iconify/icons-logos@npm:1.2.36"
   dependencies:
-    "@fortawesome/fontawesome-common-types": "npm:6.7.2"
-  checksum: 10c0/9e4e2992b341d2d11cd6ab8cf001e2cb9be4266ce200b307d15c0618e7d2cf11c1c4c67a1f95f3cc70feed2380fa66672132c32078674d5f9cb2cb0b7703f3ac
+    "@iconify/types": "npm:*"
+  checksum: 10c0/4c40c028b7fcd0c76f06a72704fc5d0e27a36944021ef20e092d7c140bfb5204c0a7dcfff0116d2ed4b847c941e58281f6f2fab9675ba93d3d26a4a984d0924a
   languageName: node
   linkType: hard
 
-"@fortawesome/free-brands-svg-icons@npm:^6.7.2":
-  version: 6.7.2
-  resolution: "@fortawesome/free-brands-svg-icons@npm:6.7.2"
+"@iconify/icons-mdi@npm:^1.2.48":
+  version: 1.2.48
+  resolution: "@iconify/icons-mdi@npm:1.2.48"
   dependencies:
-    "@fortawesome/fontawesome-common-types": "npm:6.7.2"
-  checksum: 10c0/054af882f3416d4a04dfe0f8db8f1ac645d07709a019e95368ae796c1aeee5929dfaf023e5568438a600e1bc1496e6e7270659d2be91b50531fdbd724034b22c
+    "@iconify/types": "npm:*"
+  checksum: 10c0/21ee35a678db1788ac056e90641ee376f66f5f65dbfe8bbb6b445aa93e9cedc493851fba38ee7b5811550bdaf07522ed08d1bb8be99c216e9fe39bd3ae9307bf
   languageName: node
   linkType: hard
 
-"@fortawesome/free-regular-svg-icons@npm:^6.7.2":
-  version: 6.7.2
-  resolution: "@fortawesome/free-regular-svg-icons@npm:6.7.2"
+"@iconify/icons-simple-icons@npm:^1.2.74":
+  version: 1.2.74
+  resolution: "@iconify/icons-simple-icons@npm:1.2.74"
   dependencies:
-    "@fortawesome/fontawesome-common-types": "npm:6.7.2"
-  checksum: 10c0/3a334cb0c837170f7b14759ddc8ef2a821b8d2c59b23a7b852d7e3fb16b066dd5fe8649e47bc1ef91764c78a78f51d1c0c8c5b8567e1680eeb21e8afdc70f5f7
+    "@iconify/types": "npm:*"
+  checksum: 10c0/3e05fb8ead49b7cff4ec757645a96516fc6251e91bfd5de38ba9ae1d8564129ad0aada745db3c3a70207bbcbc6918858c12a43dda57b73745796b17a2325f317
   languageName: node
   linkType: hard
 
-"@fortawesome/free-solid-svg-icons@npm:^6.7.2":
-  version: 6.7.2
-  resolution: "@fortawesome/free-solid-svg-icons@npm:6.7.2"
+"@iconify/types@npm:*, @iconify/types@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@iconify/types@npm:2.0.0"
+  checksum: 10c0/65a3be43500c7ccacf360e136d00e1717f050b7b91da644e94370256ac66f582d59212bdb30d00788aab4fc078262e91c95b805d1808d654b72f6d2072a7e4b2
+  languageName: node
+  linkType: hard
+
+"@iconify/vue@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "@iconify/vue@npm:5.0.0"
   dependencies:
-    "@fortawesome/fontawesome-common-types": "npm:6.7.2"
-  checksum: 10c0/e900f3bb7b7d821421f11439ff78cd2b3c98ca31e848e1afebf7caa578d29a31fb6cf8ef283d4df342de777126a71fcbb154dd395b9d9ab6914a40a86df81413
-  languageName: node
-  linkType: hard
-
-"@fortawesome/vue-fontawesome@npm:^3.0.8":
-  version: 3.0.8
-  resolution: "@fortawesome/vue-fontawesome@npm:3.0.8"
+    "@iconify/types": "npm:^2.0.0"
   peerDependencies:
-    "@fortawesome/fontawesome-svg-core": ~1 || ~6
-    vue: ">= 3.0.0 < 4"
-  checksum: 10c0/a123db06deceb3b7304a94081262946f8da64884a6aac55ea3691ef7fe803692b3af933e772b04cdaad4f2c41473594122cc516a3078f861d413452ce6cb1d86
+    vue: ">=3"
+  checksum: 10c0/363133a77bf697c4cebda2af776ca6fce312d15742a5ed6a2114d79d032814b15f04bcc1cec51cee31256f1a62dc64b0dbbcfe4e341692cb2dca64f0561fa1c0
   languageName: node
   linkType: hard
 
@@ -1727,11 +1719,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "highlite-website@workspace:."
   dependencies:
-    "@fortawesome/fontawesome-svg-core": "npm:^6.7.2"
-    "@fortawesome/free-brands-svg-icons": "npm:^6.7.2"
-    "@fortawesome/free-regular-svg-icons": "npm:^6.7.2"
-    "@fortawesome/free-solid-svg-icons": "npm:^6.7.2"
-    "@fortawesome/vue-fontawesome": "npm:^3.0.8"
+    "@iconify/icons-logos": "npm:^1.2.36"
+    "@iconify/icons-mdi": "npm:^1.2.48"
+    "@iconify/icons-simple-icons": "npm:^1.2.74"
+    "@iconify/vue": "npm:^5.0.0"
     "@tsconfig/node22": "npm:^22.0.1"
     "@types/node": "npm:^22.14.0"
     "@vitejs/plugin-vue": "npm:^5.2.3"

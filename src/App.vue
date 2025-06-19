@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faDiscord } from '@fortawesome/free-brands-svg-icons'
+import { Icon } from '@iconify/vue'
 import { RouterLink, RouterView } from 'vue-router'
 </script>
 
@@ -28,7 +27,7 @@ import { RouterLink, RouterView } from 'vue-router'
 
   <div class="joinUs">
     <a href="https://discord.gg/SszbKF5dtm" target="_blank">
-      <button>Join us on <FontAwesomeIcon :icon="faDiscord" /></button>
+      <button>Join us on <Icon icon="simple-icons:discord" /></button>
     </a>
   </div>
 </template>

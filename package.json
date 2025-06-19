@@ -9,11 +9,10 @@
     "build": "vite build"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^6.7.2",
-    "@fortawesome/free-brands-svg-icons": "^6.7.2",
-    "@fortawesome/free-regular-svg-icons": "^6.7.2",
-    "@fortawesome/free-solid-svg-icons": "^6.7.2",
-    "@fortawesome/vue-fontawesome": "^3.0.8",
+    "@iconify/icons-logos": "^1.2.36",
+    "@iconify/icons-mdi": "^1.2.48",
+    "@iconify/icons-simple-icons": "^1.2.74",
+    "@iconify/vue": "^5.0.0",
     "ol": "^10.5.0",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0"

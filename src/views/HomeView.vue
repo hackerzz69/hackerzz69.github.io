@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faGithub } from '@fortawesome/free-brands-svg-icons';
+import { Icon } from '@iconify/vue';
 import { onMounted } from 'vue';
 
 
@@ -40,11 +39,11 @@ onMounted(() => {
         // Based off userAgent OS update Download button
         const userOS = window.navigator.platform.toLowerCase();
         if (userOS.includes('win')) {
-          downloadButton.innerHTML = `<i class="fa-brands fa-windows"></i> Download`;
+          downloadButton.innerHTML = `<iconify-icon icon="simple-icons:windows"></iconify-icon> Download`;
         } else if (userOS.includes('linux')) {
-          downloadButton.innerHTML = `<i class="fa-brands fa-linux"></i> Download`;
+          downloadButton.innerHTML = `<iconify-icon icon="simple-icons:linux"></iconify-icon> Download`;
         } else if (userOS.includes('mac')) {
-          downloadButton.innerHTML = `<i class="fa-brands fa-apple"></i> Download`;
+          downloadButton.innerHTML = `<iconify-icon icon="simple-icons:apple"></iconify-icon> Download`;
         } else {
           downloadButton.innerHTML = `Download`;
         }
@@ -107,7 +106,7 @@ onMounted(() => {
       <div id="aboutContent">
         <h1>HighLite</h1>
         <p>An open-source RuneLite-esque standalone client for High Spell</p>
-        <div><button id="contribute"><font-awesome-icon :icon="faGithub" /> Contribute </button> <button id="download">Download</button></div>
+        <div class="button-container"><button id="contribute"><Icon icon="simple-icons:github" /> Contribute </button> <button id="download">Download</button></div>
         <div id="aboutStats">
           <span>Latest Release: -</span>
           <span> | </span>
@@ -196,7 +195,9 @@ onMounted(() => {
   cursor: pointer;
   font-size: 16px;
   transition: all 0.3s ease;
-  margin-right: 10px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 #aboutContent #contribute:hover {
@@ -213,7 +214,9 @@ onMounted(() => {
   cursor: pointer;
   font-size: 16px;
   transition: all 0.3s ease;
-  margin-right: 10px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 #aboutContent #download:hover {
   background-color: var(--theme-accent);
@@ -224,6 +227,19 @@ onMounted(() => {
   margin-top: 1rem;
   font-size: 0.8rem;
   color: var(--theme-text-secondary);
+}
+
+#aboutContent #contribute svg,
+#aboutContent #download svg,
+#aboutContent #contribute iconify-icon,
+#aboutContent #download iconify-icon {
+  vertical-align: middle;
+}
+
+.button-container {
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
 
 /* Responsive design */

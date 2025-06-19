@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faDiscord } from '@fortawesome/free-brands-svg-icons'
+import { Icon } from '@iconify/vue'
 </script>
 
 <template>

@@ -59,6 +59,7 @@ let skyLayers: Group
 const selectedLayer = ref('Overworld')
 const isLoading = ref(true)
 const mouseCoords = reactive({ x: 0, y: 0 })
+const isFirefox = ref(navigator.userAgent.toLowerCase().indexOf('firefox') > -1)
 
 // Highlite Map Plugin state
 const isHighliteMode = ref(false)
@@ -76,9 +77,12 @@ const popupPosition = ref<[number, number] | null>(null)
 const activeSearchQuery = ref('')
 const filteredMarkerIds = ref<Set<string>>(new Set())
 const originalCategoryStates = ref<Record<string, boolean>>({})
+const isLayerSwitchFromSearch = ref(false)
 
 // Performance optimization variables
 let hoverTimeout: number | null = null
+let lastHoverFeature: Feature | null = null
+let performanceMode = navigator.userAgent.toLowerCase().indexOf('firefox') > -1 ? 'low' : 'high' // Auto-detect Firefox and use low performance mode
 
 // Layer definitions with enhanced styling
 const layers = ref([
@@ -137,58 +141,95 @@ const displayCoordinates = computed(() => {
 })
 
 const updateMarkerCounts = () => {
-  markerCategories.value.forEach(category => {
-    const currentLayerMarkers = levelMarkers[selectedLayer.value]
-    category.count = currentLayerMarkers[category.name]?.length || 0
-  })
+  // Firefox optimization: Throttle marker count updates
+  if (performanceMode === 'low') {
+    setTimeout(() => {
+      markerCategories.value.forEach(category => {
+        const currentLayerMarkers = levelMarkers[selectedLayer.value]
+        category.count = currentLayerMarkers[category.name]?.length || 0
+      })
+    }, 0)
+  } else {
+    markerCategories.value.forEach(category => {
+      const currentLayerMarkers = levelMarkers[selectedLayer.value]
+      category.count = currentLayerMarkers[category.name]?.length || 0
+    })
+  }
 }
 
-// Function to apply current filter states to the layer
+// Function to apply current filter states to the layer - optimized for Firefox
 const applyFilterStatesToLayer = () => {
-  markerCategories.value.forEach(category => {
-    const currentLayerMarkers = levelMarkers[selectedLayer.value]
-    if (currentLayerMarkers[category.name]) {
-      // Handle locations separately (they use location label layers)
-      if (category.name === 'Locations') {
-        const layer = locationLabelLayers[selectedLayer.value]
-        const source = layer.getSource()
-        if (source) {
-          // Clear all features from this category first
-          currentLayerMarkers[category.name].forEach((feature: Feature) => {
-            if (source.hasFeature(feature)) {
-              source.removeFeature(feature)
-            }
-          })
-          
-          // Add features back only if category is visible
-          if (category.visible) {
-            currentLayerMarkers[category.name].forEach((feature: Feature) => {
-              source.addFeature(feature)
-            })
-          }
+  // Firefox optimization: Batch operations to reduce redraws
+  const currentLayerMarkers = levelMarkers[selectedLayer.value]
+  const markerSource = markerLayers[selectedLayer.value].getSource()
+  const locationSource = locationLabelLayers[selectedLayer.value].getSource()
+  
+  if (!markerSource || !locationSource) return
+  
+  // Batch clear operations
+  if (performanceMode === 'low') {
+    // Firefox: Clear and rebuild in batches
+    markerSource.clear()
+    locationSource.clear()
+    
+    // Add visible features in one go
+    markerCategories.value.forEach(category => {
+      if (category.visible && currentLayerMarkers[category.name]) {
+        const features = currentLayerMarkers[category.name]
+        if (category.name === 'Locations') {
+          locationSource.addFeatures(features)
+        } else {
+          markerSource.addFeatures(features)
         }
-      } else {
-        // Handle other markers (they use regular marker layers)
-        const layer = markerLayers[selectedLayer.value]
-        const source = layer.getSource()
-        if (source) {
-          // Clear all features from this category first
-          currentLayerMarkers[category.name].forEach((feature: Feature) => {
-            if (source.hasFeature(feature)) {
-              source.removeFeature(feature)
-            }
-          })
-          
-          // Add features back only if category is visible
-          if (category.visible) {
+      }
+    })
+  } else {
+    // Other browsers: Individual feature management
+    markerCategories.value.forEach(category => {
+      const currentLayerMarkers = levelMarkers[selectedLayer.value]
+      if (currentLayerMarkers[category.name]) {
+        // Handle locations separately (they use location label layers)
+        if (category.name === 'Locations') {
+          const layer = locationLabelLayers[selectedLayer.value]
+          const source = layer.getSource()
+          if (source) {
+            // Clear all features from this category first
             currentLayerMarkers[category.name].forEach((feature: Feature) => {
-              source.addFeature(feature)
+              if (source.hasFeature(feature)) {
+                source.removeFeature(feature)
+              }
             })
+            
+            // Add features back only if category is visible
+            if (category.visible) {
+              currentLayerMarkers[category.name].forEach((feature: Feature) => {
+                source.addFeature(feature)
+              })
+            }
+          }
+        } else {
+          // Handle other markers (they use regular marker layers)
+          const layer = markerLayers[selectedLayer.value]
+          const source = layer.getSource()
+          if (source) {
+            // Clear all features from this category first
+            currentLayerMarkers[category.name].forEach((feature: Feature) => {
+              if (source.hasFeature(feature)) {
+                source.removeFeature(feature)
+              }
+            })
+            
+            // Add features back only if category is visible
+            if (category.visible) {
+              currentLayerMarkers[category.name].forEach((feature: Feature) => {
+                source.addFeature(feature)
+              })
+            }
           }
         }
       }
-    }
-  })
+    })
+  }
 }
 
 // Helper functions for pinned feature visuals
@@ -481,6 +522,7 @@ const handleLayerChanged = (layerId: string) => {
 
 const handleSearchLocationSelected = (result: any) => {
   if (result.layer !== selectedLayer.value) {
+    isLayerSwitchFromSearch.value = true
     selectedLayer.value = result.layer
   }
   
@@ -502,41 +544,64 @@ const handleMarkerCategoryToggled = (categoryName: string, visible: boolean) => 
   
   const currentLayerMarkers = levelMarkers[selectedLayer.value]
   if (currentLayerMarkers[categoryName]) {
+    // Firefox optimization: Batch operations
+    if (performanceMode === 'low' && !visible) {
+      // For hiding categories in Firefox, use batch clear and rebuild
+      setTimeout(() => {
+        applyFilterStatesToLayer()
+      }, 0)
+      return
+    }
+    
     // Handle locations separately (they use location label layers)
     if (categoryName === 'Locations') {
       const layer = locationLabelLayers[selectedLayer.value]
       const source = layer.getSource()
       if (source) {
-        currentLayerMarkers[categoryName].forEach((feature: Feature) => {
-          if (visible) {
-            if (!source.hasFeature(feature)) {
-              source.addFeature(feature)
-            }
+        if (visible) {
+          // Batch add for Firefox
+          if (performanceMode === 'low') {
+            source.addFeatures(currentLayerMarkers[categoryName].filter(f => !source.hasFeature(f)))
           } else {
-            // Don't remove pinned features even when category is hidden
+            currentLayerMarkers[categoryName].forEach((feature: Feature) => {
+              if (!source.hasFeature(feature)) {
+                source.addFeature(feature)
+              }
+            })
+          }
+        } else {
+          // Don't remove pinned features even when category is hidden
+          currentLayerMarkers[categoryName].forEach((feature: Feature) => {
             if (feature !== pinnedFeature) {
               source.removeFeature(feature)
             }
-          }
-        })
+          })
+        }
       }
     } else {
       // Handle other markers (they use regular marker layers)
       const layer = markerLayers[selectedLayer.value]
       const source = layer.getSource()
       if (source) {
-        currentLayerMarkers[categoryName].forEach((feature: Feature) => {
-          if (visible) {
-            if (!source.hasFeature(feature)) {
-              source.addFeature(feature)
-            }
+        if (visible) {
+          // Batch add for Firefox
+          if (performanceMode === 'low') {
+            source.addFeatures(currentLayerMarkers[categoryName].filter(f => !source.hasFeature(f)))
           } else {
-            // Don't remove pinned features even when category is hidden
+            currentLayerMarkers[categoryName].forEach((feature: Feature) => {
+              if (!source.hasFeature(feature)) {
+                source.addFeature(feature)
+              }
+            })
+          }
+        } else {
+          // Don't remove pinned features even when category is hidden
+          currentLayerMarkers[categoryName].forEach((feature: Feature) => {
             if (feature !== pinnedFeature) {
               source.removeFeature(feature)
             }
-          }
-        })
+          })
+        }
       }
     }
   }
@@ -561,13 +626,18 @@ onMounted(() => {
   const searchParams = new URLSearchParams(window.location.search)
   isHighliteMode.value = searchParams.get('highliteMapPlugin') === 'true'
   
+  // Log performance mode for debugging
+  if (isFirefox.value) {
+    console.log(`🗺️ Map initialized in ${performanceMode} performance mode for Firefox. Toggle with button in bottom-left.`)
+  }
+  
   // Set bounds for a 1024x1024 map
   const bounds = [0, 0, 1024, 1024]
   const center = [512, 512]
   // Extended bounds to allow comfortable zoom-out
   const extendedBounds = [-512, -512, 1536, 1536]
 
-  // Map initialization
+  // Map initialization with Firefox optimizations
   map = new Map({
     target: 'map',
     layers: [],
@@ -578,84 +648,41 @@ onMounted(() => {
       center: center,
       zoom: 2,
       minZoom: 0, // Allow zooming out more
-      maxZoom: 28, // Set a reasonable max zoom
+      maxZoom: performanceMode === 'low' ? 24 : 28, // Reduced max zoom for Firefox
       extent: extendedBounds, // Use extended bounds for more comfortable navigation
-      constrainResolution: false // Allow smoother zooming
+      constrainResolution: performanceMode === 'low' ? true : false, // Snap to zoom levels in Firefox for better performance
+      multiWorld: false, // Disable multi-world for better performance
+      smoothResolutionConstraint: performanceMode === 'high', // Disable smooth zooming in Firefox
+      enableRotation: false // Disable rotation for better performance
     }),
   })
 
-  // Enhanced mouse interaction with throttled hover detection to reduce canvas reads
+  // Enhanced mouse interaction with Firefox-optimized hover detection
   map.on('pointermove', (evt) => {
     const coordinate = evt.coordinate
     mouseCoords.x = Math.round(coordinate[0] - 512.5)
     mouseCoords.y = Math.round(coordinate[1] - 512.5)
     
-    // Throttle hover detection to reduce canvas readback operations
-    if (hoverTimeout) {
-      clearTimeout(hoverTimeout)
-    }
-    
-    hoverTimeout = setTimeout(() => {
-      // Enhanced hover effects for all marker types
-      const features = map.getFeaturesAtPixel(evt.pixel)
-      
-      // Reset all features to default style first (except pinned feature)
-      Object.values(locationLabelLayers).forEach(layer => {
-        layer.getSource()?.getFeatures().forEach(feature => {
-          if (feature.get('isLocation') && feature !== pinnedFeature) {
-            const defaultStyle = feature.get('defaultStyle')
-            if (defaultStyle) {
-              feature.setStyle(defaultStyle)
-            }
-          }
-        })
-      })
-      
-      Object.values(markerLayers).forEach(layer => {
-        layer.getSource()?.getFeatures().forEach(feature => {
-          if (!feature.get('isLocation') && feature !== pinnedFeature) {
-            const defaultStyle = feature.get('defaultStyle')
-            if (defaultStyle) {
-              feature.setStyle(defaultStyle)
-            }
-          }
-        })
-      })
-      
-      // Apply hover effects to features under cursor
-      if (features.length > 0) {
-        const hoveredFeatures = features.slice(0, 3) // Limit to top 3 features to avoid performance issues
-        
-        hoveredFeatures.forEach(featureLike => {
-          // Check if it's an actual Feature (not RenderFeature) and not the pinned feature
-          if ('setStyle' in featureLike && 'get' in featureLike && featureLike !== pinnedFeature) {
-            const feature = featureLike as Feature
-            const hoverStyle = feature.get('hoverStyle')
-            if (hoverStyle) {
-              feature.setStyle(hoverStyle)
-            }
-          }
-        })
-        
-        map.getViewport().style.cursor = 'pointer'
-        
-        // Show tooltip for multiple features if clustered
-        if (features.length > 1) {
-          const featureNames = features.slice(0, 5)
-            .filter(f => 'get' in f)
-            .map(f => (f as Feature).get('name'))
-            .filter(name => name)
-          if (featureNames.length > 1) {
-            map.getViewport().title = `Multiple items: ${featureNames.join(', ')}`
-          }
-        } else if ('get' in features[0]) {
-          map.getViewport().title = (features[0] as Feature).get('name') || ''
-        }
-      } else {
-        map.getViewport().style.cursor = 'default'
-        map.getViewport().title = ''
+    // Different hover handling based on performance mode
+    if (performanceMode === 'low') {
+      // Firefox optimization: Much more throttled hover detection
+      if (hoverTimeout) {
+        clearTimeout(hoverTimeout)
       }
-    }, 16) // ~60fps throttling to reduce canvas reads
+      
+      hoverTimeout = setTimeout(() => {
+        handleHoverOptimized(evt)
+      }, 100) // Increased to 100ms for Firefox
+    } else {
+      // Chrome/other browsers: Normal throttling
+      if (hoverTimeout) {
+        clearTimeout(hoverTimeout)
+      }
+      
+      hoverTimeout = setTimeout(() => {
+        handleHoverNormal(evt)
+      }, 16) // 60fps for other browsers
+    }
   })
 
 
@@ -767,7 +794,7 @@ onMounted(() => {
     // Don't automatically add to layer - let filter states control visibility
   }
 
-  // Enhanced marker creation with better styling and categorization
+  // Enhanced marker creation with Firefox-specific optimizations
   function createMarkerFeature(position: [number, number], icon: string, name: string, category?: string): Feature {
     const feature = new Feature({
       geometry: new Point(position),
@@ -818,20 +845,39 @@ onMounted(() => {
       })
     })
     
-    // Create enhanced hover style (larger)
-    const hoverStyle = new Style({
-      text: new Text({
-        text: icon,
-        font: `bold 1.2rem "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", Inter, sans-serif`,
-        fill: new Fill({ color: '#ffffff' }),
-        stroke: new Stroke({ 
-          color: style.color, 
-          width: strokeWidth + 1.5 
-        }),
-        textAlign: 'center',
-        textBaseline: 'middle'
+    // Firefox optimization: Create simpler hover styles to reduce rendering overhead
+    let hoverStyle: Style
+    if (performanceMode === 'low') {
+      // Simplified hover style for Firefox - just change color, no size change
+      hoverStyle = new Style({
+        text: new Text({
+          text: icon,
+          font: `bold ${style.fontSize} "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", Inter, sans-serif`,
+          fill: new Fill({ color: '#ffffff' }),
+          stroke: new Stroke({ 
+            color: style.color, 
+            width: strokeWidth + 0.5 // Minimal stroke increase
+          }),
+          textAlign: 'center',
+          textBaseline: 'middle'
+        })
       })
-    })
+    } else {
+      // Full hover style for other browsers
+      hoverStyle = new Style({
+        text: new Text({
+          text: icon,
+          font: `bold 1.2rem "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", Inter, sans-serif`,
+          fill: new Fill({ color: '#ffffff' }),
+          stroke: new Stroke({ 
+            color: style.color, 
+            width: strokeWidth + 1.5 
+          }),
+          textAlign: 'center',
+          textBaseline: 'middle'
+        })
+      })
+    }
     
     // Create selection/active style for better feedback (slightly larger)
     const activeStyle = new Style({
@@ -1344,6 +1390,14 @@ onMounted(() => {
       newVal === 'Underworld' ? underworldLayers :
       skyLayers
     )
+    
+    // If layer switch was initiated by search result selection, re-apply search filter
+    if (isLayerSwitchFromSearch.value && activeSearchQuery.value) {
+      setTimeout(() => {
+        filterMarkersBasedOnSearch(activeSearchQuery.value)
+        isLayerSwitchFromSearch.value = false // Reset the flag
+      }, 100) // Short delay to ensure layer switch is complete
+    }
   })
 
   // Set initial layer based on URL param
@@ -1467,6 +1521,105 @@ const updateFilterCategoriesBasedOnSearch = (categoriesWithResults: Set<string>)
   markerCategories.value.forEach(category => {
     category.visible = categoriesWithResults.has(category.name)
   })
+}
+
+// Firefox-optimized hover handler - minimal feature detection and style changes
+const handleHoverOptimized = (evt: any) => {
+  const features = map.getFeaturesAtPixel(evt.pixel)
+  
+  // Reset only the last hovered feature to avoid iterating through all features
+  if (lastHoverFeature && lastHoverFeature !== pinnedFeature) {
+    const defaultStyle = lastHoverFeature.get('defaultStyle')
+    if (defaultStyle) {
+      lastHoverFeature.setStyle(defaultStyle)
+    }
+  }
+  
+  if (features.length > 0) {
+    // Only process the first feature to minimize performance impact
+    const firstFeature = features[0]
+    if ('setStyle' in firstFeature && 'get' in firstFeature && firstFeature !== pinnedFeature) {
+      const feature = firstFeature as Feature
+      const hoverStyle = feature.get('hoverStyle')
+      if (hoverStyle) {
+        feature.setStyle(hoverStyle)
+        lastHoverFeature = feature
+      }
+    }
+    
+    map.getViewport().style.cursor = 'pointer'
+    
+    // Simplified tooltip - only show first feature name
+    if ('get' in firstFeature) {
+      map.getViewport().title = (firstFeature as Feature).get('name') || ''
+    }
+  } else {
+    map.getViewport().style.cursor = 'default'
+    map.getViewport().title = ''
+    lastHoverFeature = null
+  }
+}
+
+// Normal hover handler for Chrome and other browsers
+const handleHoverNormal = (evt: any) => {
+  const features = map.getFeaturesAtPixel(evt.pixel)
+  
+  // Reset all features to default style first (except pinned feature)
+  Object.values(locationLabelLayers).forEach(layer => {
+    layer.getSource()?.getFeatures().forEach(feature => {
+      if (feature.get('isLocation') && feature !== pinnedFeature) {
+        const defaultStyle = feature.get('defaultStyle')
+        if (defaultStyle) {
+          feature.setStyle(defaultStyle)
+        }
+      }
+    })
+  })
+  
+  Object.values(markerLayers).forEach(layer => {
+    layer.getSource()?.getFeatures().forEach(feature => {
+      if (!feature.get('isLocation') && feature !== pinnedFeature) {
+        const defaultStyle = feature.get('defaultStyle')
+        if (defaultStyle) {
+          feature.setStyle(defaultStyle)
+        }
+      }
+    })
+  })
+  
+  // Apply hover effects to features under cursor
+  if (features.length > 0) {
+    const hoveredFeatures = features.slice(0, 3) // Limit to top 3 features to avoid performance issues
+    
+    hoveredFeatures.forEach(featureLike => {
+      // Check if it's an actual Feature (not RenderFeature) and not the pinned feature
+      if ('setStyle' in featureLike && 'get' in featureLike && featureLike !== pinnedFeature) {
+        const feature = featureLike as Feature
+        const hoverStyle = feature.get('hoverStyle')
+        if (hoverStyle) {
+          feature.setStyle(hoverStyle)
+        }
+      }
+    })
+    
+    map.getViewport().style.cursor = 'pointer'
+    
+    // Show tooltip for multiple features if clustered
+    if (features.length > 1) {
+      const featureNames = features.slice(0, 5)
+        .filter(f => 'get' in f)
+        .map(f => (f as Feature).get('name'))
+        .filter(name => name)
+      if (featureNames.length > 1) {
+        map.getViewport().title = `Multiple items: ${featureNames.join(', ')}`
+      }
+    } else if ('get' in features[0]) {
+      map.getViewport().title = (features[0] as Feature).get('name') || ''
+    }
+  } else {
+    map.getViewport().style.cursor = 'default'
+    map.getViewport().title = ''
+  }
 }
 </script>
 

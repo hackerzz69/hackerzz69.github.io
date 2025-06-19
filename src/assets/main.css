@@ -58,6 +58,9 @@ a:hover, .green:hover {
   cursor: pointer;
   font-size: 16px;
   transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .joinUs button:hover {
@@ -130,4 +133,16 @@ a:hover, .green:hover {
   #copyright span {
     margin: 0.1rem 0;
   }
+}
+
+/* Button styles for icons */
+button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Iconify icon alignment */
+iconify-icon {
+  vertical-align: middle;
 }
