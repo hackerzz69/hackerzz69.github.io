@@ -12,6 +12,7 @@ import { RouterLink, RouterView } from 'vue-router'
       <RouterLink to="/" class="navItem">Home</RouterLink>
       <RouterLink to="/map" class="navItem">Map</RouterLink>
       <RouterLink to="/calculators" class="navItem">Calculators</RouterLink>
+      <RouterLink to="/marketplace" class="navItem">Marketplace</RouterLink>
       <!-- Drop Down Menu -->
     </nav>
   </header>

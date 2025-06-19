@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import MapView from '@/views/MapView.vue'
 import CalculatorView from '@/views/CalculatorView.vue'
+import MarketplaceView from '@/views/MarketplaceView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -23,6 +24,11 @@ const router = createRouter({
       path: '/calculators',
       name: 'Calculators',
       component: CalculatorView,
+    },
+    {
+      path: '/marketplace',
+      name: 'Marketplace',
+      component: MarketplaceView,
     },
   ],
 })
