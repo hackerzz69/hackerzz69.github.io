@@ -628,7 +628,7 @@ onMounted(() => {
   
   // Log performance mode for debugging
   if (isFirefox.value) {
-    console.log(`🗺️ Map initialized in ${performanceMode} performance mode for Firefox. Toggle with button in bottom-left.`)
+    console.log(`🗺️ Map initialized in ${performanceMode} performance mode for Firefox.`)
   }
   
   // Set bounds for a 1024x1024 map
