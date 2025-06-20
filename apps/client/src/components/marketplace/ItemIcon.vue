@@ -44,7 +44,7 @@ const spriteStyle = computed(() => {
   const backgroundSizeWidth = itemsPerRow * spriteSize
   
   return {
-    backgroundImage: `url('/src/assets/itemInformation/itemSpriteSheet.png')`,
+    backgroundImage: `url('/src/assets/marketplace/itemspritesheet.png')`,
     backgroundPosition: `${backgroundPositionX}rem ${backgroundPositionY}rem`,
     backgroundSize: `${backgroundSizeWidth}rem auto`,
     backgroundRepeat: 'no-repeat',

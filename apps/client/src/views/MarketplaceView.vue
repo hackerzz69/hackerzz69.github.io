@@ -840,9 +840,9 @@
 import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import { Icon } from '@iconify/vue'
-import ItemIcon from '@/components/ItemIcon.vue'
-import ItemSelector from '@/components/ItemSelector.vue'
-import itemDefs from '@/assets/itemInformation/itemdefs.json'
+import ItemIcon from '@/components/marketplace/ItemIcon.vue'
+import ItemSelector from '@/components/marketplace/ItemSelector.vue'
+import itemDefs from '@/assets/marketplace/itemdefs.json'
 import { useMarketplace, type MarketplaceListing, type ItemOffer } from '@/composables/useMarketplace'
 import { useAuthStore } from '@/stores/auth'
 

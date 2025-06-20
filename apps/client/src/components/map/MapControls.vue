@@ -79,10 +79,10 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import locations from '@/assets/markerInformation/Locations.json'
-import npcs from '@/assets/markerInformation/NPCs.json'
-import npcDefinitions from '@/assets/markerInformation/NPCDefs.json'
-import entitiesData from '@/assets/markerInformation/worldEntities.json'
+import locations from '@/assets/map/Locations.json'
+import npcs from '@/assets/map/NPCs.json'
+import npcDefinitions from '@/assets/map/NPCDefs.json'
+import entitiesData from '@/assets/map/worldEntities.json'
 
 // Props
 interface Props {

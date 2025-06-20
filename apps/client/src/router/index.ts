@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import HomeView from '../views/HomeView.vue'
 import MapView from '@/views/MapView.vue'
-import CalculatorView from '@/views/CalculatorView.vue'
 import MarketplaceView from '@/views/MarketplaceView.vue'
 import LoginView from '@/views/LoginView.vue'
 import AuthCallbackView from '@/views/AuthCallbackView.vue'
@@ -19,11 +18,6 @@ const router = createRouter({
       path: '/map',
       name: 'Map',
       component: MapView,
-    },
-    {
-      path: '/calculators',
-      name: 'Calculators',
-      component: CalculatorView,
     },
     {
       path: '/marketplace',
