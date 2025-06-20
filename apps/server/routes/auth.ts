@@ -55,8 +55,7 @@ router.get('/me', requireAuth, (req: Request, res: Response): void => {
       discord_id: user.discord_id,
       username: user.username,
       discriminator: user.discriminator,
-      avatar: user.avatar,
-      email: user.email
+      avatar: user.avatar
     }
   });
 });

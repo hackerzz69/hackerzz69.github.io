@@ -20,7 +20,7 @@ export const configurePassport = () => {
       clientID,
       clientSecret,
       callbackURL: redirectURI,
-      scope: ['identify', 'email']
+      scope: ['identify']
     }, async (accessToken, refreshToken, profile, done) => {
       try {
         // Check if user already exists
