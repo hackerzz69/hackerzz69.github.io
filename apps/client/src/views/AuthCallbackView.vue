@@ -24,9 +24,6 @@ import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import LoadingSpinner from '@/components/LoadingSpinner.vue'
-import axios from 'axios'
-
-const API_BASE_URL = (import.meta as any).env.VITE_API_URL || 'http://localhost:3000'
 
 const route = useRoute()
 const router = useRouter()

@@ -18,8 +18,6 @@ onMounted(() => {
   fetch('https://api.github.com/repos/HighL1te/HighLiteDesktop/releases/latest')
     .then(response => response.json())
     .then(data => {
-      const latestRelease = data.tag_name;
-
       // Loop through assets and find the latest release for each OS
       data.assets.forEach(asset => {
         if (asset.name.endsWith('.exe')) {
@@ -32,22 +30,6 @@ onMounted(() => {
       });
 
       releaseAssets.unkown = "https://github.com/HighL1te/HighLiteDesktop/releases/latest";
-      const statsElement = document.getElementById('aboutStats');
-
-
-      if (downloadButton) {
-        // Based off userAgent OS update Download button
-        const userOS = window.navigator.platform.toLowerCase();
-        if (userOS.includes('win')) {
-          downloadButton.innerHTML = `<iconify-icon icon="simple-icons:windows"></iconify-icon> Download`;
-        } else if (userOS.includes('linux')) {
-          downloadButton.innerHTML = `<iconify-icon icon="simple-icons:linux"></iconify-icon> Download`;
-        } else if (userOS.includes('mac')) {
-          downloadButton.innerHTML = `<iconify-icon icon="simple-icons:apple"></iconify-icon> Download`;
-        } else {
-          downloadButton.innerHTML = `Download`;
-        }
-      }
     })
     .catch(error => console.error('Error fetching release info:', error));
 
@@ -106,7 +88,10 @@ onMounted(() => {
       <div id="aboutContent">
         <h1>HighLite</h1>
         <p>An open-source RuneLite-esque standalone client for High Spell</p>
-        <div class="button-container"><button id="contribute"><Icon icon="simple-icons:github" /> Contribute </button> <button id="download">Download</button></div>
+        <div class="button-container">
+          <button id="contribute"><Icon icon="simple-icons:github" /> Contribute </button>
+          <button id="download"><Icon icon="ic:baseline-file-download" /> Download</button>
+        </div>
         <div id="aboutStats">
           <span>Latest Release: -</span>
           <span> | </span>

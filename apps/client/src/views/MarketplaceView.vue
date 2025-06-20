@@ -1433,5 +1433,5 @@ const scrollToListing = (listingId: string) => {
 }
 </script>
 <style scoped>
-    @import url('@/assets/marketplace.css');
+    @import url('@/assets/marketplace/marketplace.css');
 </style>
