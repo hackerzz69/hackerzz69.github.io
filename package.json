@@ -21,7 +21,8 @@
     "test": "yarn workspaces foreach -A run test",
     "clean": "yarn workspaces foreach -A run clean && rm -rf node_modules",
     "install:all": "yarn install",
-    "docker:build": "docker build -t highlite-app .",
+    "docker:build": "docker build -f Dockerfile.simple -t highlite-app .",
+    "docker:build-multi": "docker build -t highlite-app .",
     "docker:run": "docker run -p 80:80 -p 3000:3000 highlite-app",
     "docker:compose": "docker-compose up -d"
   },

@@ -1,48 +1,41 @@
-# Multi-stage Docker build for production
+# Simplified Docker build for production
+FROM node:18-alpine
 
-# Build stage for shared packages
-FROM node:18-alpine as shared-build
 WORKDIR /app
+
+# Enable Corepack for proper Yarn version management
+RUN corepack enable
+
+# Copy package files
 COPY package*.json yarn.lock ./
-COPY packages/shared/package.json ./packages/shared/
-RUN yarn install --frozen-lockfile
+COPY .yarnrc.yml ./
+COPY packages/shared/package.json ./packages/shared/package.json
+COPY apps/client/package.json ./apps/client/package.json  
+COPY apps/server/package.json ./apps/server/package.json
+
+# Set Yarn to use node_modules instead of PnP to avoid peer dependency issues
+RUN echo 'nodeLinker: node-modules' >> .yarnrc.yml
+
+# Install dependencies (allow lockfile updates in Docker)
+RUN yarn install
+
+# Copy source code
 COPY packages/shared ./packages/shared
-RUN yarn workspace @highlite/shared build
-
-# Build stage for client
-FROM node:18-alpine as client-build
-WORKDIR /app
-COPY package*.json yarn.lock ./
-COPY apps/client/package.json ./apps/client/
-COPY --from=shared-build /app/packages ./packages
-RUN yarn install --frozen-lockfile
 COPY apps/client ./apps/client
-RUN yarn workspace @highlite/client build
-
-# Build stage for server
-FROM node:18-alpine as server-build
-WORKDIR /app
-COPY package*.json yarn.lock ./
-COPY apps/server/package.json ./apps/server/
-COPY --from=shared-build /app/packages ./packages
-RUN yarn install --frozen-lockfile
 COPY apps/server ./apps/server
+COPY .env ./.env
+
+# Build all packages
+RUN yarn workspace @highlite/shared build
+RUN yarn workspace @highlite/client build  
 RUN yarn workspace @highlite/server build
 
-# Production stage
-FROM nginx:stable-alpine as production
+# Install nginx
+RUN apk add --no-cache nginx
 
-# Install Node.js for the server
-RUN apk add --no-cache nodejs npm
-
-# Copy built client files to nginx
-COPY --from=client-build /app/apps/client/dist /usr/share/nginx/html
-
-# Copy server files
-COPY --from=server-build /app/apps/server/dist /app/server
-COPY --from=server-build /app/apps/server/package.json /app/server/
-COPY --from=server-build /app/node_modules /app/node_modules
-COPY --from=shared-build /app/packages /app/packages
+# Copy built client files to nginx directory
+RUN mkdir -p /usr/share/nginx/html
+RUN cp -r apps/client/dist/* /usr/share/nginx/html/
 
 # Copy nginx configuration
 COPY nginx.conf /etc/nginx/nginx.conf
@@ -50,6 +43,9 @@ COPY nginx.conf /etc/nginx/nginx.conf
 # Copy startup script
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
+
+# Create nginx directories
+RUN mkdir -p /var/log/nginx /var/lib/nginx/tmp /run/nginx
 
 EXPOSE 80 3000
 
