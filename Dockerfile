@@ -24,10 +24,11 @@ COPY packages/shared ./packages/shared
 COPY apps/client ./apps/client
 COPY apps/server ./apps/server
 COPY .env ./.env
+COPY .env.production ./.env.production
 
 # Build all packages
 RUN yarn workspace @highlite/shared build
-RUN yarn workspace @highlite/client build  
+RUN yarn workspace @highlite/client build
 RUN yarn workspace @highlite/server build
 
 # Install nginx
@@ -46,9 +47,6 @@ RUN chmod +x /start.sh
 
 # Create nginx directories
 RUN mkdir -p /var/log/nginx /var/lib/nginx/tmp /run/nginx
-
-# Create directory for database
-RUN mkdir -p /app/server
 
 EXPOSE 80 3000
 

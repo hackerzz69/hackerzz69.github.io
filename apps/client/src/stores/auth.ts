@@ -10,7 +10,7 @@ export interface User {
   avatar?: string
 }
 
-const API_BASE_URL = (import.meta as any).env.VITE_API_URL || 'http://localhost:3000'
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(null)

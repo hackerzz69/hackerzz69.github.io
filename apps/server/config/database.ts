@@ -19,17 +19,6 @@ export async function initializeDatabase(): Promise<Database> {
   
   console.log('Attempting to open database at:', dbPath);
   
-  // Ensure the directory exists
-  const dbDir = path.dirname(dbPath);
-  console.log('Database directory:', dbDir);
-  
-  try {
-    const fs = await import('fs');
-    await fs.promises.mkdir(dbDir, { recursive: true });
-  } catch (error) {
-    console.warn('Could not create database directory:', error);
-  }
-  
   db = await open({
     filename: dbPath,
     driver: sqlite3.Database

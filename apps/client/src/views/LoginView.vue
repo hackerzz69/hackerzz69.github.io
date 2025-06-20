@@ -54,7 +54,7 @@ const loading = ref(false)
 const errorMessage = ref('')
 const configStatus = ref<{ discord_configured: boolean; message: string } | null>(null)
 
-const API_BASE_URL = (import.meta as any).env.VITE_API_URL || 'http://localhost:3000'
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
 onMounted(async () => {
   // Check authentication configuration status
