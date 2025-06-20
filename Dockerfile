@@ -47,6 +47,9 @@ RUN chmod +x /start.sh
 # Create nginx directories
 RUN mkdir -p /var/log/nginx /var/lib/nginx/tmp /run/nginx
 
+# Create directory for database
+RUN mkdir -p /app/server
+
 EXPOSE 80 3000
 
 CMD ["/start.sh"]

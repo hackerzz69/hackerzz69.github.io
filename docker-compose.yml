@@ -6,12 +6,11 @@ services:
     ports:
       - "80:80"
       - "3000:3000"
-    environment:
-      - NODE_ENV=production
-      - DATABASE_URL=./database.sqlite
+    env_file:
+      - .env
     volumes:
-      - ./apps/server/database.sqlite:/app/server/database.sqlite
-      - ./apps/server/config:/app/server/config
+      - ./apps/server:/app/server
+      - database_data:/app/server
     restart: unless-stopped
 
   # Optional: separate database service if using PostgreSQL instead of SQLite
@@ -27,3 +26,6 @@ services:
 
 # volumes:
 #   postgres_data:
+
+volumes:
+  database_data:
