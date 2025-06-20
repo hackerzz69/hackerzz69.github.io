@@ -17,6 +17,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/passport": "^1.0.17",
     "@types/passport-discord": "^0.1.14",
+    "@types/uuid": "^10.0.0",
     "axios": "^1.10.0",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
@@ -30,7 +31,8 @@
     "passport": "^0.7.0",
     "passport-discord": "^0.1.4",
     "sqlite": "^5.1.1",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^5.1.7",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.9",

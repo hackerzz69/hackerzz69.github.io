@@ -37,6 +37,40 @@ export interface MarketplaceOffer {
   item_offers: ItemOffer[]
 }
 
+export interface TradeConfirmation {
+  id: string
+  offer_id: string
+  listing_id: string
+  seller_confirmed: boolean
+  buyer_confirmed: boolean
+  seller_confirmed_at?: string
+  buyer_confirmed_at?: string
+  completed_at?: string
+  status: string
+  created_at: string
+  updated_at: string
+  user_role: 'seller' | 'buyer'
+  // Listing details
+  item_id: number
+  quantity: number
+  asking_price: number
+  accepts_items: boolean
+  notes: string
+  // Offer details
+  coin_offer: number
+  message: string
+  item_offers: ItemOffer[]
+  // User details
+  seller_name: string
+  seller_discord_id: string
+  seller_discriminator?: string
+  seller_avatar?: string
+  buyer_name: string
+  buyer_discord_id: string
+  buyer_discriminator?: string
+  buyer_avatar?: string
+}
+
 export interface ItemOffer {
   id?: number
   offer_id?: string
@@ -73,6 +107,7 @@ export function useMarketplace() {
   const listings = ref<MarketplaceListing[]>([])
   const userListings = ref<MarketplaceListing[]>([])
   const userOffers = ref<MarketplaceOffer[]>([])
+  const pendingTrades = ref<TradeConfirmation[]>([])
   const loading = ref(false)
   const error = ref<string | null>(null)
 
@@ -172,15 +207,77 @@ export function useMarketplace() {
     try {
       loading.value = true
       error.value = null
-      await axios.post(`${API_BASE_URL}/offers/${offerId}/accept`)
+      const response = await axios.post(`${API_BASE_URL}/offers/${offerId}/accept`)
       
       // Refresh listings since the listing status changed
       await fetchListings()
       await fetchUserListings()
+      await fetchPendingTrades()
+      
+      return response.data
     } catch (err: any) {
       error.value = err.response?.data?.error || 'Failed to accept offer'
       console.error('Error accepting offer:', err)
       throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  // Confirm trade completion
+  const confirmTrade = async (tradeConfirmationId: string) => {
+    try {
+      loading.value = true
+      error.value = null
+      const response = await axios.post(`${API_BASE_URL}/trades/${tradeConfirmationId}/confirm`)
+      
+      // Refresh pending trades and listings
+      await fetchPendingTrades()
+      await fetchListings()
+      await fetchUserListings()
+      
+      return response.data
+    } catch (err: any) {
+      error.value = err.response?.data?.error || 'Failed to confirm trade'
+      console.error('Error confirming trade:', err)
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  // Cancel pending trade
+  const cancelTrade = async (tradeConfirmationId: string) => {
+    try {
+      loading.value = true
+      error.value = null
+      const response = await axios.post(`${API_BASE_URL}/trades/${tradeConfirmationId}/cancel`)
+      
+      // Refresh pending trades and listings
+      await fetchPendingTrades()
+      await fetchListings()
+      await fetchUserListings()
+      
+      return response.data
+    } catch (err: any) {
+      error.value = err.response?.data?.error || 'Failed to cancel trade'
+      console.error('Error cancelling trade:', err)
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  // Get pending trades for current user
+  const fetchPendingTrades = async () => {
+    try {
+      loading.value = true
+      error.value = null
+      const response = await axios.get(`${API_BASE_URL}/my-pending-trades`)
+      pendingTrades.value = response.data
+    } catch (err: any) {
+      error.value = err.response?.data?.error || 'Failed to fetch pending trades'
+      console.error('Error fetching pending trades:', err)
     } finally {
       loading.value = false
     }
@@ -277,6 +374,7 @@ export function useMarketplace() {
     listings,
     userListings,
     userOffers,
+    pendingTrades,
     loading,
     error,
     fetchListings,
@@ -288,6 +386,9 @@ export function useMarketplace() {
     rejectOffer,
     fetchUserListings,
     fetchUserOffers,
+    fetchPendingTrades,
+    confirmTrade,
+    cancelTrade,
     fetchSellerProfile,
     isOwnListing,
     getOfferCount,

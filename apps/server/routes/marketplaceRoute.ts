@@ -13,7 +13,7 @@ function getItemName(itemId: number): string {
   return item?.name || 'Unknown Item';
 }
 
-// Get all active listings
+// Get all active listings (excluding pending trades)
 router.get('/listings', async (_req: Request, res: Response) => {
   try {
     const db = await getDatabase();
@@ -365,7 +365,7 @@ router.post('/listings/:id/offers', requireAuth, async (req: Request, res: Respo
   }
 });
 
-// Accept an offer (only by listing owner)
+// Accept an offer (only by listing owner) - this creates a pending trade
 router.post('/offers/:id/accept', requireAuth, async (req: Request, res: Response): Promise<void> => {
   try {
     const offerId = req.params.id;
@@ -392,12 +392,19 @@ router.post('/offers/:id/accept', requireAuth, async (req: Request, res: Respons
       WHERE id = ?
     `, [offerId]);
 
-    // Update listing status to sold
+    // Update listing status to pending (not sold yet)
     await db.run(`
       UPDATE marketplace_listings 
-      SET status = 'sold', updated_at = CURRENT_TIMESTAMP 
+      SET status = 'pending', updated_at = CURRENT_TIMESTAMP 
       WHERE id = ?
     `, [offer.listing_id]);
+
+    // Create trade confirmation record - both parties need to verify
+    const tradeConfirmationId = randomBytes(16).toString('hex');
+    await db.run(`
+      INSERT INTO trade_confirmations (id, offer_id, listing_id, seller_confirmed, buyer_confirmed)
+      VALUES (?, ?, ?, 0, 0)
+    `, [tradeConfirmationId, offerId, offer.listing_id]);
 
     // Reject all other pending offers for this listing
     await db.run(`
@@ -418,7 +425,7 @@ router.post('/offers/:id/accept', requireAuth, async (req: Request, res: Respons
       `, [offerId]);
 
       if (listingDetails) {
-        // Notify buyer that their offer was accepted
+        // Notify buyer that their offer was accepted and trade is pending verification
         await discordNotifications.notifyOfferAccepted(
           {
             discordId: listingDetails.buyer_discord_id,
@@ -447,10 +454,211 @@ router.post('/offers/:id/accept', requireAuth, async (req: Request, res: Respons
       console.error('Failed to send Discord notification for offer acceptance:', notificationError);
     }
 
-    res.json({ message: 'Offer accepted successfully' });
+    res.json({ 
+      message: 'Offer accepted successfully. Trade is now pending verification from both parties. Please confirm when you have completed the exchange.',
+      tradeConfirmationId: tradeConfirmationId 
+    });
   } catch (error) {
     console.error('Error accepting offer:', error);
     res.status(500).json({ error: 'Failed to accept offer' });
+  }
+});
+
+// Confirm trade completion (by either seller or buyer)
+router.post('/trades/:id/confirm', requireAuth, async (req: Request, res: Response): Promise<void> => {
+  try {
+    const tradeConfirmationId = req.params.id;
+    const userId = (req.user as any)!.id!;
+    const db = await getDatabase();
+
+    // Get trade confirmation details and verify user is involved
+    const tradeConfirmation = await db.get(`
+      SELECT tc.*, l.user_id as seller_id, o.user_id as buyer_id, l.id as listing_id, o.id as offer_id
+      FROM trade_confirmations tc
+      JOIN marketplace_listings l ON tc.listing_id = l.id
+      JOIN marketplace_offers o ON tc.offer_id = o.id
+      WHERE tc.id = ? AND tc.status = 'pending' AND (l.user_id = ? OR o.user_id = ?)
+    `, [tradeConfirmationId, userId, userId]);
+
+    if (!tradeConfirmation) {
+      res.status(404).json({ error: 'Trade confirmation not found or not authorized' });
+      return;
+    }
+
+    const isSeller = tradeConfirmation.seller_id === userId;
+    const isBuyer = tradeConfirmation.buyer_id === userId;
+
+    // Update confirmation based on who's confirming
+    if (isSeller) {
+      if (tradeConfirmation.seller_confirmed) {
+        res.status(400).json({ error: 'You have already confirmed this trade' });
+        return;
+      }
+      await db.run(`
+        UPDATE trade_confirmations 
+        SET seller_confirmed = 1, seller_confirmed_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?
+      `, [tradeConfirmationId]);
+    } else if (isBuyer) {
+      if (tradeConfirmation.buyer_confirmed) {
+        res.status(400).json({ error: 'You have already confirmed this trade' });
+        return;
+      }
+      await db.run(`
+        UPDATE trade_confirmations 
+        SET buyer_confirmed = 1, buyer_confirmed_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?
+      `, [tradeConfirmationId]);
+    }
+
+    // Check if both parties have now confirmed
+    const updatedConfirmation = await db.get(`
+      SELECT * FROM trade_confirmations WHERE id = ?
+    `, [tradeConfirmationId]);
+
+    if (updatedConfirmation.seller_confirmed && updatedConfirmation.buyer_confirmed) {
+      // Both confirmed - complete the trade
+      await db.run(`
+        UPDATE trade_confirmations 
+        SET status = 'completed', completed_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?
+      `, [tradeConfirmationId]);
+
+      await db.run(`
+        UPDATE marketplace_listings 
+        SET status = 'sold', updated_at = CURRENT_TIMESTAMP 
+        WHERE id = ?
+      `, [tradeConfirmation.listing_id]);
+
+      // Send completion notifications
+      try {
+        const listingDetails = await db.get(`
+          SELECT l.*, 
+                 seller.discord_id as seller_discord_id, seller.username as seller_name, seller.discriminator as seller_discriminator, seller.avatar as seller_avatar,
+                 buyer.discord_id as buyer_discord_id, buyer.username as buyer_name, buyer.discriminator as buyer_discriminator, buyer.avatar as buyer_avatar
+          FROM marketplace_listings l
+          JOIN users seller ON l.user_id = seller.id
+          JOIN marketplace_offers o ON l.id = o.listing_id
+          JOIN users buyer ON o.user_id = buyer.id
+          WHERE l.id = ? AND o.id = ?
+        `, [tradeConfirmation.listing_id, tradeConfirmation.offer_id]);
+
+        if (listingDetails) {
+          // Notify both parties of trade completion
+          // ... notification logic here
+        }
+      } catch (notificationError) {
+        console.error('Failed to send trade completion notifications:', notificationError);
+      }
+
+      res.json({ 
+        message: 'Trade completed successfully! Both parties have confirmed the exchange.',
+        status: 'completed'
+      });
+    } else {
+      const waitingFor = isSeller ? 'buyer' : 'seller';
+      res.json({ 
+        message: `Trade confirmation recorded. Waiting for ${waitingFor} to confirm.`,
+        status: 'pending',
+        waitingFor: waitingFor
+      });
+    }
+  } catch (error) {
+    console.error('Error confirming trade:', error);
+    res.status(500).json({ error: 'Failed to confirm trade' });
+  }
+});
+
+// Get pending trades for current user
+router.get('/my-pending-trades', requireAuth, async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userId = (req.user as any)!.id!;
+    const db = await getDatabase();
+
+    const pendingTrades = await db.all(`
+      SELECT tc.*, 
+             l.item_id, l.quantity, l.asking_price, l.accepts_items, l.notes,
+             o.coin_offer, o.message,
+             seller.username as seller_name, seller.discord_id as seller_discord_id, seller.discriminator as seller_discriminator, seller.avatar as seller_avatar,
+             buyer.username as buyer_name, buyer.discord_id as buyer_discord_id, buyer.discriminator as buyer_discriminator, buyer.avatar as buyer_avatar,
+             CASE WHEN l.user_id = ? THEN 'seller' ELSE 'buyer' END as user_role
+      FROM trade_confirmations tc
+      JOIN marketplace_listings l ON tc.listing_id = l.id
+      JOIN marketplace_offers o ON tc.offer_id = o.id
+      JOIN users seller ON l.user_id = seller.id
+      JOIN users buyer ON o.user_id = buyer.id
+      WHERE (l.user_id = ? OR o.user_id = ?) AND tc.status = 'pending'
+      ORDER BY tc.created_at DESC
+    `, [userId, userId, userId]);
+
+    // Get offer items for each trade
+    for (const trade of pendingTrades) {
+      const offerItems = await db.all(`
+        SELECT * FROM marketplace_offer_items 
+        WHERE offer_id = ?
+      `, [trade.offer_id]);
+      trade.item_offers = offerItems;
+    }
+
+    res.json(pendingTrades);
+  } catch (error) {
+    console.error('Error fetching pending trades:', error);
+    res.status(500).json({ error: 'Failed to fetch pending trades' });
+  }
+});
+
+// Cancel a pending trade (only if neither party has confirmed yet)
+router.post('/trades/:id/cancel', requireAuth, async (req: Request, res: Response): Promise<void> => {
+  try {
+    const tradeConfirmationId = req.params.id;
+    const userId = (req.user as any)!.id!;
+    const db = await getDatabase();
+
+    // Get trade confirmation details and verify user is involved
+    const tradeConfirmation = await db.get(`
+      SELECT tc.*, l.user_id as seller_id, o.user_id as buyer_id
+      FROM trade_confirmations tc
+      JOIN marketplace_listings l ON tc.listing_id = l.id
+      JOIN marketplace_offers o ON tc.offer_id = o.id
+      WHERE tc.id = ? AND tc.status = 'pending' AND (l.user_id = ? OR o.user_id = ?)
+    `, [tradeConfirmationId, userId, userId]);
+
+    if (!tradeConfirmation) {
+      res.status(404).json({ error: 'Trade confirmation not found or not authorized' });
+      return;
+    }
+
+    // Allow cancellation only if neither party has confirmed yet
+    if (tradeConfirmation.seller_confirmed || tradeConfirmation.buyer_confirmed) {
+      res.status(400).json({ error: 'Cannot cancel trade after confirmations have been made' });
+      return;
+    }
+
+    // Cancel the trade
+    await db.run(`
+      UPDATE trade_confirmations 
+      SET status = 'cancelled', updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+    `, [tradeConfirmationId]);
+
+    // Revert listing back to active
+    await db.run(`
+      UPDATE marketplace_listings 
+      SET status = 'active', updated_at = CURRENT_TIMESTAMP 
+      WHERE id = ?
+    `, [tradeConfirmation.listing_id]);
+
+    // Revert offer back to pending
+    await db.run(`
+      UPDATE marketplace_offers 
+      SET status = 'pending', updated_at = CURRENT_TIMESTAMP 
+      WHERE id = ?
+    `, [tradeConfirmation.offer_id]);
+
+    res.json({ message: 'Trade cancelled successfully. Listing is now active again.' });
+  } catch (error) {
+    console.error('Error cancelling trade:', error);
+    res.status(500).json({ error: 'Failed to cancel trade' });
   }
 });
 
@@ -527,7 +735,7 @@ router.post('/offers/:id/reject', requireAuth, async (req: Request, res: Respons
   }
 });
 
-// Get user's own listings
+// Get user's own listings (including pending ones for management)
 router.get('/my-listings', requireAuth, async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = (req.user as any).id;
@@ -544,7 +752,7 @@ router.get('/my-listings', requireAuth, async (req: Request, res: Response): Pro
         (SELECT COUNT(*) FROM marketplace_offers o WHERE o.listing_id = l.id AND o.status = 'pending') as offer_count
       FROM marketplace_listings l
       JOIN users u ON l.user_id = u.id
-      WHERE l.user_id = ? AND l.status = 'active'
+      WHERE l.user_id = ? AND l.status IN ('active', 'pending')
       ORDER BY l.created_at DESC
     `, [userId]);
     

@@ -94,6 +94,25 @@ export async function initializeDatabase(): Promise<Database> {
     )
   `);
 
+  // Create trade confirmations table for pending trades
+  await db.exec(`
+    CREATE TABLE IF NOT EXISTS trade_confirmations (
+      id TEXT PRIMARY KEY,
+      offer_id TEXT NOT NULL,
+      listing_id TEXT NOT NULL,
+      seller_confirmed BOOLEAN DEFAULT 0,
+      buyer_confirmed BOOLEAN DEFAULT 0,
+      seller_confirmed_at DATETIME NULL,
+      buyer_confirmed_at DATETIME NULL,
+      completed_at DATETIME NULL,
+      status TEXT DEFAULT 'pending',
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (offer_id) REFERENCES marketplace_offers (id),
+      FOREIGN KEY (listing_id) REFERENCES marketplace_listings (id)
+    )
+  `);
+
   console.log('Database initialized successfully');
   return db;
 }

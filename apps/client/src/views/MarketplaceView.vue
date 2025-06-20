@@ -20,10 +20,10 @@
           </div>
         </div>
       </div>        <div class="header-actions">
-          <button v-if="authStore.isAuthenticated" @click="showCreateListing = true" class="create-listing-btn">
+          <button v-if="authStore.isAuthenticated" @click="showCreateListing = true" class="btn btn-primary btn-lg">
             <Icon icon="mdi:plus" /> Create Listing
           </button>
-          <button v-else @click="authStore.login" class="create-listing-btn">
+          <button v-else @click="authStore.login" class="btn btn-primary btn-lg">
             <Icon icon="mdi:login" /> Login to Sell
           </button>
         </div>
@@ -87,8 +87,8 @@
           </div>
 
           <div class="modal-actions">
-            <button @click="showCreateListing = false" class="cancel-btn">Cancel</button>
-            <button @click="createListing" class="submit-btn" :disabled="!canCreateListing">
+            <button @click="showCreateListing = false" class="btn btn-ghost">Cancel</button>
+            <button @click="createListing" class="btn btn-primary" :disabled="!canCreateListing">
               Create Listing
             </button>
           </div>
@@ -230,15 +230,135 @@
           </button>
         </div>
       </div>
+
+      <!-- Pending Trades Section -->
+      <div v-if="authStore.isAuthenticated && marketplace.pendingTrades.value.length > 0" class="pending-trades-section">
+        <div class="section-header">
+          <h3>
+            <Icon icon="mdi:clock-outline" />
+            Pending Trades ({{ marketplace.pendingTrades.value.length }})
+          </h3>
+        </div>
+        <div class="pending-trades-grid">
+          <div v-for="trade in marketplace.pendingTrades.value" :key="trade.id" class="pending-trade-card">
+            <div class="trade-header">
+              <div class="trade-status">
+                <Icon icon="mdi:handshake" />
+                <span>{{ trade.user_role === 'seller' ? 'Selling' : 'Buying' }}</span>
+              </div>
+              <div class="trade-confirmations">
+                <div :class="['confirmation-badge', { confirmed: trade.seller_confirmed }]">
+                  <Icon :icon="trade.seller_confirmed ? 'mdi:check' : 'mdi:clock-outline'" />
+                  Seller
+                </div>
+                <div :class="['confirmation-badge', { confirmed: trade.buyer_confirmed }]">
+                  <Icon :icon="trade.buyer_confirmed ? 'mdi:check' : 'mdi:clock-outline'" />
+                  Buyer
+                </div>
+              </div>
+            </div>
+            
+            <div class="trade-details">
+              <div class="trade-item">
+                <ItemIcon 
+                  :item-id="trade.item_id" 
+                  :item-name="getItemName(trade.item_id)"
+                  size="medium"
+                />
+                <div class="trade-item-info">
+                  <h4>{{ getItemName(trade.item_id) }}</h4>
+                  <p>{{ trade.quantity }}x - {{ trade.asking_price }} coins</p>
+                </div>
+              </div>
+              
+              <div class="trade-offer">
+                <div v-if="trade.coin_offer > 0" class="coin-offer">
+                  <Icon icon="mdi:coin" />
+                  <span>{{ trade.coin_offer }} coins</span>
+                </div>
+                <div v-if="trade.item_offers && trade.item_offers.length > 0" class="item-offers">
+                  <div v-for="itemOffer in trade.item_offers" :key="itemOffer.id" class="offered-item">
+                    <ItemIcon 
+                      :item-id="itemOffer.item_id" 
+                      :item-name="getItemName(itemOffer.item_id)"
+                      size="small"
+                    />
+                    <span>{{ itemOffer.quantity }}x {{ getItemName(itemOffer.item_id) }}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="trade-parties">
+                <div class="party seller">
+                  <Icon icon="mdi:account" />
+                  <span>{{ trade.seller_name }}</span>
+                </div>
+                <Icon icon="mdi:arrow-right" />
+                <div class="party buyer">
+                  <Icon icon="mdi:account-outline" />
+                  <span>{{ trade.buyer_name }}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="trade-actions">
+              <div v-if="!trade.seller_confirmed && !trade.buyer_confirmed" class="trade-warning">
+                <Icon icon="mdi:information" />
+                <span>Both parties need to confirm the trade completion. You can cancel this trade until someone confirms.</span>
+              </div>
+              <div v-else-if="trade.seller_confirmed && trade.buyer_confirmed" class="trade-completed">
+                <Icon icon="mdi:check-circle" />
+                <span>Trade completed!</span>
+              </div>
+              <div v-else class="trade-waiting">
+                <Icon icon="mdi:clock-outline" />
+                <span v-if="trade.user_role === 'seller' && trade.seller_confirmed">
+                  Waiting for buyer to confirm
+                </span>
+                <span v-else-if="trade.user_role === 'buyer' && trade.buyer_confirmed">
+                  Waiting for seller to confirm
+                </span>
+                <span v-else>
+                  Please confirm when the trade is complete
+                </span>
+              </div>
+              
+              <div class="trade-buttons">
+                <button 
+                  v-if="(trade.user_role === 'seller' && !trade.seller_confirmed) || (trade.user_role === 'buyer' && !trade.buyer_confirmed)"
+                  @click="confirmTrade(trade.id)"
+                  class="btn btn-success"
+                >
+                  <Icon icon="mdi:check" />
+                  Confirm Trade
+                </button>
+                <button 
+                  v-if="!trade.seller_confirmed && !trade.buyer_confirmed"
+                  @click="cancelTrade(trade.id)"
+                  class="btn btn-danger btn-sm"
+                  title="Cancel this trade and return the listing to active status"
+                >
+                  <Icon icon="mdi:close" />
+                  Cancel Trade
+                </button>
+              </div>
+            </div>
+            
+            <div class="trade-meta">
+              <span class="trade-date">{{ getRelativeTime(trade.created_at) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
       
       <div v-if="filteredListings.length === 0" class="empty-state">
         <Icon icon="mdi:package-variant-closed" class="empty-icon" />
         <h3>No listings found</h3>
         <p>Try adjusting your filters or be the first to create a listing!</p>
-        <button v-if="authStore.isAuthenticated" @click="showCreateListing = true" class="empty-action-btn">
+        <button v-if="authStore.isAuthenticated" @click="showCreateListing = true" class="btn btn-primary btn-spaced">
           <Icon icon="mdi:plus" /> Create First Listing
         </button>
-        <button v-else @click="authStore.login" class="empty-action-btn">
+        <button v-else @click="authStore.login" class="btn btn-primary btn-spaced">
           <Icon icon="mdi:login" /> Login to Create Listing
         </button>
       </div>
@@ -319,15 +439,19 @@
           </div>
 
             <div class="listing-actions">
-              <button v-if="!isOwnListing(listing)" @click="showMakeOffer(listing)" class="offer-btn">
+              <button 
+                v-if="!isOwnListing(listing)" 
+                @click="showMakeOffer(listing)" 
+                class="btn btn-primary"
+              >
                 <Icon icon="mdi:handshake" />
                 Make Offer
               </button>
-              <button @click="viewOffers(listing)" class="view-offers-btn">
+              <button @click="viewOffers(listing)" class="btn btn-secondary">
                 <Icon icon="mdi:eye" />
                 View Offers ({{ getOfferCount(listing.id) }})
               </button>
-              <button v-if="isOwnListing(listing)" @click="removeListing(listing.id)" class="remove-btn">
+              <button v-if="isOwnListing(listing)" @click="removeListing(listing.id)" class="btn btn-danger">
                 <Icon icon="mdi:delete" />
                 Remove
               </button>
@@ -421,11 +545,11 @@
               </div>
 
               <div v-if="isOwnListing(selectedListingForOffers)" class="offer-actions">
-                <button @click="acceptOffer(selectedListingForOffers, offer)" class="accept-btn">
+                <button @click="acceptOffer(selectedListingForOffers, offer)" class="btn btn-success btn-sm">
                   <Icon icon="mdi:check" />
                   Accept Offer
                 </button>
-                <button @click="rejectOffer(offer.id, selectedListingForOffers.id)" class="reject-btn">
+                <button @click="rejectOffer(offer.id, selectedListingForOffers.id)" class="btn btn-ghost btn-sm">
                   <Icon icon="mdi:close" />
                   Reject
                 </button>
@@ -1053,15 +1177,47 @@ const getOfferCount = (listingId: string): number => {
 
 const acceptOffer = async (listing: MarketplaceListing, offer: any) => {
   try {
-    await marketplace.acceptOffer(offer.id)
+    const result = await marketplace.acceptOffer(offer.id)
     
     // Close the offers modal
     showOffersModal.value = false
     selectedListingForOffers.value = null
     
-    showFeedback(`Offer accepted! Trade completed with ${offer.buyer_name}.`, 'success')
+    showFeedback(`Offer accepted! Trade is now pending verification from both parties.`, 'success')
+    
+    // Show additional guidance
+    setTimeout(() => {
+      showFeedback('Please confirm the trade once you have completed the exchange.', 'info')
+    }, 2000)
   } catch (error) {
     showFeedback('Failed to accept offer', 'error')
+  }
+}
+
+const confirmTrade = async (tradeConfirmationId: string) => {
+  try {
+    const result = await marketplace.confirmTrade(tradeConfirmationId)
+    
+    if (result.status === 'completed') {
+      showFeedback('Trade completed successfully! Both parties have confirmed.', 'success')
+    } else {
+      showFeedback(result.message, 'info')
+    }
+  } catch (error) {
+    showFeedback('Failed to confirm trade', 'error')
+  }
+}
+
+const cancelTrade = async (tradeConfirmationId: string) => {
+  if (!confirm('Are you sure you want to cancel this trade? The listing will become active again.')) {
+    return
+  }
+  
+  try {
+    await marketplace.cancelTrade(tradeConfirmationId)
+    showFeedback('Trade cancelled. Listing is now active again.', 'info')
+  } catch (error) {
+    showFeedback('Failed to cancel trade', 'error')
   }
 }
 
@@ -1249,6 +1405,11 @@ const clearFilters = () => {
 // Initialize
 onMounted(async () => {
   await marketplace.fetchListings()
+  
+  // Fetch pending trades if user is authenticated
+  if (authStore.isAuthenticated) {
+    await marketplace.fetchPendingTrades()
+  }
   
   // Check for listing query parameter and scroll to it
   const listingId = route.query.listing as string
