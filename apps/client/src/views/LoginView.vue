@@ -24,7 +24,7 @@
         <button 
           @click="handleDiscordLogin" 
           class="discord-login-btn" 
-          :disabled="loading || (configStatus && !configStatus.discord_configured)"
+          :disabled="loading || (configStatus ? !configStatus.discord_configured : false)"
         >
           <Icon v-if="loading" icon="mdi:loading" class="discord-icon loading-spinner" />
           <Icon v-else icon="mdi:discord" class="discord-icon" />

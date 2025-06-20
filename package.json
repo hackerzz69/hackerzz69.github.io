@@ -11,13 +11,19 @@
     "dev": "concurrently \"yarn dev:server\" \"yarn dev:client\"",
     "dev:client": "yarn workspace @highlite/client dev --host",
     "dev:server": "yarn workspace @highlite/server dev",
-    "build": "yarn workspace @highlite/client build && yarn workspace @highlite/server build",
+    "build": "yarn workspace @highlite/shared build && yarn workspace @highlite/client build && yarn workspace @highlite/server build",
     "build:client": "yarn workspace @highlite/client build",
     "build:server": "yarn workspace @highlite/server build",
+    "build:shared": "yarn workspace @highlite/shared build",
+    "build:production": "NODE_ENV=production yarn build",
     "start": "yarn workspace @highlite/server start",
+    "start:production": "NODE_ENV=production yarn workspace @highlite/server start",
     "test": "yarn workspaces foreach -A run test",
     "clean": "yarn workspaces foreach -A run clean && rm -rf node_modules",
-    "install:all": "yarn install"
+    "install:all": "yarn install",
+    "docker:build": "docker build -t highlite-app .",
+    "docker:run": "docker run -p 80:80 -p 3000:3000 highlite-app",
+    "docker:compose": "docker-compose up -d"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

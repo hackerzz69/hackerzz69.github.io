@@ -15,7 +15,8 @@
     "rootDir": "./src",
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "composite": true
   },
   "include": [
     "src/**/*.ts"

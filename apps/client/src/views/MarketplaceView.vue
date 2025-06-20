@@ -583,7 +583,7 @@
                 size="large"
               />
               <div class="listing-summary-info">
-                <h3>{{ getItemName(selectedListing?.item_id) }}</h3>
+                <h3>{{ selectedListing?.item_id ? getItemName(selectedListing.item_id) : 'Unknown Item' }}</h3>
                 <p>Quantity: {{ selectedListing?.quantity }}</p>
                 <p>Asking Price: {{ selectedListing?.asking_price }} coins</p>
                 <p v-if="selectedListing?.accepts_items">✓ Accepts item trades</p>
@@ -779,7 +779,7 @@
                   v-for="listing in selectedSellerProfile.listings" 
                   :key="listing.id"
                   class="mini-listing-card"
-                  @click="showSellerProfileModal = false; document.querySelector(`[data-listing-id='${listing.id}']`)?.scrollIntoView({ behavior: 'smooth' })"
+                  @click="scrollToListing(listing.id.toString())"
                 >
                   <ItemIcon 
                     :item-id="listing.item_id" 
@@ -837,7 +837,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, computed, onMounted, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import { Icon } from '@iconify/vue'
 import ItemIcon from '@/components/marketplace/ItemIcon.vue'
@@ -1132,7 +1132,7 @@ const submitOffer = async () => {
     await marketplace.createOffer(selectedListing.value.id, {
       coinOffer: newOffer.value.coinOffer || 0,
       itemOffers: newOffer.value.itemOffers.filter(offer => offer.item_id && offer.quantity > 0).map(offer => ({
-        itemId: offer.item_id,
+        item_id: offer.item_id,
         quantity: offer.quantity
       })),
       message: newOffer.value.message
@@ -1175,9 +1175,9 @@ const getOfferCount = (listingId: string): number => {
   return getOffersForListing(listingId).length
 }
 
-const acceptOffer = async (listing: MarketplaceListing, offer: any) => {
+const acceptOffer = async (_listing: MarketplaceListing, offer: any) => {
   try {
-    const result = await marketplace.acceptOffer(offer.id)
+    await marketplace.acceptOffer(offer.id)
     
     // Close the offers modal
     showOffersModal.value = false

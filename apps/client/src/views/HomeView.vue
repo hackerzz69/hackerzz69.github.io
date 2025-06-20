@@ -19,7 +19,7 @@ onMounted(() => {
     .then(response => response.json())
     .then(data => {
       // Loop through assets and find the latest release for each OS
-      data.assets.forEach(asset => {
+      data.assets.forEach((asset: any) => {
         if (asset.name.endsWith('.exe')) {
           releaseAssets.windows = asset.browser_download_url;
         } else if (asset.name.endsWith('.AppImage')) {
@@ -38,8 +38,8 @@ onMounted(() => {
     .then(data => {
       // For each release, get the number of downloads for each .exe, .AppImage, and .dmg
       let totalDownloads = 0;
-      data.forEach(release => {
-        release.assets.forEach(asset => {
+      data.forEach((release: any) => {
+        release.assets.forEach((asset: any) => {
           if (asset.name.endsWith('.exe') || asset.name.endsWith('.AppImage') || asset.name.endsWith('.dmg')) {
             totalDownloads += asset.download_count;
           }

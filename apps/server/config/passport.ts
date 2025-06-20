@@ -21,7 +21,7 @@ export const configurePassport = () => {
       clientSecret,
       callbackURL: redirectURI,
       scope: ['identify']
-    }, async (accessToken, refreshToken, profile, done) => {
+    }, async (_accessToken, _refreshToken, profile, done) => {
       try {
         // Check if user already exists
         let user = await UserModel.findByDiscordId(profile.id);
