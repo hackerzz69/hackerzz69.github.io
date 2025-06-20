@@ -47,7 +47,7 @@ import VectorSource from 'ol/source/Vector'
 import ImageStatic from 'ol/source/ImageStatic'
 import Feature from 'ol/Feature'
 import Point from 'ol/geom/Point'
-import { Style, Text, Fill, Stroke, Icon } from 'ol/style'
+import { Style, Text, Fill, Stroke } from 'ol/style'
 import { defaults as defaultInteractions } from 'ol/interaction'
 
 let map: Map
@@ -59,7 +59,6 @@ let skyLayers: Group
 const selectedLayer = ref('Overworld')
 const isLoading = ref(true)
 const mouseCoords = reactive({ x: 0, y: 0 })
-const isFirefox = ref(navigator.userAgent.toLowerCase().indexOf('firefox') > -1)
 
 // Highlite Map Plugin state
 const isHighliteMode = ref(false)
@@ -413,7 +412,6 @@ const filterMarkersBasedOnSearch = (searchQuery: string) => {
     features.forEach((feature: Feature) => {
       const name = feature.get('name')?.toLowerCase() || ''
       const featureCategory = feature.get('category')?.toLowerCase() || ''
-      const icon = feature.get('icon') || ''
       
       // Check if feature matches search query or is the pinned feature
       if (name.includes(activeSearchQuery.value) || 
@@ -461,13 +459,6 @@ const hideAllMarkers = () => {
 const showAllMarkersBasedOnCategories = () => {
   // Apply filter states to show markers based on category visibility settings
   applyFilterStatesToLayer()
-}
-
-const clearSearchFilter = () => {
-  activeSearchQuery.value = ''
-  filteredMarkerIds.value.clear()
-  restoreOriginalCategoryStates()
-  showAllMarkersBasedOnCategories()
 }
 
 // Function to pin a location (used in highlite mode)
@@ -626,11 +617,6 @@ onMounted(() => {
   const searchParams = new URLSearchParams(window.location.search)
   isHighliteMode.value = searchParams.get('highliteMapPlugin') === 'true'
   
-  // Log performance mode for debugging
-  if (isFirefox.value) {
-    console.log(`🗺️ Map initialized in ${performanceMode} performance mode for Firefox.`)
-  }
-  
   // Set bounds for a 1024x1024 map
   const bounds = [0, 0, 1024, 1024]
   const center = [512, 512]
@@ -670,7 +656,7 @@ onMounted(() => {
         clearTimeout(hoverTimeout)
       }
       
-      hoverTimeout = setTimeout(() => {
+      hoverTimeout = window.setTimeout(() => {
         handleHoverOptimized(evt)
       }, 100) // Increased to 100ms for Firefox
     } else {
@@ -679,7 +665,7 @@ onMounted(() => {
         clearTimeout(hoverTimeout)
       }
       
-      hoverTimeout = setTimeout(() => {
+      hoverTimeout = window.setTimeout(() => {
         handleHoverNormal(evt)
       }, 16) // 60fps for other browsers
     }
@@ -774,12 +760,6 @@ onMounted(() => {
       }),
     ],
   })
-  const baseMaps = {
-    Sky: skyLayers,
-    Overworld: overworldLayers,
-    Underworld: underworldLayers,
-  }
-
   function addItem(feature: Feature, level: string, group: string) {
     if (!levelMarkers[level][group]) levelMarkers[level][group] = []
     levelMarkers[level][group].push(feature)
@@ -1220,7 +1200,7 @@ onMounted(() => {
   // NPC type configuration for cleaner processing
   const npcTypeConfig = [
     {
-      condition: (npc: any, npcDef: any) => Boolean(npc.shopdef_id),
+      condition: (npc: any) => Boolean(npc.shopdef_id),
       icon: '🏪',
       category: 'Shops',
       nameFormatter: (npcDef: any) => 
@@ -1239,7 +1219,7 @@ onMounted(() => {
       }
     },
     {
-      condition: (npc: any, npcDef: any) => Boolean(npcDef?.combat),
+      condition: (_npc: any, npcDef: any) => Boolean(npcDef?.combat),
       icon: '⚔️',
       category: 'Attackable NPCs', 
       nameFormatter: (npcDef: any) => {

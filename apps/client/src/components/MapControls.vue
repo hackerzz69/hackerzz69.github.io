@@ -78,7 +78,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import locations from '@/assets/markerInformation/Locations.json'
 import npcs from '@/assets/markerInformation/NPCs.json'
 import npcDefinitions from '@/assets/markerInformation/NPCDefs.json'
@@ -604,17 +604,6 @@ onMounted(() => {
 /* Advanced Options Container */
 .advanced-options {
   animation: slideDown 0.3s ease-out;
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 .search-result-item {

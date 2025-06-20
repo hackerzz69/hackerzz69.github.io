@@ -68,7 +68,6 @@ export const useAuthStore = defineStore('auth', () => {
 
   const login = () => {
     if (typeof window !== 'undefined') {
-      console.log('Redirecting to Discord OAuth:', `${API_BASE_URL}/auth/discord`)
       window.location.href = `${API_BASE_URL}/auth/discord`
     }
   }

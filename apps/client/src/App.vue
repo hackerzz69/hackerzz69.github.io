@@ -12,7 +12,6 @@ import UserMenu from '@/components/UserMenu.vue'
     <nav>
       <RouterLink to="/" class="navItem">Home</RouterLink>
       <RouterLink to="/map" class="navItem">Map</RouterLink>
-      <RouterLink to="/calculators" class="navItem">Calculators</RouterLink>
       <RouterLink to="/marketplace" class="navItem">Marketplace</RouterLink>
     </nav>
     <UserMenu />
