@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
 import { RouterLink, RouterView } from 'vue-router'
+import UserMenu from '@/components/UserMenu.vue'
 </script>
 
 <template>
@@ -13,8 +14,8 @@ import { RouterLink, RouterView } from 'vue-router'
       <RouterLink to="/map" class="navItem">Map</RouterLink>
       <RouterLink to="/calculators" class="navItem">Calculators</RouterLink>
       <RouterLink to="/marketplace" class="navItem">Marketplace</RouterLink>
-      <!-- Drop Down Menu -->
     </nav>
+    <UserMenu />
   </header>
   
   <main>

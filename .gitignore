@@ -17,14 +17,18 @@ coverage
 /cypress/videos/
 /cypress/screenshots/
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+# Build directories
+apps/*/dist
+packages/*/dist
+apps/*/build
+packages/*/build
 
-*.tsbuildinfo
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Database files
+*.sqlite
+*.sqlite3
+apps/server/database.sqlite

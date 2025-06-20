@@ -28,6 +28,17 @@
   --theme-border-light: rgba(255, 255, 255, 0.05);
   --theme-divider: rgba(255, 255, 255, 0.15);
   
+  /* Status colors */
+  --theme-success: #10b981;
+  --theme-success-dark: #059669;
+  --theme-success-light: #34d399;
+  --theme-success-transparent-30: rgba(16, 185, 129, 0.3);
+  
+  --theme-danger: #ef4444;
+  --theme-danger-dark: #dc2626;
+  --theme-danger-light: #f87171;
+  --theme-danger-transparent-30: rgba(239, 68, 68, 0.3);
+
   /* Legacy Vue theme compatibility */
   --vt-c-white: #ffffff;
   --vt-c-white-soft: #f8f8f8;
