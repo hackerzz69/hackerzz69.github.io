@@ -34,13 +34,32 @@ export const useAuthStore = defineStore('auth', () => {
     user.value = null
   }
 
+  const checkAuthStatus = async (): Promise<boolean> => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/auth/me`)
+      user.value = response.data.user
+      return true
+    } catch (error: any) {
+      if (error.response?.status === 401) {
+        clearAuth()
+        return false
+      }
+      // Log non-401 errors as they might indicate server issues
+      console.error('Error checking auth status:', error)
+      return false
+    }
+  }
+
   const fetchUser = async () => {
     try {
       loading.value = true
       const response = await axios.get(`${API_BASE_URL}/auth/me`)
       user.value = response.data.user
-    } catch (error) {
-      console.error('Failed to fetch user:', error)
+    } catch (error: any) {
+      // Only log errors that aren't 401 (unauthorized) since that's expected when not logged in
+      if (error.response?.status !== 401) {
+        console.error('Failed to fetch user:', error)
+      }
       clearAuth()
     } finally {
       loading.value = false
@@ -49,6 +68,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   const login = () => {
     if (typeof window !== 'undefined') {
+      console.log('Redirecting to Discord OAuth:', `${API_BASE_URL}/auth/discord`)
       window.location.href = `${API_BASE_URL}/auth/discord`
     }
   }
@@ -69,7 +89,10 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   // Try to fetch user on store initialization (in case session exists)
-  fetchUser()
+  // Don't await this to avoid blocking store initialization
+  checkAuthStatus().catch(() => {
+    // Silently handle any initialization errors - user can manually login
+  })
 
   return {
     user,
@@ -77,6 +100,7 @@ export const useAuthStore = defineStore('auth', () => {
     isAuthenticated,
     avatarUrl,
     clearAuth,
+    checkAuthStatus,
     fetchUser,
     login,
     logout,

@@ -2,8 +2,16 @@ import express, { Request, Response } from 'express';
 import { getDatabase } from '../config/database.js';
 import { requireAuth } from './auth.js';
 import { randomBytes } from 'crypto';
+import { discordNotifications } from '../services/discordNotifications.js';
+import itemDefs from '../data/itemdefs.json' assert { type: 'json' };
 
 const router = express.Router();
+
+// Helper function to get item name by ID
+function getItemName(itemId: number): string {
+  const item = (itemDefs as any[]).find((item: any) => item._id === itemId);
+  return item?.name || 'Unknown Item';
+}
 
 // Get all active listings
 router.get('/listings', async (_req: Request, res: Response) => {
@@ -65,6 +73,30 @@ router.post('/listings', requireAuth, async (req: Request, res: Response): Promi
       WHERE l.id = ?
     `, [listingId]);
 
+    // Send Discord notification
+    try {
+      const user = (req.user as any);
+      await discordNotifications.notifyListingCreated(
+        {
+          discordId: user.discord_id,
+          username: user.username,
+          discriminator: user.discriminator,
+          avatar: user.avatar
+        },
+        {
+          id: listingId,
+          itemName: getItemName(itemId),
+          quantity,
+          askingPrice,
+          acceptsItems,
+          notes
+        }
+      );
+    } catch (notificationError) {
+      console.error('Failed to send Discord notification for listing creation:', notificationError);
+      // Don't fail the request if notification fails
+    }
+
     res.status(201).json(listing);
   } catch (error) {
     console.error('Error creating listing:', error);
@@ -81,8 +113,10 @@ router.delete('/listings/:id', requireAuth, async (req: Request, res: Response):
 
     // Check if listing exists and belongs to user
     const listing = await db.get(`
-      SELECT * FROM marketplace_listings 
-      WHERE id = ? AND user_id = ? AND status = 'active'
+      SELECT l.*, u.username, u.discord_id, u.discriminator, u.avatar 
+      FROM marketplace_listings l
+      JOIN users u ON l.user_id = u.id
+      WHERE l.id = ? AND l.user_id = ? AND l.status = 'active'
     `, [listingId, userId]);
 
     if (!listing) {
@@ -96,6 +130,28 @@ router.delete('/listings/:id', requireAuth, async (req: Request, res: Response):
       SET status = 'removed', updated_at = CURRENT_TIMESTAMP 
       WHERE id = ?
     `, [listingId]);
+
+    // Send Discord notification
+    try {
+      await discordNotifications.notifyListingRemoved(
+        {
+          discordId: listing.discord_id,
+          username: listing.username,
+          discriminator: listing.discriminator,
+          avatar: listing.avatar
+        },
+        {
+          id: listingId,
+          itemName: getItemName(listing.item_id),
+          quantity: listing.quantity,
+          askingPrice: listing.asking_price,
+          acceptsItems: listing.accepts_items === 1,
+          notes: listing.notes
+        }
+      );
+    } catch (notificationError) {
+      console.error('Failed to send Discord notification for listing removal:', notificationError);
+    }
 
     res.json({ message: 'Listing removed successfully' });
   } catch (error) {
@@ -264,6 +320,44 @@ router.post('/listings/:id/offers', requireAuth, async (req: Request, res: Respo
     `, [offerId]);
     offer.item_offers = offerItems;
 
+    // Send Discord notification to listing owner
+    try {
+      const listingOwner = await db.get(`
+        SELECT u.* FROM users u
+        JOIN marketplace_listings l ON u.id = l.user_id
+        WHERE l.id = ?
+      `, [listingId]);
+
+      if (listingOwner) {
+        await discordNotifications.notifyOfferReceived(
+          {
+            discordId: listingOwner.discord_id,
+            username: listingOwner.username,
+            discriminator: listingOwner.discriminator,
+            avatar: listingOwner.avatar
+          },
+          {
+            id: listingId,
+            itemName: getItemName(listing.item_id),
+            quantity: listing.quantity,
+            askingPrice: listing.asking_price,
+            acceptsItems: listing.accepts_items === 1,
+            notes: listing.notes
+          },
+          {
+            id: offerId,
+            listingId: listingId,
+            coinOffer: coinOffer || 0,
+            message: message || '',
+            buyerName: offer.buyer_name,
+            buyerDiscordId: offer.buyer_discord_id
+          }
+        );
+      }
+    } catch (notificationError) {
+      console.error('Failed to send Discord notification for new offer:', notificationError);
+    }
+
     res.status(201).json(offer);
   } catch (error) {
     console.error('Error creating offer:', error);
@@ -312,6 +406,47 @@ router.post('/offers/:id/accept', requireAuth, async (req: Request, res: Respons
       WHERE listing_id = ? AND id != ? AND status = 'pending'
     `, [offer.listing_id, offerId]);
 
+    // Send Discord notifications
+    try {
+      // Get listing details and buyer info for notifications
+      const listingDetails = await db.get(`
+        SELECT l.*, u.discord_id as buyer_discord_id, u.username as buyer_name, u.discriminator as buyer_discriminator, u.avatar as buyer_avatar
+        FROM marketplace_listings l
+        JOIN marketplace_offers o ON l.id = o.listing_id
+        JOIN users u ON o.user_id = u.id
+        WHERE o.id = ?
+      `, [offerId]);
+
+      if (listingDetails) {
+        // Notify buyer that their offer was accepted
+        await discordNotifications.notifyOfferAccepted(
+          {
+            discordId: listingDetails.buyer_discord_id,
+            username: listingDetails.buyer_name,
+            discriminator: listingDetails.buyer_discriminator,
+            avatar: listingDetails.buyer_avatar
+          },
+          {
+            id: listingDetails.id,
+            itemName: getItemName(listingDetails.item_id),
+            quantity: listingDetails.quantity,
+            askingPrice: listingDetails.asking_price,
+            acceptsItems: listingDetails.accepts_items === 1,
+            notes: listingDetails.notes
+          },
+          {
+            id: offerId,
+            listingId: offer.listing_id,
+            coinOffer: offer.coin_offer,
+            message: offer.message,
+            buyerName: listingDetails.buyer_name
+          }
+        );
+      }
+    } catch (notificationError) {
+      console.error('Failed to send Discord notification for offer acceptance:', notificationError);
+    }
+
     res.json({ message: 'Offer accepted successfully' });
   } catch (error) {
     console.error('Error accepting offer:', error);
@@ -345,6 +480,45 @@ router.post('/offers/:id/reject', requireAuth, async (req: Request, res: Respons
       SET status = 'rejected', updated_at = CURRENT_TIMESTAMP 
       WHERE id = ?
     `, [offerId]);
+
+    // Send Discord notification to buyer
+    try {
+      const offerDetails = await db.get(`
+        SELECT o.*, l.*, u.discord_id, u.username, u.discriminator, u.avatar
+        FROM marketplace_offers o
+        JOIN marketplace_listings l ON o.listing_id = l.id
+        JOIN users u ON o.user_id = u.id
+        WHERE o.id = ?
+      `, [offerId]);
+
+      if (offerDetails) {
+        await discordNotifications.notifyOfferRejected(
+          {
+            discordId: offerDetails.discord_id,
+            username: offerDetails.username,
+            discriminator: offerDetails.discriminator,
+            avatar: offerDetails.avatar
+          },
+          {
+            id: offerDetails.listing_id,
+            itemName: getItemName(offerDetails.item_id),
+            quantity: offerDetails.quantity,
+            askingPrice: offerDetails.asking_price,
+            acceptsItems: offerDetails.accepts_items === 1,
+            notes: offerDetails.notes
+          },
+          {
+            id: offerId,
+            listingId: offerDetails.listing_id,
+            coinOffer: offerDetails.coin_offer,
+            message: offerDetails.message,
+            buyerName: offerDetails.username
+          }
+        );
+      }
+    } catch (notificationError) {
+      console.error('Failed to send Discord notification for offer rejection:', notificationError);
+    }
 
     res.json({ message: 'Offer rejected successfully' });
   } catch (error) {

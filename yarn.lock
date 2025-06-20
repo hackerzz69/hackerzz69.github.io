@@ -567,6 +567,7 @@ __metadata:
     "@types/node": "npm:^22.14.0"
     "@types/passport": "npm:^1.0.17"
     "@types/passport-discord": "npm:^0.1.14"
+    axios: "npm:^1.10.0"
     bcrypt: "npm:^6.0.0"
     cookie-parser: "npm:^1.4.7"
     cors: "npm:^2.8.5"

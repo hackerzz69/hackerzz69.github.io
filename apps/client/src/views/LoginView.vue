@@ -9,11 +9,15 @@
         </div>
 
         <div v-if="errorMessage" class="error-message">
+          <Icon icon="mdi:alert-circle" class="error-icon" />
           {{ errorMessage }}
         </div>
 
         <div v-if="configStatus && !configStatus.discord_configured" class="warning-message">
-          <h3>⚠️ Authentication Not Configured</h3>
+          <div class="warning-header">
+            <Icon icon="mdi:alert-circle" class="warning-icon" />
+            <h3>Authentication Not Configured</h3>
+          </div>
           <p>Discord OAuth credentials need to be set up. Please check the setup instructions in the README.</p>
         </div>
 
@@ -22,9 +26,8 @@
           class="discord-login-btn" 
           :disabled="loading || (configStatus && !configStatus.discord_configured)"
         >
-          <svg viewBox="0 0 24 24" class="discord-icon">
-            <path fill="currentColor" d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419-.0002 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9554 2.4189-2.1568 2.4189Z"/>
-          </svg>
+          <Icon v-if="loading" icon="mdi:loading" class="discord-icon loading-spinner" />
+          <Icon v-else icon="mdi:discord" class="discord-icon" />
           <span v-if="!loading && configStatus && configStatus.discord_configured">Continue with Discord</span>
           <span v-else-if="loading">Connecting...</span>
           <span v-else>Authentication Unavailable</span>
@@ -42,6 +45,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { Icon } from '@iconify/vue'
 import axios from 'axios'
 
 const authStore = useAuthStore()
@@ -50,10 +54,12 @@ const loading = ref(false)
 const errorMessage = ref('')
 const configStatus = ref<{ discord_configured: boolean; message: string } | null>(null)
 
+const API_BASE_URL = (import.meta as any).env.VITE_API_URL || 'http://localhost:3000'
+
 onMounted(async () => {
   // Check authentication configuration status
   try {
-    const response = await axios.get('http://localhost:3000/auth/status')
+    const response = await axios.get(`${API_BASE_URL}/auth/status`)
     configStatus.value = response.data
   } catch (error) {
     console.error('Failed to check auth status:', error)
@@ -91,21 +97,44 @@ const handleDiscordLogin = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--theme-background);
+  background-image: url('@/assets/homepageBackground.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
   padding: 20px;
+  position: relative;
+}
+
+.login-view::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(26, 26, 26, 0.85);
+  z-index: 1;
 }
 
 .login-container {
   width: 100%;
   max-width: 400px;
+  position: relative;
+  z-index: 2;
 }
 
 .login-card {
-  background: white;
+  background: var(--theme-background-soft);
+  border: 1px solid var(--theme-border);
   border-radius: 16px;
   padding: 40px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow: 
+    0 20px 25px -5px rgba(0, 0, 0, 0.3), 
+    0 10px 10px -5px rgba(0, 0, 0, 0.2),
+    0 0 0 1px var(--theme-border);
   text-align: center;
+  backdrop-filter: blur(10px);
 }
 
 .logo-section {
@@ -116,49 +145,81 @@ const handleDiscordLogin = () => {
   width: 80px;
   height: 80px;
   margin-bottom: 20px;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
 }
 
 .logo-section h1 {
   font-size: 28px;
   font-weight: 700;
-  color: #1f2937;
+  color: var(--theme-text-primary);
   margin-bottom: 8px;
+  background: linear-gradient(90deg, var(--theme-accent) 0%, var(--theme-accent-light) 60%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .logo-section p {
-  color: #6b7280;
+  color: var(--theme-text-secondary);
   margin-bottom: 0;
+  font-size: 16px;
 }
 
 .error-message {
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  color: #dc2626;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid var(--theme-danger-transparent-30);
+  color: var(--theme-danger-light);
   padding: 12px;
   border-radius: 8px;
   margin-bottom: 20px;
   font-size: 14px;
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.error-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
 }
 
 .warning-message {
-  background: #fefbef;
-  border: 1px solid #fed7aa;
-  color: #ea580c;
+  background: rgba(249, 244, 73, 0.1);
+  border: 1px solid var(--theme-accent-transparent-30);
+  color: var(--theme-accent);
   padding: 16px;
   border-radius: 8px;
   margin-bottom: 20px;
   text-align: left;
+  backdrop-filter: blur(5px);
+}
+
+.warning-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.warning-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--theme-accent);
 }
 
 .warning-message h3 {
-  margin: 0 0 8px 0;
+  margin: 0;
   font-size: 16px;
+  color: var(--theme-accent);
 }
 
 .warning-message p {
   margin: 0;
   font-size: 14px;
   line-height: 1.4;
+  color: var(--theme-text-secondary);
 }
 
 .discord-login-btn {
@@ -166,7 +227,7 @@ const handleDiscordLogin = () => {
   background: #5865f2;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 16px 24px;
   font-size: 16px;
   font-weight: 600;
@@ -175,24 +236,60 @@ const handleDiscordLogin = () => {
   align-items: center;
   justify-content: center;
   gap: 12px;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.discord-login-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.discord-login-btn:hover:not(:disabled)::before {
+  left: 100%;
 }
 
 .discord-login-btn:hover:not(:disabled) {
   background: #4752c4;
-  transform: translateY(-1px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 10px 20px rgba(88, 101, 242, 0.3),
+    0 6px 6px rgba(0, 0, 0, 0.1);
+}
+
+.discord-login-btn:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .discord-login-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
-  background: #9ca3af;
+  background: var(--theme-background-light);
+  color: var(--theme-text-muted);
+  border: 1px solid var(--theme-border);
 }
 
 .discord-icon {
   width: 24px;
   height: 24px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  color: currentColor; /* Inherit the button's text color (white) */
+}
+
+.loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .terms {
@@ -200,9 +297,73 @@ const handleDiscordLogin = () => {
 }
 
 .terms p {
-  color: #6b7280;
+  color: var(--theme-text-muted);
   font-size: 12px;
   line-height: 1.5;
   margin: 0;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .login-view {
+    padding: 16px;
+  }
+  
+  .login-card {
+    padding: 32px 24px;
+  }
+  
+  .logo {
+    width: 64px;
+    height: 64px;
+  }
+  
+  .logo-section h1 {
+    font-size: 24px;
+  }
+  
+  .logo-section p {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-card {
+    padding: 24px 20px;
+  }
+  
+  .discord-login-btn {
+    padding: 14px 20px;
+    font-size: 15px;
+  }
+}
+
+/* Add subtle animations */
+.login-card {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.logo {
+  animation: logoFloat 3s ease-in-out infinite;
+}
+
+@keyframes logoFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
 }
 </style>

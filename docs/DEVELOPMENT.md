@@ -201,3 +201,39 @@ yarn workspace @highlite/shared build
 # Start fresh
 yarn dev
 ```
+
+### Discord Notifications Setup
+
+The marketplace can send Discord notifications to users when their listings are created, updated, or when they receive offers. This feature is optional and requires Discord configuration.
+
+#### Option 1: Discord Webhook (Channel Notifications)
+1. Create a Discord webhook in your server:
+   - Go to Server Settings → Integrations → Webhooks
+   - Create a new webhook and copy the webhook URL
+2. Add the webhook URL to your `.env` file:
+   ```
+   DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN
+   ```
+
+#### Option 2: Discord Bot (Direct Messages)
+1. Create a Discord bot application:
+   - Go to https://discord.com/developers/applications
+   - Create a new application and bot
+   - Copy the bot token
+2. Add the bot token to your `.env` file:
+   ```
+   DISCORD_BOT_TOKEN=YOUR_BOT_TOKEN_HERE
+   ```
+3. Invite the bot to your server with appropriate permissions
+4. Note: Users must allow DMs from server members for direct messages to work
+
+#### Notification Types
+- **Listing Created**: Sent when a user creates a new marketplace listing
+- **Listing Removed**: Sent when a user removes their listing
+- **Offer Received**: Sent to listing owners when they receive an offer
+- **Offer Accepted**: Sent to buyers when their offer is accepted
+- **Offer Rejected**: Sent to buyers when their offer is declined
+
+If both webhook and bot token are configured, the system will try to send direct messages first and fall back to webhook notifications if DMs fail.
+
+## Debugging

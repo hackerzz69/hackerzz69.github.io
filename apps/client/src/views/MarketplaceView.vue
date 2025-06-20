@@ -235,8 +235,11 @@
         <Icon icon="mdi:package-variant-closed" class="empty-icon" />
         <h3>No listings found</h3>
         <p>Try adjusting your filters or be the first to create a listing!</p>
-        <button @click="showCreateListing = true" class="empty-action-btn">
+        <button v-if="authStore.isAuthenticated" @click="showCreateListing = true" class="empty-action-btn">
           <Icon icon="mdi:plus" /> Create First Listing
+        </button>
+        <button v-else @click="authStore.login" class="empty-action-btn">
+          <Icon icon="mdi:login" /> Login to Create Listing
         </button>
       </div>
 
@@ -710,7 +713,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import { useRoute } from 'vue-router'
 import { Icon } from '@iconify/vue'
 import ItemIcon from '@/components/ItemIcon.vue'
 import ItemSelector from '@/components/ItemSelector.vue'
@@ -745,6 +749,7 @@ interface NewOffer {
 // Composables
 const marketplace = useMarketplace()
 const authStore = useAuthStore()
+const route = useRoute()
 
 // Reactive data
 const showCreateListing = ref(false)
@@ -1244,7 +1249,27 @@ const clearFilters = () => {
 // Initialize
 onMounted(async () => {
   await marketplace.fetchListings()
+  
+  // Check for listing query parameter and scroll to it
+  const listingId = route.query.listing as string
+  if (listingId) {
+    await nextTick() // Wait for DOM to update
+    scrollToListing(listingId)
+  }
 })
+
+// Function to scroll to and highlight a specific listing
+const scrollToListing = (listingId: string) => {
+  const element = document.querySelector(`[data-listing-id='${listingId}']`)
+  if (element) {
+    element.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    // Add a temporary highlight effect
+    element.classList.add('highlighted-listing')
+    setTimeout(() => {
+      element.classList.remove('highlighted-listing')
+    }, 3000)
+  }
+}
 </script>
 <style scoped>
     @import url('@/assets/marketplace.css');

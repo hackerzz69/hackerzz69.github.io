@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "dev": "concurrently \"yarn dev:server\" \"yarn dev:client\"",
-    "dev:client": "yarn workspace @highlite/client dev",
+    "dev:client": "yarn workspace @highlite/client dev --host",
     "dev:server": "yarn workspace @highlite/server dev",
     "build": "yarn workspace @highlite/client build && yarn workspace @highlite/server build",
     "build:client": "yarn workspace @highlite/client build",

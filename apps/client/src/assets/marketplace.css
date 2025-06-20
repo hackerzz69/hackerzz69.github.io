@@ -2378,3 +2378,34 @@
   font-size: 0.9rem;
   opacity: 0.7;
 }
+
+/* Highlighted listing effect for direct links */
+.highlighted-listing {
+  animation: highlightPulse 2s ease-in-out;
+  position: relative;
+}
+
+.highlighted-listing::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  background: linear-gradient(45deg, var(--theme-accent), var(--theme-accent-soft));
+  border-radius: 20px;
+  z-index: -1;
+  opacity: 0.3;
+  animation: highlightGlow 3s ease-in-out;
+}
+
+@keyframes highlightPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+@keyframes highlightGlow {
+  0% { opacity: 0.6; box-shadow: 0 0 20px var(--theme-accent); }
+  50% { opacity: 0.3; box-shadow: 0 0 30px var(--theme-accent); }
+  100% { opacity: 0; box-shadow: 0 0 0 var(--theme-accent); }
+}
