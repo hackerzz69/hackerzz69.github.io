@@ -53,18 +53,34 @@ app.use(cors({
     
     const allowedOrigins = [
       process.env.FRONTEND_URL || 'http://localhost:5173',
-      'http://localhost:5173',
-      'http://10.0.0.2:5173',
-      'http://127.0.0.1:5173'
     ];
+
+    // In development, also allow localhost variants
+    if (process.env.NODE_ENV === 'development') {
+      allowedOrigins.push(
+        'http://localhost:5173',
+        'http://10.0.0.2:5173',
+        'http://127.0.0.1:5173'
+      );
+    }
+
+    // In production, also allow the production domain variants
+    if (process.env.NODE_ENV === 'production') {
+      allowedOrigins.push(
+        'https://highlite.fanet.dev',
+        process.env.CORS_ORIGIN || 'https://highlite.fanet.dev'
+      );
+    }
     
-    // Allow any origin that matches our IP pattern or localhost
-    if (allowedOrigins.includes(origin) || 
+    // Check if origin is allowed
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else if (process.env.NODE_ENV === 'development' && (
         origin.match(/^http:\/\/10\.0\.0\.\d+:5173$/) ||
         origin.match(/^http:\/\/192\.168\.\d+\.\d+:5173$/) ||
         origin.match(/^http:\/\/172\.16\.\d+\.\d+:5173$/) ||
         origin.match(/^http:\/\/localhost:\d+$/) ||
-        origin.match(/^http:\/\/127\.0\.0\.1:\d+$/)) {
+        origin.match(/^http:\/\/127\.0\.0\.1:\d+$/))) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
@@ -87,11 +103,13 @@ app.use(session({
   })(),
   resave: false,
   saveUninitialized: false,
+  name: 'highlite.session',
   cookie: {
-    secure: process.env.NODE_ENV === 'production',
+    secure: false, // Keep false since we don't have HTTPS working yet
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax'
+    sameSite: 'lax', // Keep as lax for now
+    domain: undefined
   }
 }));
 
@@ -100,7 +118,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Routes
-app.use('/auth', authRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/api/marketplace', marketplaceRoutes);
 
 // Health check endpoint
@@ -118,15 +136,9 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
 async function startServer() {
   try {
     await initializeDatabase();
-    console.log('Database initialized successfully');
     
     app.listen(PORT, '0.0.0.0', () => {
       console.log(`Server is running on port ${PORT}`);
-      console.log(`Server accessible at:`);
-      console.log(`  - http://localhost:${PORT}`);
-      console.log(`  - http://10.0.0.2:${PORT}`);
-      console.log(`Frontend URL: ${process.env.FRONTEND_URL}`);
-      console.log(`Discord OAuth redirect: ${process.env.DISCORD_REDIRECT_URI}`);
     });
   } catch (error) {
     console.error('Failed to start server:', error);

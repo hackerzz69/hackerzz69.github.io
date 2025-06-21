@@ -4,10 +4,10 @@ import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
 
 // https://vite.dev/config/
-export default defineConfig(({ command, mode }) => {
-  // Load env file based on `mode` in the current working directory.
-  // Set the third parameter to '' to load all env regardless of the `VITE_` prefix.
-  const env = loadEnv(mode, process.cwd(), '')
+export default defineConfig(({ mode }) => {
+  // Load env file from the project root (two levels up from apps/client)
+  const projectRoot = fileURLToPath(new URL('../../', import.meta.url))
+  const env = loadEnv(mode, projectRoot, '')
   
   return {
     plugins: [

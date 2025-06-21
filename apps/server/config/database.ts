@@ -17,8 +17,6 @@ export async function initializeDatabase(): Promise<Database> {
   // If DATABASE_URL is set, use it; otherwise use relative path from this file
   const dbPath = process.env.DATABASE_URL || path.join(__dirname, '../database.sqlite');
   
-  console.log('Attempting to open database at:', dbPath);
-  
   db = await open({
     filename: dbPath,
     driver: sqlite3.Database
@@ -113,7 +111,6 @@ export async function initializeDatabase(): Promise<Database> {
     )
   `);
 
-  console.log('Database initialized successfully');
   return db;
 }
 

@@ -40,13 +40,17 @@ router.get('/discord/callback', (req: Request, res: Response, _next: NextFunctio
     failureRedirect: `${process.env.FRONTEND_URL}/login?error=auth_failed` 
   })(req, res, () => {
     // User is now authenticated via session
-    // Redirect to frontend
     res.redirect(`${process.env.FRONTEND_URL}/auth/callback?success=true`);
   });
 });
 
 // Get current user
-router.get('/me', requireAuth, (req: Request, res: Response): void => {
+router.get('/me', (req: Request, res: Response): void => {
+  if (!req.isAuthenticated()) {
+    res.status(401).json({ error: 'Authentication required' });
+    return;
+  }
+  
   const user = req.user as any;
   res.json({
     success: true,

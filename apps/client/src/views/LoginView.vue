@@ -59,7 +59,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 onMounted(async () => {
   // Check authentication configuration status
   try {
-    const response = await axios.get(`${API_BASE_URL}/auth/status`)
+    const response = await axios.get(`${API_BASE_URL}/api/auth/status`)
     configStatus.value = response.data
   } catch (error) {
     console.error('Failed to check auth status:', error)

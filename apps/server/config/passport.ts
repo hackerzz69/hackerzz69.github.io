@@ -52,7 +52,6 @@ export const configurePassport = () => {
     }));
     
     isPassportConfigured = true;
-    console.log('Discord OAuth authentication is ready');
   } else {
     console.warn('Discord OAuth credentials not configured. Authentication will be disabled.');
   }

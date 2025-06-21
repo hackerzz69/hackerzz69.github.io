@@ -19,12 +19,16 @@ RUN echo 'nodeLinker: node-modules' >> .yarnrc.yml
 # Install dependencies (allow lockfile updates in Docker)
 RUN yarn install
 
-# Copy source code
+# Copy source code and environment files
 COPY packages/shared ./packages/shared
 COPY apps/client ./apps/client
 COPY apps/server ./apps/server
 COPY .env ./.env
 COPY .env.production ./.env.production
+
+# Set environment variables for the build
+ENV NODE_ENV=production
+ENV VITE_API_URL=https://highlite.fanet.dev
 
 # Build all packages
 RUN yarn workspace @highlite/shared build

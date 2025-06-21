@@ -60,7 +60,6 @@ class DiscordNotificationService {
     if (!this.webhookUrl) return;
 
     try {
-      console.log('Sending webhook notification to:', this.webhookUrl.substring(0, 50) + '...');
       const payload: any = {
         embeds: [embed]
       };
@@ -69,8 +68,7 @@ class DiscordNotificationService {
         payload.content = content;
       }
       
-      const response = await axios.post(this.webhookUrl, payload);
-      console.log('Webhook response status:', response.status);
+      await axios.post(this.webhookUrl, payload);
     } catch (error: any) {
       console.error('Failed to send webhook notification:', error.response?.data || error.message);
     }
@@ -111,7 +109,6 @@ class DiscordNotificationService {
         }
       );
     } catch (error) {
-      console.error('Failed to send DM notification:', error);
       // Fallback to webhook if DM fails
       if (this.webhookUrl) {
         await this.sendWebhookNotification(embed);

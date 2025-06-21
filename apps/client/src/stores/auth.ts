@@ -35,7 +35,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   const checkAuthStatus = async (): Promise<boolean> => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/auth/me`)
+      const response = await axios.get(`${API_BASE_URL}/api/auth/me`)
       user.value = response.data.user
       return true
     } catch (error: any) {
@@ -52,7 +52,7 @@ export const useAuthStore = defineStore('auth', () => {
   const fetchUser = async () => {
     try {
       loading.value = true
-      const response = await axios.get(`${API_BASE_URL}/auth/me`)
+      const response = await axios.get(`${API_BASE_URL}/api/auth/me`)
       user.value = response.data.user
     } catch (error: any) {
       // Only log errors that aren't 401 (unauthorized) since that's expected when not logged in
@@ -67,13 +67,13 @@ export const useAuthStore = defineStore('auth', () => {
 
   const login = () => {
     if (typeof window !== 'undefined') {
-      window.location.href = `${API_BASE_URL}/auth/discord`
+      window.location.href = `${API_BASE_URL}/api/auth/discord`
     }
   }
 
   const logout = async () => {
     try {
-      await axios.post(`${API_BASE_URL}/auth/logout`)
+      await axios.post(`${API_BASE_URL}/api/auth/logout`)
     } catch (error) {
       console.error('Logout error:', error)
     } finally {
@@ -82,7 +82,6 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   const handleAuthCallback = async () => {
-    // Just fetch the user - session is already established
     await fetchUser()
   }
 

@@ -8,6 +8,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import itemSpritesheet from '@/assets/marketplace/itemspritesheet.png'
 
 interface Props {
   itemId: number
@@ -30,7 +31,7 @@ const spriteStyle = computed(() => {
   const col = (props.itemId - 1) % itemsPerRow
   
   // Size multipliers for different icon sizes
-  const sizeMultiplier = {
+  const sizeMultiplier: Record<'small' | 'medium' | 'large', number> = {
     small: 1.5 / baseSize,
     medium: 1,
     large: 3 / baseSize
@@ -44,7 +45,7 @@ const spriteStyle = computed(() => {
   const backgroundSizeWidth = itemsPerRow * spriteSize
   
   return {
-    backgroundImage: `url('/src/assets/marketplace/itemspritesheet.png')`,
+    backgroundImage: `url('${itemSpritesheet}')`,
     backgroundPosition: `${backgroundPositionX}rem ${backgroundPositionY}rem`,
     backgroundSize: `${backgroundSizeWidth}rem auto`,
     backgroundRepeat: 'no-repeat',

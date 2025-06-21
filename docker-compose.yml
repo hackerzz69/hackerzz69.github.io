@@ -9,6 +9,8 @@ services:
     environment:
       - NODE_ENV=production
       - DATABASE_URL=./database.sqlite
+    env_file:
+      - .env
     volumes:
       - ./apps/server/database.sqlite:/app/server/database.sqlite
       - ./apps/server/config:/app/server/config
