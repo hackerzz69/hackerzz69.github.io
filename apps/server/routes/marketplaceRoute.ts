@@ -55,6 +55,12 @@ router.post('/listings', requireAuth, async (req: Request, res: Response): Promi
       return;
     }
 
+    // Validate quantity and asking price
+    if ((quantity <= 0 && quantity !== -1) || askingPrice <= 0) {
+      res.status(400).json({ error: 'Quantity must be greater than 0 (or -1 for unlimited) and asking price must be greater than 0' });
+      return;
+    }
+
     const db = await getDatabase();
     const listingId = randomBytes(16).toString('hex');
 
@@ -124,8 +130,8 @@ router.put('/listings/:id', requireAuth, async (req: Request, res: Response): Pr
       return;
     }
 
-    if (quantity <= 0 || asking_price <= 0) {
-      res.status(400).json({ error: 'Quantity and asking price must be greater than 0' });
+    if ((quantity <= 0 && quantity !== -1) || asking_price <= 0) {
+      res.status(400).json({ error: 'Quantity must be greater than 0 (or -1 for unlimited) and asking price must be greater than 0' });
       return;
     }
 

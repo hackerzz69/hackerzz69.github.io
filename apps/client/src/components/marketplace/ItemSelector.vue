@@ -7,7 +7,7 @@
           :item-name="selectedItem.name"
           size="small"
         />
-        <span>{{ selectedItem.name }}</span>
+        <span>{{ capitalizeWords(selectedItem.name) }}</span>
         <span class="item-cost">({{ selectedItem.cost }} coins)</span>
       </div>
       <div class="placeholder" v-else>
@@ -43,7 +43,7 @@
             size="small"
           />
           <div class="item-info">
-            <span class="item-name">{{ item.name }}</span>
+            <span class="item-name">{{ capitalizeWords(item.name) }}</span>
             <span class="item-description">{{ item.description }}</span>
           </div>
           <span class="item-cost">{{ item.cost }} coins</span>
@@ -99,6 +99,12 @@ const selectedItem = computed(() => {
   if (!props.modelValue) return null
   return props.items.find(item => item._id === Number(props.modelValue)) || null
 })
+
+const capitalizeWords = (str: string) => {
+  return str.split(' ').map(word => 
+    word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+  ).join(' ')
+}
 
 const filteredItems = computed(() => {
   if (!searchQuery.value) return props.items

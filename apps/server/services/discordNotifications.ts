@@ -56,6 +56,29 @@ class DiscordNotificationService {
     return `https://cdn.discordapp.com/avatars/${discordId}/${avatar}.png?size=128`;
   }
 
+  private formatQuantity(quantity: number): string {
+    return quantity === -1 ? '∞' : quantity.toString();
+  }
+
+  private sanitizeForDiscord(text: string): string {
+    if (!text) return text;
+    
+    return text
+      // Escape Discord markdown characters
+      .replace(/[*_`~|\\]/g, '\\$&')
+      // Remove or escape @ mentions to prevent unwanted pings
+      .replace(/@(everyone|here)/gi, '@​$1') // Zero-width space to break mentions
+      .replace(/@([a-zA-Z0-9_]+)/g, '@​$1') // Break user mentions with zero-width space
+      // Remove discord channel mentions
+      .replace(/<#\d+>/g, '[channel]')
+      // Remove role mentions
+      .replace(/<@&\d+>/g, '[role]')
+      // Remove user mentions with IDs
+      .replace(/<@!?\d+>/g, '[user]')
+      // Limit length to prevent spam
+      .substring(0, 1000);
+  }
+
   // Send notification via webhook (to a channel)
   private async sendWebhookNotification(embed: any, content?: string): Promise<void> {
     if (!this.webhookUrl) return;
@@ -141,7 +164,7 @@ class DiscordNotificationService {
         },
         {
           name: '🔢 Quantity',
-          value: listing.quantity.toString(),
+          value: this.formatQuantity(listing.quantity),
           inline: true
         },
         {
@@ -173,7 +196,7 @@ class DiscordNotificationService {
     if (listing.notes) {
       embed.fields.splice(-1, 0, {
         name: '📝 Notes',
-        value: listing.notes,
+        value: this.sanitizeForDiscord(listing.notes),
         inline: false
       });
     }
@@ -209,7 +232,7 @@ class DiscordNotificationService {
         },
         {
           name: '🔢 Quantity',
-          value: listing.quantity.toString(),
+          value: this.formatQuantity(listing.quantity),
           inline: true
         },
         {
@@ -241,7 +264,7 @@ class DiscordNotificationService {
     if (listing.notes) {
       embed.fields.splice(-1, 0, {
         name: '📝 Notes',
-        value: listing.notes,
+        value: this.sanitizeForDiscord(listing.notes),
         inline: false
       });
     }
@@ -274,7 +297,7 @@ class DiscordNotificationService {
         },
         {
           name: '🔢 Quantity',
-          value: listing.quantity.toString(),
+          value: this.formatQuantity(listing.quantity),
           inline: true
         },
         {
@@ -323,12 +346,12 @@ class DiscordNotificationService {
       fields: [
         {
           name: '📦 Your Item',
-          value: `${listing.quantity}x ${listing.itemName}`,
+          value: `${this.formatQuantity(listing.quantity)}x ${listing.itemName}`,
           inline: true
         },
         {
           name: '👤 Buyer',
-          value: offer.buyerName,
+          value: this.sanitizeForDiscord(offer.buyerName),
           inline: true
         },
         {
@@ -358,7 +381,7 @@ class DiscordNotificationService {
     if (offer.message) {
       embed.fields.splice(-1, 0, {
         name: '💬 Message',
-        value: offer.message,
+        value: this.sanitizeForDiscord(offer.message),
         inline: false
       });
     }
@@ -386,7 +409,7 @@ class DiscordNotificationService {
       fields: [
         {
           name: '📦 Item',
-          value: `${listing.quantity}x ${listing.itemName}`,
+          value: `${this.formatQuantity(listing.quantity)}x ${listing.itemName}`,
           inline: true
         },
         {
@@ -436,7 +459,7 @@ class DiscordNotificationService {
       fields: [
         {
           name: '📦 Item',
-          value: `${listing.quantity}x ${listing.itemName}`,
+          value: `${this.formatQuantity(listing.quantity)}x ${listing.itemName}`,
           inline: true
         },
         {

@@ -46,14 +46,14 @@
                 <input type="radio" v-model="newListing.listingType" value="selling">
                 <span class="radio-label">
                   <Icon icon="mdi:tag" />
-                  <strong>Selling</strong> - I want to sell this item
+                  <strong>Selling</strong>
                 </span>
               </label>
               <label class="radio-option">
                 <input type="radio" v-model="newListing.listingType" value="buying">
                 <span class="radio-label">
                   <Icon icon="mdi:cash" />
-                  <strong>Buying</strong> - I want to buy this item
+                  <strong>Buying</strong>
                 </span>
               </label>
             </div>
@@ -68,30 +68,51 @@
               @change="updateSelectedItem"
             />
           </div>
-          
-          <div v-if="selectedItem" class="item-preview">
-            <div class="item-preview-header">
-              <ItemIcon 
-                :item-id="selectedItem._id" 
-                :item-name="selectedItem.name"
-                size="large"
-              />
-              <div class="item-preview-info">
-                <h3>{{ selectedItem.name }}</h3>
-                <p>{{ selectedItem.description }}</p>
-                <p class="base-cost">Base cost: {{ selectedItem.cost }} coins</p>
+
+          <div class="form-group">
+            <label>Quantity:</label>
+            <div class="quantity-selector">
+              <div class="quantity-type-buttons">
+                <button 
+                  type="button"
+                  @click="newListing.isInfinite = false"
+                  :class="['quantity-type-btn', { active: !newListing.isInfinite }]"
+                >
+                  <Icon icon="mdi:numeric" />
+                  <span>Specific Amount</span>
+                </button>
+                <button 
+                  type="button"
+                  @click="toggleInfiniteQuantity"
+                  :class="['quantity-type-btn', { active: newListing.isInfinite }]"
+                >
+                  <Icon icon="mdi:infinity" />
+                  <span>Unlimited</span>
+                </button>
+              </div>
+              <div v-if="!newListing.isInfinite" class="quantity-input-container">
+                <input type="number" v-model="newListing.quantity" min="1" placeholder="1">
+              </div>
+              <div v-else class="infinite-quantity-info">
+                <Icon icon="mdi:information" />
+                <span>Unlimited quantity - {{ newListing.listingType === 'buying' ? 'buyers' : 'sellers' }} can request any amount</span>
               </div>
             </div>
           </div>
 
           <div class="form-group">
-            <label>Quantity:</label>
-            <input type="number" v-model="newListing.quantity" min="1" placeholder="1">
-          </div>
-
-          <div class="form-group">
-            <label>{{ newListing.listingType === 'buying' ? 'Offering Price (coins):' : 'Asking Price (coins):' }}</label>
-            <input type="number" v-model="newListing.askingPrice" min="1" placeholder="Enter price">
+            <label>
+              {{ newListing.listingType === 'buying' ? 'Offering Price' : 'Asking Price' }}
+              {{ newListing.acceptsPartialOffers ? '(per item)' : newListing.quantity > 1 ? '(total for ' + newListing.quantity + ' items)' : '(per item)' }}:
+            </label>
+            <div class="price-input-container">
+              <input type="number" v-model="newListing.askingPrice" min="1" placeholder="Enter price">
+              <span class="price-unit">coins</span>
+            </div>
+            <div v-if="newListing.acceptsPartialOffers" class="price-explanation">
+              <Icon icon="mdi:information-outline" />
+              <span>Price is per individual item. {{ newListing.listingType === 'buying' ? 'Sellers' : 'Buyers' }} can request any quantity at this rate.</span>
+            </div>
           </div>
 
           <div class="form-group">
@@ -108,12 +129,21 @@
               </button>
               <button 
                 type="button"
-                @click="newListing.acceptsPartialOffers = !newListing.acceptsPartialOffers"
-                :class="['toggle-btn', { active: newListing.acceptsPartialOffers }]"
+                @click="!newListing.isInfinite && (newListing.acceptsPartialOffers = !newListing.acceptsPartialOffers)"
+                :class="['toggle-btn', { 
+                  active: newListing.acceptsPartialOffers,
+                  disabled: newListing.isInfinite 
+                }]"
+                :disabled="newListing.isInfinite"
               >
                 <Icon icon="mdi:chart-box-multiple-outline" />
                 <span>Accept partial quantity offers</span>
+                <span v-if="newListing.isInfinite" class="required-badge">Required</span>
               </button>
+            </div>
+            <div v-if="newListing.isInfinite" class="infinite-notice">
+              <Icon icon="mdi:information" />
+              <span>Partial offers are automatically enabled for unlimited quantity listings</span>
             </div>
           </div>
 
@@ -142,39 +172,53 @@
           </button>
         </div>
         <div class="modal-body" v-if="editingListing">
-          <div class="form-group">
-            <label>Item (cannot be changed):</label>
-            <div class="item-display-readonly">
+          <div class="item-preview">
+            <div class="item-preview-header">
               <ItemIcon 
                 :item-id="editingListing.item_id" 
                 :item-name="getItemName(editingListing.item_id)"
-                size="medium"
+                size="large"
               />
-              <div class="item-info">
+              <div class="item-preview-info">
                 <h3>{{ getItemName(editingListing.item_id) }}</h3>
                 <p>{{ getItemDescription(editingListing.item_id) }}</p>
+                <p class="base-cost">Base cost: {{ getItem(editingListing.item_id)?.cost }} coins</p>
+                <div class="listing-type-badge">
+                  <Icon :icon="editingListing.listing_type === 'buying' ? 'mdi:cash' : 'mdi:tag'" />
+                  {{ editingListing.listing_type === 'buying' ? 'BUYING' : 'SELLING' }}
+                </div>
               </div>
             </div>
           </div>
 
-          <div class="form-group">
-            <label>Listing Type (cannot be changed):</label>
-            <div class="listing-type-display">
-              <div class="tag-chip listing-type" :class="editingListing.listing_type">
-                <Icon :icon="editingListing.listing_type === 'buying' ? 'mdi:cash' : 'mdi:tag'" />
-                {{ editingListing.listing_type === 'buying' ? 'BUYING' : 'SELLING' }}
-              </div>
-            </div>
-          </div>
-
-          <div class="form-group">
+          <div class="form-group" v-if="editingListing.quantity !== -1">
             <label>Quantity:</label>
-            <input type="number" v-model="editingListing.quantity" min="1" placeholder="1">
+            <div class="quantity-input-container">
+              <input type="number" v-model="editingListing.quantity" min="1" placeholder="1">
+            </div>
+          </div>
+          
+          <div class="form-group" v-else>
+            <div class="infinite-quantity-notice">
+              <Icon icon="mdi:infinity" />
+              <span class="infinite-label">Unlimited Quantity</span>
+              <p class="infinite-description">{{ editingListing.listing_type === 'buying' ? 'Buyers' : 'Sellers' }} can request any amount</p>
+            </div>
           </div>
 
           <div class="form-group">
-            <label>{{ editingListing.listing_type === 'buying' ? 'Offering Price (coins):' : 'Asking Price (coins):' }}</label>
-            <input type="number" v-model="editingListing.asking_price" min="1" placeholder="Enter price">
+            <label>
+              {{ editingListing.listing_type === 'buying' ? 'Offering Price' : 'Asking Price' }}
+              {{ editingListing.accepts_partial_offers ? '(per item)' : editingListing.quantity > 1 ? '(total for ' + editingListing.quantity + ' items)' : '(per item)' }}:
+            </label>
+            <div class="price-input-container">
+              <input type="number" v-model="editingListing.asking_price" min="1" placeholder="Enter price">
+              <span class="price-unit">coins</span>
+            </div>
+            <div v-if="editingListing.quantity === -1" class="price-explanation">
+              <Icon icon="mdi:information-outline" />
+              <span>Price is per individual item. {{ editingListing.listing_type === 'buying' ? 'Sellers' : 'Buyers' }} can request any quantity at this rate.</span>
+            </div>
           </div>
 
           <div class="form-group">
@@ -190,6 +234,7 @@
                 <span>Accept item trades of equivalent value</span>
               </button>
               <button 
+                v-if="editingListing.quantity !== -1"
                 type="button"
                 @click="editingListing.accepts_partial_offers = !editingListing.accepts_partial_offers"
                 :class="['toggle-btn', { active: editingListing.accepts_partial_offers }]"
@@ -197,6 +242,10 @@
                 <Icon icon="mdi:chart-box-multiple-outline" />
                 <span>Accept partial quantity offers</span>
               </button>
+            </div>
+            <div v-if="editingListing.quantity === -1" class="automatic-partial-notice">
+              <Icon icon="mdi:information" />
+              <span>Partial offers are automatically enabled for unlimited quantity listings</span>
             </div>
           </div>
 
@@ -310,27 +359,10 @@
             </span>
           </h3>
         <div class="view-controls">
-          <div class="view-toggle">
-            <button 
-              @click="viewMode = 'grid'" 
-              :class="{ active: viewMode === 'grid' }"
-              class="view-btn"
-              title="Grid View"
-            >
-              <Icon icon="mdi:view-grid" />
-            </button>
-            <button 
-              @click="viewMode = 'list'" 
-              :class="{ active: viewMode === 'list' }"
-              class="view-btn"
-              title="List View"
-            >
-              <Icon icon="mdi:view-list" />
-            </button>
-          </div>
           <button @click="toggleQuickFilters" class="quick-filters-btn" :class="{ active: showQuickFilters }">
             <Icon icon="mdi:tune-vertical" />
             Quick Filters
+            <span v-if="activeQuickFiltersCount > 0" class="filter-count-badge">{{ activeQuickFiltersCount }}</span>
           </button>
         </div>
       </div>
@@ -343,6 +375,7 @@
             :key="chip.key"
             @click="applyQuickFilter(chip)"
             :class="['filter-chip', { active: isQuickFilterActive(chip) }]"
+            :data-filter="chip.key"
           >
             <Icon :icon="chip.icon" />
             {{ chip.label }}
@@ -482,14 +515,15 @@
         </button>
       </div>
 
-      <TransitionGroup name="listing" tag="div" :class="['listings-grid', viewMode]">
+      <TransitionGroup name="listing" tag="div" class="listings-grid">
         <div v-for="listing in filteredListings" :key="listing.id" 
              :data-listing-id="listing.id"
              class="listing-card" 
              :class="{ 
                'own-listing': isOwnListing(listing),
                'buying-listing': listing.listing_type === 'buying',
-               'selling-listing': listing.listing_type === 'selling'
+               'selling-listing': listing.listing_type === 'selling',
+               'infinite-listing': isInfiniteListing(listing)
              }">
             
             <div class="listing-header">
@@ -499,6 +533,12 @@
                 <div class="tag-chip listing-type" :class="listing.listing_type">
                   <Icon :icon="listing.listing_type === 'buying' ? 'mdi:cash' : 'mdi:tag'" />
                   {{ listing.listing_type === 'buying' ? 'BUYING' : 'SELLING' }}
+                </div>
+                
+                <!-- Priority 1.5: Infinite quantity (high importance) -->
+                <div v-if="isInfiniteListing(listing)" class="tag-chip infinite">
+                  <Icon icon="mdi:infinity" />
+                  UNLIMITED
                 </div>
                 
                 <!-- Priority 2: Ownership (high importance) -->
@@ -548,7 +588,7 @@
                     <h3>{{ getItemName(listing.item_id) }}</h3>
                     <p class="quantity">
                       <Icon icon="mdi:counter" />
-                      {{ listing.quantity }}x
+                      {{ listing.quantity === -1 ? '∞' : listing.quantity }}{{ listing.quantity === -1 ? '' : 'x' }}
                     </p>
                     <div class="listing-age">
                       <Icon icon="mdi:clock-outline" />
@@ -577,11 +617,10 @@
               <div class="asking-price">
                 <Icon icon="mdi:coin" />
                 <span class="price-amount">{{ listing.asking_price }}</span>
-                <span class="price-label">coins {{ listing.listing_type === 'buying' ? 'offered' : 'asked' }}</span>
-              </div>
-              <div v-if="listing.accepts_items" class="accepts-trades">
-                <Icon icon="mdi:swap-horizontal" />
-                <span>Accepts trades</span>
+                <span class="price-label">
+                  coins {{ listing.listing_type === 'buying' ? 'offered' : 'asked' }}
+                  {{ listing.accepts_partial_offers ? ' per item' : '' }}
+                </span>
               </div>
             </div>
 
@@ -790,26 +829,30 @@
               />
               <div class="listing-summary-info">
                 <h3>{{ selectedListing?.item_id ? getItemName(selectedListing.item_id) : 'Unknown Item' }}</h3>
-                <p>Quantity: {{ selectedListing?.quantity }}</p>
-                <p>Asking Price: {{ selectedListing?.asking_price }} coins</p>
+                <p>Quantity: {{ selectedListing?.quantity === -1 ? 'Unlimited' : selectedListing?.quantity }}</p>
+                <p>
+                  {{ selectedListing?.listing_type === 'buying' ? 'Offering Price:' : 'Asking Price:' }} 
+                  {{ selectedListing?.asking_price }} coins
+                  {{ selectedListing?.accepts_partial_offers ? ' per item' : '' }}
+                </p>
                 <p v-if="selectedListing?.accepts_items">✓ Accepts item trades</p>
                 <p v-if="selectedListing?.accepts_partial_offers">✓ Accepts partial quantity offers</p>
               </div>
             </div>
           </div>
 
-          <div class="form-group" v-if="selectedListing && selectedListing.quantity > 1 && selectedListing.accepts_partial_offers">
+          <div class="form-group" v-if="selectedListing && (selectedListing.quantity === -1 || (selectedListing.quantity > 1 && selectedListing.accepts_partial_offers))">
             <label>Quantity Requested:</label>
             <div class="quantity-input-group">
               <input 
                 type="number" 
                 v-model="newOffer.quantityRequested" 
                 :min="1" 
-                :max="selectedListing.quantity"
-                placeholder="Enter quantity (optional)"
+                :max="selectedListing.quantity === -1 ? undefined : selectedListing.quantity"
+                :placeholder="selectedListing.quantity === -1 ? 'Enter desired quantity' : 'Enter quantity (optional)'"
               >
               <span class="quantity-helper">
-                Leave blank for full quantity ({{ selectedListing.quantity }})
+                {{ selectedListing.quantity === -1 ? 'Specify how many items you want' : `Leave blank for full quantity (${selectedListing.quantity})` }}
               </span>
             </div>
           </div>
@@ -958,12 +1001,6 @@
               </div>
               <div class="seller-profile-info">
                 <h3>{{ marketplace.formatDiscordUsername(selectedSellerProfile.username, selectedSellerProfile.discriminator) }}</h3>
-                <div class="seller-badges">
-                  <span class="badge verified">
-                    <Icon icon="mdi:check-circle" />
-                    HighLite Verified
-                  </span>
-                </div>
                 <p class="seller-since">Trading since: {{ formatJoinDate(selectedSellerProfile.joined_date) }}</p>
               </div>
             </div>
@@ -1081,6 +1118,7 @@ interface Item {
 interface NewListing {
   itemId: number | string
   quantity: number
+  isInfinite: boolean
   askingPrice: number
   acceptsItems: boolean
   acceptsPartialOffers: boolean
@@ -1112,7 +1150,6 @@ const sortBy = ref('newest')
 const showOnlyTradeableItems = ref(false)
 const showOnlyOwnListings = ref(false)
 const listingTypeFilter = ref<'all' | 'selling' | 'buying'>('all')
-const viewMode = ref<'grid' | 'list'>('grid')
 const priceFilter = ref({ min: null as number | null, max: null as number | null })
 
 // New UX features
@@ -1154,6 +1191,7 @@ const sortOptions = [
 const newListing = ref<NewListing>({
   itemId: '',
   quantity: 1,
+  isInfinite: false,
   askingPrice: 0,
   acceptsItems: false,
   acceptsPartialOffers: false,
@@ -1187,21 +1225,20 @@ const hasActiveFilters = computed(() => {
          listingTypeFilter.value !== 'all'
 })
 
-const selectedItem = computed(() => {
-  if (!newListing.value.itemId) return null
-  return tradeableItems.value.find(item => item._id === Number(newListing.value.itemId))
+const activeQuickFiltersCount = computed(() => {
+  return quickFilterChips.value.filter(chip => isQuickFilterActive(chip)).length
 })
 
 const canCreateListing = computed(() => {
   return newListing.value.itemId && 
-         newListing.value.quantity > 0 && 
+         (newListing.value.isInfinite || newListing.value.quantity > 0) && 
          newListing.value.askingPrice > 0 &&
          authStore.isAuthenticated
 })
 
 const canUpdateListing = computed(() => {
   return editingListing.value &&
-         editingListing.value.quantity > 0 && 
+         (editingListing.value.quantity > 0 || editingListing.value.quantity === -1) && 
          editingListing.value.asking_price > 0 &&
          authStore.isAuthenticated
 })
@@ -1278,6 +1315,11 @@ const filteredListings = computed(() => {
   return filtered
 })
 
+// Helper function to check if a listing has infinite quantity
+const isInfiniteListing = (listing: MarketplaceListing): boolean => {
+  return listing.quantity === -1
+}
+
 // Methods
 const getItem = (itemId: number): Item | undefined => {
   return (itemDefs as Item[]).find(item => item._id === itemId)
@@ -1304,13 +1346,19 @@ const updateSelectedItem = (item: Item | null) => {
   }
 }
 
+const toggleInfiniteQuantity = () => {
+  newListing.value.isInfinite = true
+  // Force accept partial offers to be enabled for infinite quantities
+  newListing.value.acceptsPartialOffers = true
+}
+
 const createListing = async () => {
   if (!canCreateListing.value) return
   
   try {
     await marketplace.createListing({
       itemId: Number(newListing.value.itemId),
-      quantity: newListing.value.quantity,
+      quantity: newListing.value.isInfinite ? -1 : newListing.value.quantity, // Use -1 to indicate infinite
       askingPrice: newListing.value.askingPrice,
       acceptsItems: newListing.value.acceptsItems,
       acceptsPartialOffers: newListing.value.acceptsPartialOffers,
@@ -1322,6 +1370,7 @@ const createListing = async () => {
     newListing.value = {
       itemId: '',
       quantity: 1,
+      isInfinite: false,
       askingPrice: 0,
       acceptsItems: false,
       acceptsPartialOffers: false,
@@ -1631,31 +1680,84 @@ const toggleQuickFilters = () => {
 const applyQuickFilter = (chip: any) => {
   const filter = chip.filter
   
-  if (filter.listingType) listingTypeFilter.value = filter.listingType
-  if (filter.priceMin !== undefined) priceFilter.value.min = filter.priceMin
-  if (filter.priceMax !== undefined) priceFilter.value.max = filter.priceMax
-  if (filter.acceptsTrades) showOnlyTradeableItems.value = true
-  if (filter.isRecent) {
-    // Filter for listings posted in last 24 hours
-    sortBy.value = 'newest'
-  }
-  if (filter.hasOffers) {
-    // This would require additional filtering logic
-    showFeedback('Showing popular listings with offers', 'info')
+  // Check if this filter is already active - if so, toggle it off
+  if (isQuickFilterActive(chip)) {
+    // Remove the filter by resetting to defaults
+    if (filter.listingType) listingTypeFilter.value = 'all'
+    if (filter.priceMin !== undefined || filter.priceMax !== undefined) {
+      priceFilter.value.min = null
+      priceFilter.value.max = null
+    }
+    if (filter.acceptsTrades) showOnlyTradeableItems.value = false
+    if (filter.isRecent) {
+      sortBy.value = 'newest' // Keep newest, but this doesn't really "remove" the filter
+    }
+    
+    showFeedback(`Removed filter: ${chip.label}`, 'info')
+  } else {
+    // Apply the filter
+    if (filter.listingType) listingTypeFilter.value = filter.listingType
+    if (filter.priceMin !== undefined) priceFilter.value.min = filter.priceMin
+    if (filter.priceMax !== undefined) priceFilter.value.max = filter.priceMax
+    if (filter.acceptsTrades) showOnlyTradeableItems.value = true
+    if (filter.isRecent) {
+      // Filter for listings posted in last 24 hours
+      sortBy.value = 'newest'
+    }
+    if (filter.hasOffers) {
+      // This would require additional filtering logic
+      showFeedback('Showing popular listings with offers', 'info')
+    }
+    
+    showFeedback(`Applied filter: ${chip.label}`, 'info')
   }
   
-  showQuickFilters.value = false
-  showFeedback(`Applied filter: ${chip.label}`, 'info')
+  // Don't auto-close the quick filters bar so users can apply multiple filters
+  // showQuickFilters.value = false
 }
 
 const isQuickFilterActive = (chip: any): boolean => {
   const filter = chip.filter
   
-  if (filter.priceMin !== undefined && priceFilter.value.min !== filter.priceMin) return false
-  if (filter.priceMax !== undefined && priceFilter.value.max !== filter.priceMax) return false
-  if (filter.acceptsTrades && !showOnlyTradeableItems.value) return false
+  // Check listing type filter
+  if (filter.listingType && listingTypeFilter.value !== filter.listingType) {
+    return false
+  }
   
-  return false // Simplified logic for demo
+  // Check price range filters
+  if (filter.priceMin !== undefined || filter.priceMax !== undefined) {
+    const minMatches = filter.priceMin === undefined || priceFilter.value.min === filter.priceMin
+    const maxMatches = filter.priceMax === undefined || priceFilter.value.max === filter.priceMax
+    if (!minMatches || !maxMatches) return false
+  }
+  
+  // Check accepts trades filter
+  if (filter.acceptsTrades && !showOnlyTradeableItems.value) {
+    return false
+  }
+  
+  // Check recent filter (posted today)
+  if (filter.isRecent && sortBy.value !== 'newest') {
+    return false
+  }
+  
+  // For filters that match current state, return true
+  if (filter.listingType && listingTypeFilter.value === filter.listingType) return true
+  if (filter.acceptsTrades && showOnlyTradeableItems.value) return true
+  if (filter.isRecent && sortBy.value === 'newest') return true
+  
+  // For price filters, check if they match exactly
+  if (filter.priceMin !== undefined || filter.priceMax !== undefined) {
+    const minMatches = filter.priceMin === undefined || priceFilter.value.min === filter.priceMin
+    const maxMatches = filter.priceMax === undefined || priceFilter.value.max === filter.priceMax
+    return minMatches && maxMatches
+  }
+  
+  // For "has offers" filter, we can't easily determine this without additional data
+  // So we'll return false for now (this filter would need backend support)
+  if (filter.hasOffers) return false
+  
+  return false
 }
 
 // Item details modal
