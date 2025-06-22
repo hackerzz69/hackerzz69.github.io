@@ -13,6 +13,7 @@ export interface ListingNotificationData {
   quantity: number;
   askingPrice: number;
   acceptsItems: boolean;
+  listingType?: 'selling' | 'buying';
   notes?: string;
 }
 
@@ -108,8 +109,9 @@ class DiscordNotificationService {
           }
         }
       );
-    } catch (error) {
+    } catch (error: any) {
       // Fallback to webhook if DM fails
+      console.error('Failed to send direct message:', error.response?.data || error.message);
       if (this.webhookUrl) {
         await this.sendWebhookNotification(embed);
       }
@@ -122,11 +124,15 @@ class DiscordNotificationService {
   ): Promise<void> {
     if (!this.isConfigured()) return;
 
+    const listingType = listing.listingType || 'selling';
+    const listingVerb = listingType === 'buying' ? 'Buying Request' : 'Selling Listing';
+    const listingAction = listingType === 'buying' ? 'looking to buy' : 'selling';
+    
     const marketplaceUrl = this.getMarketplaceUrl(listing.id);
     const embed = {
-      title: '🛍️ New Listing Created',
-      description: `Your listing for **${listing.itemName}** has been created successfully!`,
-      color: 0x00ff00, // Green
+      title: `🛍️ New ${listingVerb} Created`,
+      description: `Your ${listingType} listing for **${listing.itemName}** has been created successfully! You are ${listingAction} this item.`,
+      color: listingType === 'buying' ? 0x0099ff : 0x00ff00, // Blue for buying, Green for selling
       fields: [
         {
           name: '📦 Item',
@@ -139,7 +145,7 @@ class DiscordNotificationService {
           inline: true
         },
         {
-          name: '💰 Asking Price',
+          name: listingType === 'buying' ? '💰 Offering Price' : '💰 Asking Price',
           value: `${listing.askingPrice} coins`,
           inline: true
         },
@@ -176,7 +182,75 @@ class DiscordNotificationService {
     if (this.botToken) {
       await this.sendDirectMessage(user.discordId, embed);
     } else if (this.webhookUrl) {
-      const mentionContent = `<@${user.discordId}> Your marketplace listing has been created!`;
+      const mentionContent = `<@${user.discordId}> Your marketplace ${listingType} listing has been created!`;
+      await this.sendWebhookNotification(embed, mentionContent);
+    }
+  }
+
+  async notifyListingUpdated(
+    user: DiscordNotificationData,
+    listing: ListingNotificationData
+  ): Promise<void> {
+    if (!this.isConfigured()) return;
+
+    const listingType = listing.listingType || 'selling';
+    const listingVerb = listingType === 'buying' ? 'Buying Request' : 'Selling Listing';
+    
+    const marketplaceUrl = this.getMarketplaceUrl(listing.id);
+    const embed = {
+      title: `✏️ ${listingVerb} Updated`,
+      description: `Your ${listingType} listing for **${listing.itemName}** has been updated successfully!`,
+      color: 0xffa500, // Orange for updates
+      fields: [
+        {
+          name: '📦 Item',
+          value: listing.itemName,
+          inline: true
+        },
+        {
+          name: '🔢 Quantity',
+          value: listing.quantity.toString(),
+          inline: true
+        },
+        {
+          name: listingType === 'buying' ? '💰 Offering Price' : '💰 Asking Price',
+          value: `${listing.askingPrice} coins`,
+          inline: true
+        },
+        {
+          name: '🔄 Accepts Trades',
+          value: listing.acceptsItems ? 'Yes' : 'No',
+          inline: true
+        },
+        {
+          name: '🔗 Direct Link',
+          value: `[View on Marketplace](${marketplaceUrl})`,
+          inline: false
+        }
+      ],
+      thumbnail: {
+        url: this.getAvatarUrl(user.discordId, user.avatar)
+      },
+      footer: {
+        text: 'Marketplace Notification',
+        icon_url: 'https://cdn.discordapp.com/embed/avatars/0.png'
+      },
+      timestamp: new Date().toISOString()
+    };
+
+    if (listing.notes) {
+      embed.fields.splice(-1, 0, {
+        name: '📝 Notes',
+        value: listing.notes,
+        inline: false
+      });
+    }
+
+    // Try DM first, fallback to webhook with mention
+    if (this.botToken) {
+      await this.sendDirectMessage(user.discordId, embed);
+    } else if (this.webhookUrl) {
+      const mentionContent = `<@${user.discordId}> Your marketplace ${listingType} listing has been updated!`;
       await this.sendWebhookNotification(embed, mentionContent);
     }
   }

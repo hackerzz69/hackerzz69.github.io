@@ -57,7 +57,9 @@ export async function initializeDatabase(): Promise<Database> {
       quantity INTEGER NOT NULL,
       asking_price INTEGER NOT NULL,
       accepts_items BOOLEAN DEFAULT 0,
+      accepts_partial_offers BOOLEAN DEFAULT 0,
       notes TEXT,
+      listing_type TEXT DEFAULT 'selling' CHECK(listing_type IN ('selling', 'buying')),
       status TEXT DEFAULT 'active',
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -72,6 +74,7 @@ export async function initializeDatabase(): Promise<Database> {
       listing_id TEXT NOT NULL,
       user_id INTEGER NOT NULL,
       coin_offer INTEGER DEFAULT 0,
+      quantity_requested INTEGER DEFAULT NULL,
       message TEXT,
       status TEXT DEFAULT 'pending',
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -98,6 +101,7 @@ export async function initializeDatabase(): Promise<Database> {
       id TEXT PRIMARY KEY,
       offer_id TEXT NOT NULL,
       listing_id TEXT NOT NULL,
+      accepted_quantity INTEGER DEFAULT NULL,
       seller_confirmed BOOLEAN DEFAULT 0,
       buyer_confirmed BOOLEAN DEFAULT 0,
       seller_confirmed_at DATETIME NULL,
@@ -110,6 +114,58 @@ export async function initializeDatabase(): Promise<Database> {
       FOREIGN KEY (listing_id) REFERENCES marketplace_listings (id)
     )
   `);
+
+  // Add listing_type column to existing marketplace_listings table if it doesn't exist
+  try {
+    await db.exec(`
+      ALTER TABLE marketplace_listings 
+      ADD COLUMN listing_type TEXT DEFAULT 'selling' CHECK(listing_type IN ('selling', 'buying'))
+    `);
+  } catch (error: any) {
+    // Column likely already exists, ignore error
+    if (!error.message?.includes('duplicate column name')) {
+      console.warn('Warning: Failed to add listing_type column:', error.message);
+    }
+  }
+
+  // Add quantity_requested column to existing marketplace_offers table if it doesn't exist
+  try {
+    await db.exec(`
+      ALTER TABLE marketplace_offers 
+      ADD COLUMN quantity_requested INTEGER DEFAULT NULL
+    `);
+  } catch (error: any) {
+    // Column likely already exists, ignore error
+    if (!error.message?.includes('duplicate column name')) {
+      console.warn('Warning: Failed to add quantity_requested column:', error.message);
+    }
+  }
+
+  // Add accepted_quantity column to existing trade_confirmations table if it doesn't exist
+  try {
+    await db.exec(`
+      ALTER TABLE trade_confirmations 
+      ADD COLUMN accepted_quantity INTEGER DEFAULT NULL
+    `);
+  } catch (error: any) {
+    // Column likely already exists, ignore error
+    if (!error.message?.includes('duplicate column name')) {
+      console.warn('Warning: Failed to add accepted_quantity column:', error.message);
+    }
+  }
+
+  // Add accepts_partial_offers column to existing marketplace_listings table if it doesn't exist
+  try {
+    await db.exec(`
+      ALTER TABLE marketplace_listings 
+      ADD COLUMN accepts_partial_offers BOOLEAN DEFAULT 0
+    `);
+  } catch (error: any) {
+    // Column likely already exists, ignore error
+    if (!error.message?.includes('duplicate column name')) {
+      console.warn('Warning: Failed to add accepts_partial_offers column:', error.message);
+    }
+  }
 
   return db;
 }

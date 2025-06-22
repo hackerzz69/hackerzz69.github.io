@@ -24,7 +24,7 @@
             <Icon icon="mdi:plus" /> Create Listing
           </button>
           <button v-else @click="authStore.login" class="btn btn-primary btn-lg">
-            <Icon icon="mdi:login" /> Login to Sell
+            <Icon icon="mdi:login" /> Login to Trade
           </button>
         </div>
     </div>
@@ -40,11 +40,31 @@
         </div>
         <div class="modal-body">
           <div class="form-group">
+            <label>Listing Type:</label>
+            <div class="listing-type-selector">
+              <label class="radio-option">
+                <input type="radio" v-model="newListing.listingType" value="selling">
+                <span class="radio-label">
+                  <Icon icon="mdi:tag" />
+                  <strong>Selling</strong> - I want to sell this item
+                </span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" v-model="newListing.listingType" value="buying">
+                <span class="radio-label">
+                  <Icon icon="mdi:cash" />
+                  <strong>Buying</strong> - I want to buy this item
+                </span>
+              </label>
+            </div>
+          </div>
+          
+          <div class="form-group">
             <label>Select Item:</label>
             <ItemSelector
               v-model="newListing.itemId"
               :items="tradeableItems"
-              placeholder="Choose an item to sell..."
+              :placeholder="newListing.listingType === 'buying' ? 'Choose an item to buy...' : 'Choose an item to sell...'"
               @change="updateSelectedItem"
             />
           </div>
@@ -70,15 +90,31 @@
           </div>
 
           <div class="form-group">
-            <label>Asking Price (coins):</label>
+            <label>{{ newListing.listingType === 'buying' ? 'Offering Price (coins):' : 'Asking Price (coins):' }}</label>
             <input type="number" v-model="newListing.askingPrice" min="1" placeholder="Enter price">
           </div>
 
           <div class="form-group">
-            <label>
-              <input type="checkbox" v-model="newListing.acceptsItems">
-              Accept item trades of equivalent value
-            </label>
+            <label>Trade Options:</label>
+            <div class="toggle-buttons-group">
+              <button 
+                v-if="newListing.listingType === 'selling'"
+                type="button"
+                @click="newListing.acceptsItems = !newListing.acceptsItems"
+                :class="['toggle-btn', { active: newListing.acceptsItems }]"
+              >
+                <Icon icon="mdi:swap-horizontal" />
+                <span>Accept item trades of equivalent value</span>
+              </button>
+              <button 
+                type="button"
+                @click="newListing.acceptsPartialOffers = !newListing.acceptsPartialOffers"
+                :class="['toggle-btn', { active: newListing.acceptsPartialOffers }]"
+              >
+                <Icon icon="mdi:chart-box-multiple-outline" />
+                <span>Accept partial quantity offers</span>
+              </button>
+            </div>
           </div>
 
           <div class="form-group">
@@ -90,6 +126,89 @@
             <button @click="showCreateListing = false" class="btn btn-ghost">Cancel</button>
             <button @click="createListing" class="btn btn-primary" :disabled="!canCreateListing">
               Create Listing
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Listing Modal -->
+    <div v-if="showEditListing" class="modal-overlay" @click="showEditListing = false">
+      <div class="modal" @click.stop>
+        <div class="modal-header">
+          <h2>Edit Listing</h2>
+          <button @click="showEditListing = false" class="close-btn">
+            <Icon icon="mdi:close" />
+          </button>
+        </div>
+        <div class="modal-body" v-if="editingListing">
+          <div class="form-group">
+            <label>Item (cannot be changed):</label>
+            <div class="item-display-readonly">
+              <ItemIcon 
+                :item-id="editingListing.item_id" 
+                :item-name="getItemName(editingListing.item_id)"
+                size="medium"
+              />
+              <div class="item-info">
+                <h3>{{ getItemName(editingListing.item_id) }}</h3>
+                <p>{{ getItemDescription(editingListing.item_id) }}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Listing Type (cannot be changed):</label>
+            <div class="listing-type-display">
+              <div class="tag-chip listing-type" :class="editingListing.listing_type">
+                <Icon :icon="editingListing.listing_type === 'buying' ? 'mdi:cash' : 'mdi:tag'" />
+                {{ editingListing.listing_type === 'buying' ? 'BUYING' : 'SELLING' }}
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Quantity:</label>
+            <input type="number" v-model="editingListing.quantity" min="1" placeholder="1">
+          </div>
+
+          <div class="form-group">
+            <label>{{ editingListing.listing_type === 'buying' ? 'Offering Price (coins):' : 'Asking Price (coins):' }}</label>
+            <input type="number" v-model="editingListing.asking_price" min="1" placeholder="Enter price">
+          </div>
+
+          <div class="form-group">
+            <label>Trade Options:</label>
+            <div class="toggle-buttons-group">
+              <button 
+                v-if="editingListing.listing_type === 'selling'"
+                type="button"
+                @click="editingListing.accepts_items = !editingListing.accepts_items"
+                :class="['toggle-btn', { active: editingListing.accepts_items }]"
+              >
+                <Icon icon="mdi:swap-horizontal" />
+                <span>Accept item trades of equivalent value</span>
+              </button>
+              <button 
+                type="button"
+                @click="editingListing.accepts_partial_offers = !editingListing.accepts_partial_offers"
+                :class="['toggle-btn', { active: editingListing.accepts_partial_offers }]"
+              >
+                <Icon icon="mdi:chart-box-multiple-outline" />
+                <span>Accept partial quantity offers</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Additional Notes (optional):</label>
+            <textarea v-model="editingListing.notes" placeholder="Any additional information..."></textarea>
+          </div>
+
+          <div class="modal-actions">
+            <button @click="showEditListing = false" class="btn btn-ghost">Cancel</button>
+            <button @click="updateListing" class="btn btn-primary" :disabled="!canUpdateListing">
+              Update Listing
             </button>
           </div>
         </div>
@@ -367,54 +486,90 @@
         <div v-for="listing in filteredListings" :key="listing.id" 
              :data-listing-id="listing.id"
              class="listing-card" 
-             :class="{ 'own-listing': isOwnListing(listing) }">
-            <div class="listing-badge" v-if="isOwnListing(listing)">
-              <Icon icon="mdi:account" />
-              Your Listing
-            </div>
+             :class="{ 
+               'own-listing': isOwnListing(listing),
+               'buying-listing': listing.listing_type === 'buying',
+               'selling-listing': listing.listing_type === 'selling'
+             }">
             
-            <!-- Listing Popularity Indicator -->
-            <div v-if="getOfferCount(listing.id) > 0" class="popularity-badge">
-              <Icon icon="mdi:fire" />
-              {{ getOfferCount(listing.id) }} offer{{ getOfferCount(listing.id) !== 1 ? 's' : '' }}
-            </div>
-            
-            <div class="listing-header">            <div class="item-info">
-              <div class="item-icon-container" @click="showItemDetails(listing.item_id)">
-                <ItemIcon 
-                  :item-id="listing.item_id" 
-                  :item-name="getItemName(listing.item_id)"
-                  size="medium"
-                />
-                <div class="icon-overlay">
-                  <Icon icon="mdi:magnify" />
+            <div class="listing-header">
+              <!-- Listing Tags Chip Area - moved to header -->
+              <div class="listing-tags">
+                <!-- Priority 1: Listing Type (always shown) -->
+                <div class="tag-chip listing-type" :class="listing.listing_type">
+                  <Icon :icon="listing.listing_type === 'buying' ? 'mdi:cash' : 'mdi:tag'" />
+                  {{ listing.listing_type === 'buying' ? 'BUYING' : 'SELLING' }}
+                </div>
+                
+                <!-- Priority 2: Ownership (high importance) -->
+                <div v-if="isOwnListing(listing)" class="tag-chip owner">
+                  <Icon icon="mdi:account" />
+                  YOURS
+                </div>
+                
+                <!-- Priority 3: Recent listing (attention grabbing) -->
+                <div v-if="isRecentListing(listing)" class="tag-chip recent">
+                  <Icon icon="mdi:new-box" />
+                  NEW
+                </div>
+                
+                <!-- Priority 4: Popularity (social proof) -->
+                <div v-if="getOfferCount(listing.id) > 0" class="tag-chip popular">
+                  <Icon icon="mdi:fire" />
+                  {{ getOfferCount(listing.id) }}
+                </div>
+                
+                <!-- Priority 5: Accepts trades (feature) -->
+                <div v-if="listing.accepts_items" class="tag-chip trades">
+                  <Icon icon="mdi:swap-horizontal" />
+                  TRADES
+                </div>
+                
+                <!-- Priority 6: Accepts partial offers (feature) -->
+                <div v-if="listing.accepts_partial_offers" class="tag-chip partial">
+                  <Icon icon="mdi:chart-box-multiple-outline" />
+                  PARTIAL
                 </div>
               </div>
-              <div class="item-details">
-                <h3>{{ getItemName(listing.item_id) }}</h3>
-                <p class="quantity">
-                  <Icon icon="mdi:counter" />
-                  {{ listing.quantity }}x
-                </p>
-                <div class="listing-age">
-                  <Icon icon="mdi:clock-outline" />
-                  {{ getRelativeTime(listing.created_at) }}
+              
+              <div class="listing-header-content">
+                <div class="item-info">
+                  <div class="item-icon-container" @click="showItemDetails(listing.item_id)">
+                    <ItemIcon 
+                      :item-id="listing.item_id" 
+                      :item-name="getItemName(listing.item_id)"
+                      size="medium"
+                    />
+                    <div class="icon-overlay">
+                      <Icon icon="mdi:magnify" />
+                    </div>
+                  </div>
+                  <div class="item-details">
+                    <h3>{{ getItemName(listing.item_id) }}</h3>
+                    <p class="quantity">
+                      <Icon icon="mdi:counter" />
+                      {{ listing.quantity }}x
+                    </p>
+                    <div class="listing-age">
+                      <Icon icon="mdi:clock-outline" />
+                      {{ getRelativeTime(listing.created_at) }}
+                    </div>
+                  </div>
+                </div>
+                <div class="listing-meta">
+                  <div class="seller-info" @click="showSellerProfile(listing.seller_discord_id)">
+                    <div class="seller-avatar">
+                      <img 
+                        :src="marketplace.getDiscordAvatarUrl(listing.seller_discord_id, listing.seller_avatar)" 
+                        :alt="`${listing.seller_name}'s avatar`"
+                        @error="(e) => (e.target as HTMLImageElement).src = marketplace.getDiscordAvatarUrl(listing.seller_discord_id)"
+                      />
+                    </div>
+                    <span class="seller">{{ marketplace.formatDiscordUsername(listing.seller_name, listing.seller_discriminator) }}</span>
+                    <Icon icon="mdi:chevron-right" class="profile-arrow" />
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="listing-meta">
-              <div class="seller-info" @click="showSellerProfile(listing.seller_discord_id)">
-                <div class="seller-avatar">
-                  <img 
-                    :src="marketplace.getDiscordAvatarUrl(listing.seller_discord_id, listing.seller_avatar)" 
-                    :alt="`${listing.seller_name}'s avatar`"
-                    @error="(e) => (e.target as HTMLImageElement).src = marketplace.getDiscordAvatarUrl(listing.seller_discord_id)"
-                  />
-                </div>
-                <span class="seller">{{ marketplace.formatDiscordUsername(listing.seller_name, listing.seller_discriminator) }}</span>
-                <Icon icon="mdi:chevron-right" class="profile-arrow" />
-              </div>
-            </div>
             </div>
           
           <div class="listing-body">
@@ -422,7 +577,7 @@
               <div class="asking-price">
                 <Icon icon="mdi:coin" />
                 <span class="price-amount">{{ listing.asking_price }}</span>
-                <span class="price-label">coins</span>
+                <span class="price-label">coins {{ listing.listing_type === 'buying' ? 'offered' : 'asked' }}</span>
               </div>
               <div v-if="listing.accepts_items" class="accepts-trades">
                 <Icon icon="mdi:swap-horizontal" />
@@ -433,7 +588,7 @@
             <div v-if="listing.notes" class="notes">
               <Icon icon="mdi:note-text" />
               <div class="notes-content">
-                <strong>Seller Notes:</strong> {{ listing.notes }}
+                <strong>{{ listing.listing_type === 'buying' ? 'Buyer' : 'Seller' }} Notes:</strong> {{ listing.notes }}
               </div>
             </div>
           </div>
@@ -445,11 +600,15 @@
                 class="btn btn-primary"
               >
                 <Icon icon="mdi:handshake" />
-                Make Offer
+                {{ listing.listing_type === 'buying' ? 'Make Counter-Offer' : 'Make Offer' }}
               </button>
               <button @click="viewOffers(listing)" class="btn btn-secondary">
                 <Icon icon="mdi:eye" />
                 View Offers ({{ getOfferCount(listing.id) }})
+              </button>
+              <button v-if="isOwnListing(listing)" @click="editListing(listing)" class="btn btn-secondary">
+                <Icon icon="mdi:pencil" />
+                Edit
               </button>
               <button v-if="isOwnListing(listing)" @click="removeListing(listing.id)" class="btn btn-danger">
                 <Icon icon="mdi:delete" />
@@ -542,17 +701,64 @@
                     <p>{{ offer.message }}</p>
                   </div>
                 </div>
+                
+                <!-- Display quantity requested if specified -->
+                <div v-if="offer.quantity_requested" class="quantity-requested">
+                  <Icon icon="mdi:package-variant-closed" />
+                  <div class="quantity-content">
+                    <strong>Quantity Requested:</strong>
+                    <span class="quantity-value">{{ offer.quantity_requested }} of {{ selectedListingForOffers?.quantity }}</span>
+                  </div>
+                </div>
               </div>
 
               <div v-if="isOwnListing(selectedListingForOffers)" class="offer-actions">
-                <button @click="acceptOffer(selectedListingForOffers, offer)" class="btn btn-success btn-sm">
-                  <Icon icon="mdi:check" />
-                  Accept Offer
-                </button>
-                <button @click="rejectOffer(offer.id, selectedListingForOffers.id)" class="btn btn-ghost btn-sm">
-                  <Icon icon="mdi:close" />
-                  Reject
-                </button>
+                <div class="action-row">
+                  <button @click="acceptOffer(selectedListingForOffers, offer)" class="btn btn-success btn-sm">
+                    <Icon icon="mdi:check" />
+                    Accept Full Offer
+                  </button>
+                  <button @click="rejectOffer(offer.id, selectedListingForOffers.id)" class="btn btn-ghost btn-sm">
+                    <Icon icon="mdi:close" />
+                    Reject
+                  </button>
+                </div>
+                
+                <!-- Partial acceptance section for offers requesting specific quantities or when listing has multiple items and accepts partial offers -->
+                <div v-if="selectedListingForOffers.accepts_partial_offers && (selectedListingForOffers.quantity > 1 || offer.quantity_requested)" class="partial-accept-section">
+                  <div class="partial-accept-header">
+                    <Icon icon="mdi:package-variant" />
+                    <span>Accept Partial Offer</span>
+                  </div>
+                  <div class="partial-accept-controls">
+                    <div class="quantity-info">
+                      <span v-if="offer.quantity_requested">
+                        Buyer requested: {{ offer.quantity_requested }} of {{ selectedListingForOffers.quantity }}
+                      </span>
+                      <span v-else>
+                        Available: {{ selectedListingForOffers.quantity }} items
+                      </span>
+                    </div>
+                    <div class="partial-input-group">
+                      <input 
+                        type="number" 
+                        v-model="partialAcceptQuantity[offer.id]"
+                        :min="1" 
+                        :max="Math.min(offer.quantity_requested || selectedListingForOffers.quantity, selectedListingForOffers.quantity)"
+                        :placeholder="`Enter quantity (max: ${Math.min(offer.quantity_requested || selectedListingForOffers.quantity, selectedListingForOffers.quantity)})`"
+                        class="partial-quantity-input"
+                      >
+                      <button 
+                        @click="acceptPartialOffer(offer.id, partialAcceptQuantity[offer.id])" 
+                        class="btn btn-warning btn-sm"
+                        :disabled="!partialAcceptQuantity[offer.id] || partialAcceptQuantity[offer.id] <= 0"
+                      >
+                        <Icon icon="mdi:check-circle" />
+                        Accept {{ partialAcceptQuantity[offer.id] || '?' }}
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
               <div v-else class="offer-viewer-info">
                 <Icon icon="mdi:information" />
@@ -587,7 +793,24 @@
                 <p>Quantity: {{ selectedListing?.quantity }}</p>
                 <p>Asking Price: {{ selectedListing?.asking_price }} coins</p>
                 <p v-if="selectedListing?.accepts_items">✓ Accepts item trades</p>
+                <p v-if="selectedListing?.accepts_partial_offers">✓ Accepts partial quantity offers</p>
               </div>
+            </div>
+          </div>
+
+          <div class="form-group" v-if="selectedListing && selectedListing.quantity > 1 && selectedListing.accepts_partial_offers">
+            <label>Quantity Requested:</label>
+            <div class="quantity-input-group">
+              <input 
+                type="number" 
+                v-model="newOffer.quantityRequested" 
+                :min="1" 
+                :max="selectedListing.quantity"
+                placeholder="Enter quantity (optional)"
+              >
+              <span class="quantity-helper">
+                Leave blank for full quantity ({{ selectedListing.quantity }})
+              </span>
             </div>
           </div>
 
@@ -860,12 +1083,15 @@ interface NewListing {
   quantity: number
   askingPrice: number
   acceptsItems: boolean
+  acceptsPartialOffers: boolean
+  listingType: 'selling' | 'buying'
   notes: string
 }
 
 interface NewOffer {
   offerType: 'coins' | 'items' | 'mixed'
   coinOffer: number
+  quantityRequested?: number
   itemOffers: ItemOffer[]
   message: string
 }
@@ -877,12 +1103,15 @@ const route = useRoute()
 
 // Reactive data
 const showCreateListing = ref(false)
+const showEditListing = ref(false)
+const editingListing = ref<MarketplaceListing | null>(null)
 const showOfferModal = ref(false)
 const selectedListing = ref<MarketplaceListing | null>(null)
 const searchQuery = ref('')
 const sortBy = ref('newest')
 const showOnlyTradeableItems = ref(false)
 const showOnlyOwnListings = ref(false)
+const listingTypeFilter = ref<'all' | 'selling' | 'buying'>('all')
 const viewMode = ref<'grid' | 'list'>('grid')
 const priceFilter = ref({ min: null as number | null, max: null as number | null })
 
@@ -898,9 +1127,12 @@ const recentActions = ref<string[]>([]) // For feedback messages
 
 // Offers data
 const listingOffers = ref<{ [listingId: string]: any[] }>({})
+const partialAcceptQuantity = ref<{ [offerId: string]: number }>({})
 
 // Quick filter chips data
 const quickFilterChips = ref([
+  { key: 'selling', label: 'Selling Items', icon: 'mdi:tag', filter: { listingType: 'selling' } },
+  { key: 'buying', label: 'Buying Requests', icon: 'mdi:cash', filter: { listingType: 'buying' } },
   { key: 'cheap', label: 'Under 20 coins', icon: 'mdi:currency-usd-off', filter: { priceMax: 20 } },
   { key: 'moderate', label: '20-50 coins', icon: 'mdi:currency-usd', filter: { priceMin: 20, priceMax: 50 } },
   { key: 'expensive', label: 'Over 50 coins', icon: 'mdi:diamond', filter: { priceMin: 50 } },
@@ -924,12 +1156,15 @@ const newListing = ref<NewListing>({
   quantity: 1,
   askingPrice: 0,
   acceptsItems: false,
+  acceptsPartialOffers: false,
+  listingType: 'selling',
   notes: ''
 })
 
 const newOffer = ref<NewOffer>({
   offerType: 'coins',
   coinOffer: 0,
+  quantityRequested: undefined,
   itemOffers: [],
   message: ''
 })
@@ -948,7 +1183,8 @@ const hasActiveFilters = computed(() => {
          priceFilter.value.min !== null ||
          priceFilter.value.max !== null ||
          showOnlyTradeableItems.value ||
-         showOnlyOwnListings.value
+         showOnlyOwnListings.value ||
+         listingTypeFilter.value !== 'all'
 })
 
 const selectedItem = computed(() => {
@@ -960,6 +1196,13 @@ const canCreateListing = computed(() => {
   return newListing.value.itemId && 
          newListing.value.quantity > 0 && 
          newListing.value.askingPrice > 0 &&
+         authStore.isAuthenticated
+})
+
+const canUpdateListing = computed(() => {
+  return editingListing.value &&
+         editingListing.value.quantity > 0 && 
+         editingListing.value.asking_price > 0 &&
          authStore.isAuthenticated
 })
 
@@ -987,6 +1230,11 @@ const filteredListings = computed(() => {
              item?.description.toLowerCase().includes(query) ||
              listing.notes.toLowerCase().includes(query)
     })
+  }
+  
+  // Listing type filter
+  if (listingTypeFilter.value !== 'all') {
+    filtered = filtered.filter(listing => listing.listing_type === listingTypeFilter.value)
   }
   
   // Price filter
@@ -1065,6 +1313,8 @@ const createListing = async () => {
       quantity: newListing.value.quantity,
       askingPrice: newListing.value.askingPrice,
       acceptsItems: newListing.value.acceptsItems,
+      acceptsPartialOffers: newListing.value.acceptsPartialOffers,
+      listingType: newListing.value.listingType,
       notes: newListing.value.notes
     })
     
@@ -1074,6 +1324,8 @@ const createListing = async () => {
       quantity: 1,
       askingPrice: 0,
       acceptsItems: false,
+      acceptsPartialOffers: false,
+      listingType: 'selling',
       notes: ''
     }
     
@@ -1081,6 +1333,64 @@ const createListing = async () => {
     showFeedback('Listing created successfully!', 'success')
   } catch (error) {
     showFeedback('Failed to create listing', 'error')
+  }
+}
+
+const editListing = (listing: MarketplaceListing) => {
+  if (!isOwnListing(listing)) {
+    showFeedback('You can only edit your own listings', 'error')
+    return
+  }
+  
+  console.log('Original listing accepts_partial_offers:', listing.accepts_partial_offers)
+  console.log('Original listing accepts_items:', listing.accepts_items)
+  
+  // Create a deep copy of the listing for editing
+  // Ensure all boolean fields are always defined as booleans, never undefined
+  editingListing.value = {
+    id: listing.id,
+    user_id: listing.user_id,
+    item_id: listing.item_id,
+    quantity: listing.quantity,
+    asking_price: listing.asking_price,
+    accepts_items: Boolean(listing.accepts_items),
+    accepts_partial_offers: Boolean(listing.accepts_partial_offers),
+    notes: listing.notes || '',
+    listing_type: listing.listing_type,
+    status: listing.status,
+    created_at: listing.created_at,
+    updated_at: listing.updated_at,
+    seller_name: listing.seller_name,
+    seller_discord_id: listing.seller_discord_id,
+    seller_discriminator: listing.seller_discriminator,
+    seller_avatar: listing.seller_avatar,
+    seller_joined_date: listing.seller_joined_date,
+    offer_count: listing.offer_count
+  }
+  
+  console.log('Editing listing accepts_partial_offers:', editingListing.value.accepts_partial_offers)
+  console.log('Editing listing accepts_items:', editingListing.value.accepts_items)
+  
+  showEditListing.value = true
+}
+
+const updateListing = async () => {
+  if (!canUpdateListing.value || !editingListing.value) return
+  
+  try {
+    await marketplace.updateListing(editingListing.value.id, {
+      quantity: editingListing.value.quantity,
+      asking_price: editingListing.value.asking_price,
+      accepts_items: editingListing.value.accepts_items,
+      accepts_partial_offers: editingListing.value.accepts_partial_offers ?? false,
+      notes: editingListing.value.notes
+    })
+    
+    showEditListing.value = false
+    editingListing.value = null
+    showFeedback('Listing updated successfully!', 'success')
+  } catch (error) {
+    showFeedback('Failed to update listing', 'error')
   }
 }
 
@@ -1098,6 +1408,7 @@ const showMakeOffer = (listing: MarketplaceListing) => {
   newOffer.value = {
     offerType: 'coins',
     coinOffer: 0,
+    quantityRequested: undefined,
     itemOffers: [],
     message: ''
   }
@@ -1131,6 +1442,7 @@ const submitOffer = async () => {
   try {
     await marketplace.createOffer(selectedListing.value.id, {
       coinOffer: newOffer.value.coinOffer || 0,
+      quantityRequested: newOffer.value.quantityRequested,
       itemOffers: newOffer.value.itemOffers.filter(offer => offer.item_id && offer.quantity > 0).map(offer => ({
         item_id: offer.item_id,
         quantity: offer.quantity
@@ -1191,6 +1503,37 @@ const acceptOffer = async (_listing: MarketplaceListing, offer: any) => {
     }, 2000)
   } catch (error) {
     showFeedback('Failed to accept offer', 'error')
+  }
+}
+
+const acceptPartialOffer = async (offerId: string, quantity: number) => {
+  if (!quantity || quantity <= 0) {
+    showFeedback('Please enter a valid quantity', 'error')
+    return
+  }
+  
+  try {
+    const result = await marketplace.acceptPartialOffer(offerId, quantity)
+    
+    // Clear the partial quantity input
+    delete partialAcceptQuantity.value[offerId]
+    
+    // Close the offers modal
+    showOffersModal.value = false
+    selectedListingForOffers.value = null
+    
+    const message = result.remainingQuantity > 0 
+      ? `Partial offer accepted for ${quantity} items! ${result.remainingQuantity} remaining in listing.`
+      : `Offer accepted for ${quantity} items! Listing is now complete.`
+    
+    showFeedback(message, 'success')
+    
+    // Show additional guidance
+    setTimeout(() => {
+      showFeedback('Please confirm the trade once you have completed the exchange.', 'info')
+    }, 2000)
+  } catch (error) {
+    showFeedback('Failed to accept partial offer', 'error')
   }
 }
 
@@ -1274,6 +1617,13 @@ const getRelativeTime = (date: string): string => {
   return formatDate(date)
 }
 
+const isRecentListing = (listing: MarketplaceListing): boolean => {
+  const now = new Date().getTime()
+  const listingTime = new Date(listing.created_at).getTime()
+  const hoursDiff = (now - listingTime) / (1000 * 60 * 60)
+  return hoursDiff <= 24 // Consider listings from last 24 hours as "recent"
+}
+
 const toggleQuickFilters = () => {
   showQuickFilters.value = !showQuickFilters.value
 }
@@ -1281,6 +1631,7 @@ const toggleQuickFilters = () => {
 const applyQuickFilter = (chip: any) => {
   const filter = chip.filter
   
+  if (filter.listingType) listingTypeFilter.value = filter.listingType
   if (filter.priceMin !== undefined) priceFilter.value.min = filter.priceMin
   if (filter.priceMax !== undefined) priceFilter.value.max = filter.priceMax
   if (filter.acceptsTrades) showOnlyTradeableItems.value = true
@@ -1398,6 +1749,7 @@ const clearFilters = () => {
   priceFilter.value.max = null
   showOnlyTradeableItems.value = false
   showOnlyOwnListings.value = false
+  listingTypeFilter.value = 'all'
   sortBy.value = 'newest'
   showFeedback('All filters cleared', 'info')
 }

@@ -9,7 +9,9 @@ export interface MarketplaceListing {
   quantity: number
   asking_price: number
   accepts_items: boolean
+  accepts_partial_offers?: boolean
   notes: string
+  listing_type: 'selling' | 'buying'
   status: string
   created_at: string
   updated_at: string
@@ -26,6 +28,7 @@ export interface MarketplaceOffer {
   listing_id: string
   user_id: number
   coin_offer: number
+  quantity_requested?: number
   message: string
   status: string
   created_at: string
@@ -132,6 +135,8 @@ export function useMarketplace() {
     quantity: number
     askingPrice: number
     acceptsItems: boolean
+    acceptsPartialOffers: boolean
+    listingType: 'selling' | 'buying'
     notes?: string
   }) => {
     try {
@@ -145,6 +150,39 @@ export function useMarketplace() {
     } catch (err: any) {
       error.value = err.response?.data?.error || 'Failed to create listing'
       console.error('Error creating listing:', err)
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  // Update a listing
+  const updateListing = async (listingId: string, updateData: {
+    quantity: number
+    asking_price: number
+    accepts_items: boolean
+    accepts_partial_offers: boolean
+    notes: string
+  }) => {
+    try {
+      loading.value = true
+      const response = await axios.put(`${API_BASE_URL}/listings/${listingId}`, updateData)
+      
+      // Update the listing in the local array
+      const listingIndex = listings.value.findIndex(l => l.id === listingId)
+      if (listingIndex !== -1) {
+        listings.value[listingIndex] = { ...listings.value[listingIndex], ...response.data }
+      }
+      
+      // Also update in userListings if it exists there
+      const userListingIndex = userListings.value.findIndex(l => l.id === listingId)
+      if (userListingIndex !== -1) {
+        userListings.value[userListingIndex] = { ...userListings.value[userListingIndex], ...response.data }
+      }
+      
+      return response.data
+    } catch (err: any) {
+      error.value = err.response?.data?.message || 'Failed to update listing'
       throw err
     } finally {
       loading.value = false
@@ -185,6 +223,7 @@ export function useMarketplace() {
   // Create an offer
   const createOffer = async (listingId: string, offerData: {
     coinOffer?: number
+    quantityRequested?: number
     itemOffers?: ItemOffer[]
     message?: string
   }) => {
@@ -218,6 +257,30 @@ export function useMarketplace() {
     } catch (err: any) {
       error.value = err.response?.data?.error || 'Failed to accept offer'
       console.error('Error accepting offer:', err)
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  // Accept a partial offer
+  const acceptPartialOffer = async (offerId: string, acceptedQuantity: number) => {
+    try {
+      loading.value = true
+      error.value = null
+      const response = await axios.post(`${API_BASE_URL}/offers/${offerId}/accept-partial`, {
+        acceptedQuantity
+      })
+      
+      // Refresh listings and pending trades
+      await fetchListings()
+      await fetchUserListings()
+      await fetchPendingTrades()
+      
+      return response.data
+    } catch (err: any) {
+      error.value = err.response?.data?.error || 'Failed to accept partial offer'
+      console.error('Error accepting partial offer:', err)
       throw err
     } finally {
       loading.value = false
@@ -379,10 +442,12 @@ export function useMarketplace() {
     error,
     fetchListings,
     createListing,
+    updateListing,
     deleteListing,
     fetchOffersForListing,
     createOffer,
     acceptOffer,
+    acceptPartialOffer,
     rejectOffer,
     fetchUserListings,
     fetchUserOffers,

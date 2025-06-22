@@ -29,7 +29,7 @@ router.get('/listings', async (_req: Request, res: Response) => {
       FROM marketplace_listings l
       JOIN users u ON l.user_id = u.id
       WHERE l.status = 'active'
-      ORDER BY l.created_at DESC
+      ORDER BY l.listing_type DESC, l.created_at DESC
     `);
     
     res.json(listings);
@@ -42,11 +42,16 @@ router.get('/listings', async (_req: Request, res: Response) => {
 // Create a new listing
 router.post('/listings', requireAuth, async (req: Request, res: Response): Promise<void> => {
   try {
-    const { itemId, quantity, askingPrice, acceptsItems, notes } = req.body;
+    const { itemId, quantity, askingPrice, acceptsItems, acceptsPartialOffers, listingType, notes } = req.body;
     const userId = (req.user as any)!.id!;
 
-    if (!itemId || !quantity || !askingPrice) {
+    if (!itemId || !quantity || !askingPrice || !listingType) {
       res.status(400).json({ error: 'Missing required fields' });
+      return;
+    }
+
+    if (!['selling', 'buying'].includes(listingType)) {
+      res.status(400).json({ error: 'Invalid listing type. Must be "selling" or "buying"' });
       return;
     }
 
@@ -54,9 +59,9 @@ router.post('/listings', requireAuth, async (req: Request, res: Response): Promi
     const listingId = randomBytes(16).toString('hex');
 
     await db.run(`
-      INSERT INTO marketplace_listings (id, user_id, item_id, quantity, asking_price, accepts_items, notes)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
-    `, [listingId, userId, itemId, quantity, askingPrice, acceptsItems ? 1 : 0, notes || '']);
+      INSERT INTO marketplace_listings (id, user_id, item_id, quantity, asking_price, accepts_items, accepts_partial_offers, listing_type, notes)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `, [listingId, userId, itemId, quantity, askingPrice, acceptsItems ? 1 : 0, acceptsPartialOffers ? 1 : 0, listingType, notes || '']);
 
     // Return the created listing with user info
     const listing = await db.get(`
@@ -89,6 +94,7 @@ router.post('/listings', requireAuth, async (req: Request, res: Response): Promi
           quantity,
           askingPrice,
           acceptsItems,
+          listingType,
           notes
         }
       );
@@ -101,6 +107,90 @@ router.post('/listings', requireAuth, async (req: Request, res: Response): Promi
   } catch (error) {
     console.error('Error creating listing:', error);
     res.status(500).json({ error: 'Failed to create listing' });
+  }
+});
+
+// Update a listing (only by owner)
+router.put('/listings/:id', requireAuth, async (req: Request, res: Response): Promise<void> => {
+  try {
+    const listingId = req.params.id;
+    const userId = (req.user as any)!.id!;
+    const { quantity, asking_price, accepts_items, accepts_partial_offers, notes } = req.body;
+    const db = await getDatabase();
+
+    // Validate required fields
+    if (quantity === undefined || asking_price === undefined) {
+      res.status(400).json({ error: 'Missing required fields: quantity and asking_price' });
+      return;
+    }
+
+    if (quantity <= 0 || asking_price <= 0) {
+      res.status(400).json({ error: 'Quantity and asking price must be greater than 0' });
+      return;
+    }
+
+    // Check if listing exists and belongs to user
+    const existingListing = await db.get(`
+      SELECT * FROM marketplace_listings 
+      WHERE id = ? AND user_id = ? AND status = 'active'
+    `, [listingId, userId]);
+
+    if (!existingListing) {
+      res.status(404).json({ error: 'Listing not found or not authorized' });
+      return;
+    }
+
+    // Update the listing
+    await db.run(`
+      UPDATE marketplace_listings 
+      SET quantity = ?, asking_price = ?, accepts_items = ?, accepts_partial_offers = ?, notes = ?, updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+    `, [quantity, asking_price, accepts_items ? 1 : 0, accepts_partial_offers ? 1 : 0, notes || '', listingId]);
+
+    // Return the updated listing with user info
+    const updatedListing = await db.get(`
+      SELECT 
+        l.*,
+        u.username as seller_name,
+        u.discord_id as seller_discord_id,
+        u.discriminator as seller_discriminator,
+        u.avatar as seller_avatar,
+        u.created_at as seller_joined_date,
+        (SELECT COUNT(*) FROM marketplace_offers o WHERE o.listing_id = l.id AND o.status = 'pending') as offer_count
+      FROM marketplace_listings l
+      JOIN users u ON l.user_id = u.id
+      WHERE l.id = ?
+    `, [listingId]);
+
+    // Send Discord notification
+    try {
+      const user = (req.user as any);
+      await discordNotifications.notifyListingUpdated(
+        {
+          discordId: user.discord_id,
+          username: user.username,
+          discriminator: user.discriminator,
+          avatar: user.avatar
+        },
+        {
+          id: listingId,
+          itemName: getItemName(existingListing.item_id),
+          quantity,
+          askingPrice: asking_price,
+          acceptsItems: accepts_items,
+          listingType: existingListing.listing_type,
+          notes
+        }
+      );
+    } catch (notificationError) {
+      console.error('Failed to send Discord notification for listing update:', notificationError);
+      // Don't fail the request if notification fails
+    }
+
+    res.json(updatedListing);
+  } catch (error) {
+    console.error('Error updating listing:', error);
+    res.status(500).json({ error: 'Failed to update listing' });
   }
 });
 
@@ -260,7 +350,7 @@ router.post('/listings/:id/offers', requireAuth, async (req: Request, res: Respo
   try {
     const listingId = req.params.id;
     const userId = (req.user as any)!.id!;
-    const { coinOffer, itemOffers, message } = req.body;
+    const { coinOffer, quantityRequested, itemOffers, message } = req.body;
     const db = await getDatabase();
 
     // Check if listing exists and is active
@@ -280,13 +370,19 @@ router.post('/listings/:id/offers', requireAuth, async (req: Request, res: Respo
       return;
     }
 
+    // Validate quantity_requested if provided
+    if (quantityRequested && (quantityRequested <= 0 || quantityRequested > listing.quantity)) {
+      res.status(400).json({ error: 'Invalid quantity requested. Must be between 1 and listing quantity.' });
+      return;
+    }
+
     const offerId = randomBytes(16).toString('hex');
 
     // Create the offer
     await db.run(`
-      INSERT INTO marketplace_offers (id, listing_id, user_id, coin_offer, message)
-      VALUES (?, ?, ?, ?, ?)
-    `, [offerId, listingId, userId, coinOffer || 0, message || '']);
+      INSERT INTO marketplace_offers (id, listing_id, user_id, coin_offer, quantity_requested, message)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `, [offerId, listingId, userId, coinOffer || 0, quantityRequested || null, message || '']);
 
     // Add item offers if any
     if (itemOffers && itemOffers.length > 0) {
@@ -461,6 +557,139 @@ router.post('/offers/:id/accept', requireAuth, async (req: Request, res: Respons
   } catch (error) {
     console.error('Error accepting offer:', error);
     res.status(500).json({ error: 'Failed to accept offer' });
+  }
+});
+
+// Accept a partial offer (only by listing owner) - this creates a pending trade for specified quantity
+router.post('/offers/:id/accept-partial', requireAuth, async (req: Request, res: Response): Promise<void> => {
+  try {
+    const offerId = req.params.id;
+    const userId = (req.user as any)!.id!;
+    const { acceptedQuantity } = req.body;
+    const db = await getDatabase();
+
+    if (!acceptedQuantity || acceptedQuantity <= 0) {
+      res.status(400).json({ error: 'Accepted quantity must be greater than 0' });
+      return;
+    }
+
+    // Get offer and verify user owns the listing
+    const offer = await db.get(`
+      SELECT o.*, l.user_id as listing_owner_id, l.id as listing_id, l.quantity as listing_quantity
+      FROM marketplace_offers o
+      JOIN marketplace_listings l ON o.listing_id = l.id
+      WHERE o.id = ? AND l.user_id = ? AND o.status = 'pending'
+    `, [offerId, userId]);
+
+    if (!offer) {
+      res.status(404).json({ error: 'Offer not found or not authorized' });
+      return;
+    }
+
+    // Validate accepted quantity
+    const requestedQuantity = offer.quantity_requested || offer.listing_quantity;
+    if (acceptedQuantity > requestedQuantity) {
+      res.status(400).json({ error: 'Accepted quantity cannot exceed requested quantity' });
+      return;
+    }
+
+    if (acceptedQuantity > offer.listing_quantity) {
+      res.status(400).json({ error: 'Accepted quantity cannot exceed listing quantity' });
+      return;
+    }
+
+    // Update offer status to accepted
+    await db.run(`
+      UPDATE marketplace_offers 
+      SET status = 'accepted', updated_at = CURRENT_TIMESTAMP 
+      WHERE id = ?
+    `, [offerId]);
+
+    // Update listing quantity - subtract the accepted amount
+    const remainingQuantity = offer.listing_quantity - acceptedQuantity;
+    if (remainingQuantity > 0) {
+      // Update listing with remaining quantity, keep it active
+      await db.run(`
+        UPDATE marketplace_listings 
+        SET quantity = ?, updated_at = CURRENT_TIMESTAMP 
+        WHERE id = ?
+      `, [remainingQuantity, offer.listing_id]);
+    } else {
+      // If no quantity remains, mark listing as pending
+      await db.run(`
+        UPDATE marketplace_listings 
+        SET status = 'pending', updated_at = CURRENT_TIMESTAMP 
+        WHERE id = ?
+      `, [offer.listing_id]);
+    }
+
+    // Create trade confirmation record - both parties need to verify
+    const tradeConfirmationId = randomBytes(16).toString('hex');
+    await db.run(`
+      INSERT INTO trade_confirmations (id, offer_id, listing_id, seller_confirmed, buyer_confirmed, accepted_quantity)
+      VALUES (?, ?, ?, 0, 0, ?)
+    `, [tradeConfirmationId, offerId, offer.listing_id, acceptedQuantity]);
+
+    // For partial acceptance, don't reject other offers - they might still be valid for remaining quantity
+    if (remainingQuantity <= 0) {
+      // Only reject other offers if no quantity remains
+      await db.run(`
+        UPDATE marketplace_offers 
+        SET status = 'rejected', updated_at = CURRENT_TIMESTAMP 
+        WHERE listing_id = ? AND id != ? AND status = 'pending'
+      `, [offer.listing_id, offerId]);
+    }
+
+    // Send Discord notifications (simplified for now)
+    try {
+      // Get listing details and buyer info for notifications
+      const listingDetails = await db.get(`
+        SELECT l.*, u.discord_id as buyer_discord_id, u.username as buyer_name, u.discriminator as buyer_discriminator, u.avatar as buyer_avatar
+        FROM marketplace_listings l
+        JOIN marketplace_offers o ON l.id = o.listing_id
+        JOIN users u ON o.user_id = u.id
+        WHERE o.id = ?
+      `, [offerId]);
+
+      if (listingDetails && discordNotifications) {
+        // Notify buyer that their offer was accepted (partial)
+        await discordNotifications.notifyOfferAccepted(
+          {
+            discordId: listingDetails.buyer_discord_id,
+            username: listingDetails.buyer_name,
+            discriminator: listingDetails.buyer_discriminator,
+            avatar: listingDetails.buyer_avatar
+          },
+          {
+            id: listingDetails.id,
+            itemName: getItemName(listingDetails.item_id),
+            quantity: acceptedQuantity, // Show accepted quantity, not full listing quantity
+            askingPrice: listingDetails.asking_price,
+            acceptsItems: listingDetails.accepts_items === 1,
+            notes: listingDetails.notes
+          },
+          {
+            id: offerId,
+            listingId: offer.listing_id,
+            coinOffer: offer.coin_offer,
+            message: offer.message,
+            buyerName: listingDetails.buyer_name
+          }
+        );
+      }
+    } catch (notificationError) {
+      console.error('Failed to send Discord notification for partial offer acceptance:', notificationError);
+    }
+
+    res.json({ 
+      message: `Partial offer accepted successfully for ${acceptedQuantity} items. Trade is now pending verification from both parties.`,
+      tradeConfirmationId: tradeConfirmationId,
+      acceptedQuantity: acceptedQuantity,
+      remainingQuantity: remainingQuantity
+    });
+  } catch (error) {
+    console.error('Error accepting partial offer:', error);
+    res.status(500).json({ error: 'Failed to accept partial offer' });
   }
 });
 
