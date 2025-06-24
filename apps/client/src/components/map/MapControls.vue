@@ -11,8 +11,12 @@
           class="search-input"
           @input="handleSearch"
         />
-        <button v-if="searchQuery" @click="clearSearch" class="clear-search">×</button>
+        <button @click="toggleControlsExpansion" class="controls-toggle" :class="{ active: isControlsExpanded }">
+          <span class="controls-toggle-icon">{{ isControlsExpanded ? '▲' : '▼' }}</span>
+        </button>
       </div>
+      
+      <!-- Search Results -->
       <div v-if="searchResults.length > 0" class="search-results">
         <div 
           v-for="result in searchResults.slice(0, 6)" 
@@ -27,37 +31,30 @@
       </div>
     </div>
 
-    <!-- Layer Selection Section (Always Visible) -->
-    <div class="control-section">
-      <div class="section-header">
-        <h3 class="section-title">Map Layers</h3>
+    <!-- Collapsible Controls Area -->
+    <div v-if="isControlsExpanded" class="collapsible-controls">
+      <!-- Layer Selection Section -->
+      <div class="control-section">
+        <div class="section-header">
+          <h3 class="section-title">Map Layers</h3>
+        </div>
+        <div class="layer-buttons">
+          <button 
+            v-for="layer in layers" 
+            :key="layer.id"
+            @click="$emit('layerChanged', layer.id)"
+            :class="['layer-btn', { active: selectedLayer === layer.id }]"
+          >
+            {{ layer.name }}
+          </button>
+        </div>
       </div>
-      <div class="layer-buttons">
-        <button 
-          v-for="layer in layers" 
-          :key="layer.id"
-          @click="$emit('layerChanged', layer.id)"
-          :class="['layer-btn', { active: selectedLayer === layer.id }]"
-        >
-          {{ layer.name }}
-        </button>
-      </div>
-      
-      <!-- Expand/Collapse Button -->
-      <div class="panel-toggle-container">
-        <button @click="togglePanelExpansion" class="panel-toggle-btn">
-          <span class="toggle-icon">{{ isPanelExpanded ? '−' : '+' }}</span>
-          <span class="toggle-text">{{ isPanelExpanded ? 'Hide Filters' : 'Show Filters' }}</span>
-        </button>
-      </div>
-    </div>
 
-    <!-- Advanced Options (Collapsible) -->
-    <div v-if="isPanelExpanded" class="advanced-options">
       <!-- Filters Section -->
       <div class="control-section">
         <div class="section-header">
           <h3 class="section-title">Filters</h3>
+          <div class="filter-summary">{{ visibleCategoriesCount }}/{{ markerCategories.length }} active</div>
         </div>
         <div class="filter-tags">
           <button 
@@ -78,7 +75,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import locations from '@/assets/map/Locations.json'
 import npcs from '@/assets/map/NPCs.json'
 import npcDefinitions from '@/assets/map/NPCDefs.json'
@@ -115,10 +112,15 @@ const emit = defineEmits<{
 // Reactive state
 const searchQuery = ref('')
 const searchResults = ref<any[]>([])
-const isPanelExpanded = ref(false)
+const isControlsExpanded = ref(false) // Start collapsed for space efficiency
 
 // All searchable items
 let searchableItems: any[] = []
+
+// Computed properties
+const visibleCategoriesCount = computed(() => {
+  return props.markerCategories.filter(cat => cat.visible).length
+})
 
 // Enhanced search with better filtering and result grouping
 const handleSearch = () => {
@@ -220,8 +222,8 @@ const toggleMarkerCategory = (categoryName: string) => {
   emit('markerCategoryToggled', categoryName, category.visible)
 }
 
-const togglePanelExpansion = () => {
-  isPanelExpanded.value = !isPanelExpanded.value
+const toggleControlsExpansion = () => {
+  isControlsExpanded.value = !isControlsExpanded.value
 }
 
 // Initialize searchable items
@@ -496,17 +498,20 @@ onMounted(() => {
 
 /* Search panel - Compressed */
 .search-section {
-  border-bottom: 1px solid var(--theme-border);
+  border-bottom: none; /* Remove border since we're integrating with collapsible area */
 }
 
 .search-input-container {
   position: relative;
   margin-bottom: 6px;
   padding: 8px 16px 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .search-input {
-  width: 100%;
+  flex: 1;
   padding: 10px 14px;
   border: 2px solid var(--theme-border);
   border-radius: 8px;
@@ -528,28 +533,36 @@ onMounted(() => {
   color: var(--theme-text-muted);
 }
 
-.clear-search {
-  position: absolute;
-  right: 28px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  font-size: 20px;
-  color: var(--theme-text-muted);
+.controls-toggle {
+  background: var(--theme-background-mute);
+  border: 2px solid var(--theme-border);
+  border-radius: 6px;
+  padding: 6px 8px;
   cursor: pointer;
-  padding: 0;
-  width: 24px;
-  height: 24px;
+  transition: all 0.3s ease;
+  color: var(--theme-text-muted);
+  font-size: 12px;
+  min-width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.2s ease;
-  margin-top: 8px;
 }
 
-.clear-search:hover {
+.controls-toggle:hover {
+  border-color: var(--theme-accent);
+  background: var(--theme-accent-transparent-10);
   color: var(--theme-accent);
+}
+
+.controls-toggle.active {
+  border-color: var(--theme-accent);
+  background: var(--theme-accent);
+  color: var(--theme-text-dark);
+}
+
+.controls-toggle-icon {
+  font-weight: bold;
 }
 
 .search-results {
@@ -558,52 +571,56 @@ onMounted(() => {
   padding: 0 16px 12px;
 }
 
-/* Panel Toggle Button - Compressed */
-.panel-toggle-container {
-  padding: 6px 16px 12px;
+/* Collapsible Controls Area */
+.collapsible-controls {
   border-top: 1px solid var(--theme-border-light);
-  margin-top: 6px;
+  animation: slideDown 0.3s ease-out;
+  background: rgba(20, 20, 20, 0.5);
 }
 
-.panel-toggle-btn {
-  width: 100%;
-  padding: 8px 12px;
-  border: 2px solid var(--theme-border);
-  border-radius: 8px;
-  background: var(--theme-background-mute);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 12px;
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 500px;
+  }
+}
+
+.filter-summary {
+  font-size: 11px;
+  color: var(--theme-text-muted);
   font-weight: 600;
-  color: var(--theme-text-primary);
+  background: var(--theme-accent-transparent-10);
+  padding: 2px 8px;
+  border-radius: 12px;
+  border: 1px solid var(--theme-accent-transparent-20);
+}
+
+/* Section Headers */
+.section-header {
+  padding: 8px 16px 4px 16px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 6px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.panel-toggle-btn:hover {
-  border-color: var(--theme-accent);
-  background: var(--theme-accent-transparent-10);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.toggle-icon {
-  font-size: 14px;
-  font-weight: bold;
+  justify-content: space-between;
+  gap: 8px;
   color: var(--theme-accent);
+  background: rgba(26, 26, 26, 0.98);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--theme-border-light);
 }
 
-.toggle-text {
+.section-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0;
+  color: var(--theme-accent);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-}
-
-/* Advanced Options Container */
-.advanced-options {
-  animation: slideDown 0.3s ease-out;
 }
 
 .search-result-item {
@@ -855,6 +872,8 @@ onMounted(() => {
 
   .search-input-container {
     padding: 6px 12px 0 12px;
+    flex-wrap: wrap;
+    gap: 6px;
   }
 
   .search-input {
@@ -862,9 +881,9 @@ onMounted(() => {
     font-size: 14px;
   }
 
-  .clear-search {
-    right: 24px;
-    margin-top: 6px;
+  .controls-toggle {
+    min-width: 30px;
+    height: 30px;
   }
 
   .search-results {
@@ -913,13 +932,10 @@ onMounted(() => {
     min-width: 14px;
   }
 
-  .panel-toggle-container {
-    padding: 4px 12px 8px;
-  }
-
-  .panel-toggle-btn {
-    padding: 10px 12px;
-    font-size: 11px;
+  .controls-toggle {
+    min-width: 28px;
+    height: 28px;
+    padding: 4px 6px;
   }
 
   .search-result-item {
@@ -963,15 +979,13 @@ onMounted(() => {
 
   .search-input-container {
     padding: 4px 8px 0 8px;
+    flex-wrap: wrap;
+    gap: 4px;
   }
 
   .search-input {
     padding: 10px 12px;
     font-size: 16px; /* Prevents zoom on iOS */
-  }
-
-  .clear-search {
-    right: 20px;
   }
 
   .section-header {
@@ -988,13 +1002,11 @@ onMounted(() => {
     min-height: 44px; /* Touch-friendly size */
   }
 
-  .panel-toggle-container {
-    padding: 4px 8px 6px;
-  }
-
-  .panel-toggle-btn {
-    padding: 12px;
-    min-height: 44px;
+  .controls-toggle {
+    min-width: 36px;
+    height: 36px;
+    padding: 6px 8px;
+    font-size: 14px;
   }
 
   .search-results {

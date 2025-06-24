@@ -1659,12 +1659,18 @@ const handleHoverNormal = (evt: any) => {
   position: absolute;
   top: 16px;
   right: 16px;
-  width: 280px;
+  width: 260px; /* Reduced width since controls are more compact */
   max-height: calc(100vh - 120px);
   z-index: 1001;
 }
 
 /* Responsive Design */
+@media (max-width: 1200px) {
+  .map-controls-container {
+    width: 240px; /* Even more compact on medium screens */
+  }
+}
+
 @media (max-width: 768px) {
   #map {
     height: calc(100vh - 60px);
