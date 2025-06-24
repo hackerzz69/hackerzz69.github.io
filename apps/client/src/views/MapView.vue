@@ -5,11 +5,43 @@ const levelMarkers: Record<string, Record<string, Feature[]>> = {
   Sky: {},
 }
 
+// Separate storage for tree features to handle clustering
+const treeFeaturesStorage: Record<string, Feature[]> = {
+  Overworld: [],
+  Underworld: [],
+  Sky: []
+}
+
 // Vector layers for markers
 const markerLayers: Record<string, VectorLayer<VectorSource>> = {
   Overworld: new VectorLayer({ source: new VectorSource() }),
   Underworld: new VectorLayer({ source: new VectorSource() }),
   Sky: new VectorLayer({ source: new VectorSource() })
+}
+
+// Clustering layers specifically for trees
+const treeClusterLayers: Record<string, VectorLayer<Cluster>> = {
+  Overworld: new VectorLayer({
+    source: new Cluster({
+      distance: 80, // Distance in pixels within which features will be clustered
+      minDistance: 20, // Minimum distance in pixels between clusters
+      source: new VectorSource()
+    })
+  }),
+  Underworld: new VectorLayer({
+    source: new Cluster({
+      distance: 80,
+      minDistance: 20,
+      source: new VectorSource()
+    })
+  }),
+  Sky: new VectorLayer({
+    source: new Cluster({
+      distance: 80,
+      minDistance: 20,
+      source: new VectorSource()
+    })
+  })
 }
 
 // Separate layers for location labels to ensure they're always on top
@@ -44,10 +76,11 @@ import Group from 'ol/layer/Group'
 import ImageLayer from 'ol/layer/Image'
 import VectorLayer from 'ol/layer/Vector'
 import VectorSource from 'ol/source/Vector'
+import Cluster from 'ol/source/Cluster'
 import ImageStatic from 'ol/source/ImageStatic'
 import Feature from 'ol/Feature'
 import Point from 'ol/geom/Point'
-import { Style, Text, Fill, Stroke } from 'ol/style'
+import { Style, Text, Fill, Stroke, Circle } from 'ol/style'
 import { defaults as defaultInteractions } from 'ol/interaction'
 
 let map: Map
@@ -156,20 +189,21 @@ const updateMarkerCounts = () => {
   }
 }
 
-// Function to apply current filter states to the layer - optimized for Firefox
-const applyFilterStatesToLayer = () => {
+  const applyFilterStatesToLayer = () => {
   // Firefox optimization: Batch operations to reduce redraws
   const currentLayerMarkers = levelMarkers[selectedLayer.value]
   const markerSource = markerLayers[selectedLayer.value].getSource()
   const locationSource = locationLabelLayers[selectedLayer.value].getSource()
+  const treeClusterSource = treeClusterLayers[selectedLayer.value].getSource()
   
-  if (!markerSource || !locationSource) return
+  if (!markerSource || !locationSource || !treeClusterSource) return
   
   // Batch clear operations
   if (performanceMode === 'low') {
     // Firefox: Clear and rebuild in batches
     markerSource.clear()
     locationSource.clear()
+    treeClusterSource.getSource().clear()
     
     // Add visible features in one go
     markerCategories.value.forEach(category => {
@@ -177,6 +211,9 @@ const applyFilterStatesToLayer = () => {
         const features = currentLayerMarkers[category.name]
         if (category.name === 'Locations') {
           locationSource.addFeatures(features)
+        } else if (category.name === 'Trees') {
+          // Add trees to clustering source
+          treeClusterSource.getSource().addFeatures(features)
         } else {
           markerSource.addFeatures(features)
         }
@@ -203,6 +240,26 @@ const applyFilterStatesToLayer = () => {
             if (category.visible) {
               currentLayerMarkers[category.name].forEach((feature: Feature) => {
                 source.addFeature(feature)
+              })
+            }
+          }
+        } else if (category.name === 'Trees') {
+          // Handle trees with clustering
+          const clusterLayer = treeClusterLayers[selectedLayer.value]
+          const clusterSource = clusterLayer.getSource()
+          const treeSource = clusterSource.getSource()
+          if (treeSource) {
+            // Clear all tree features first
+            currentLayerMarkers[category.name].forEach((feature: Feature) => {
+              if (treeSource.hasFeature(feature)) {
+                treeSource.removeFeature(feature)
+              }
+            })
+            
+            // Add features back only if category is visible
+            if (category.visible) {
+              currentLayerMarkers[category.name].forEach((feature: Feature) => {
+                treeSource.addFeature(feature)
               })
             }
           }
@@ -274,6 +331,64 @@ const updatePinnedFeatureVisuals = (mapX: number, mapY: number) => {
         createArrowOverlay(mapX, mapY)
       }
     }
+  }
+}
+
+// Function to create cluster style for trees
+const createClusterStyle = (feature: Feature): Style => {
+  const features = feature.get('features')
+  const size = features.length
+  
+  if (size === 1) {
+    // Single feature - use the original tree style but slightly larger
+    const originalFeature = features[0]
+    return originalFeature.get('defaultStyle') || new Style({
+      text: new Text({
+        text: '🌳',
+        font: 'bold 1.2rem "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", Inter, sans-serif',
+        fill: new Fill({ color: '#90ee90' }),
+        stroke: new Stroke({ color: '#228b22', width: 1.5 }),
+        textAlign: 'center',
+        textBaseline: 'middle'
+      })
+    })
+  } else {
+    // Cluster style - multiple styles for tree + badge
+    // Note: Styles are rendered in array order, so tree icon first (behind), then badge elements (in front)
+    return [
+      // Main tree icon (rendered first, appears behind)
+      new Style({
+        text: new Text({
+          text: '🌳',
+          font: 'bold 1.5rem "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", Inter, sans-serif',
+          fill: new Fill({ color: '#228b22' }), // Darker green for clusters
+          stroke: new Stroke({ color: '#ffffff', width: 2 }),
+          textAlign: 'center',
+          textBaseline: 'middle'
+        })
+      }),
+      // Red circle badge positioned at top-right (rendered second, appears in front)
+      new Style({
+        image: new Circle({
+          radius: 8,
+          fill: new Fill({ color: '#ff0000' }),
+          stroke: new Stroke({ color: '#ffffff', width: 1 }),
+          displacement: [10, -10] // Positive X (right), negative Y (up) for top-right positioning
+        })
+      }),
+      // Count text on the red circle (rendered last, appears on top)
+      new Style({
+        text: new Text({
+          text: size.toString(),
+          font: 'bold 10px Inter, sans-serif',
+          fill: new Fill({ color: '#ffffff' }),
+          textAlign: 'center',
+          textBaseline: 'middle',
+          offsetX: 10, // Align with the red circle
+          offsetY: 10 // Align with the red circle
+        })
+      })
+    ]
   }
 }
 
@@ -423,10 +538,27 @@ const filterMarkersBasedOnSearch = (searchQuery: string) => {
         
         // Show this specific feature on the current layer
         const isLocation = feature.get('isLocation')
-        const layer = isLocation ? locationLabelLayers[selectedLayer.value] : markerLayers[selectedLayer.value]
-        const source = layer.getSource()
-        if (source && !source.hasFeature(feature)) {
-          source.addFeature(feature)
+        const isTree = feature.get('category') === 'Trees'
+        
+        if (isLocation) {
+          const layer = locationLabelLayers[selectedLayer.value]
+          const source = layer.getSource()
+          if (source && !source.hasFeature(feature)) {
+            source.addFeature(feature)
+          }
+        } else if (isTree) {
+          const clusterLayer = treeClusterLayers[selectedLayer.value]
+          const clusterSource = clusterLayer.getSource()
+          const treeSource = clusterSource.getSource()
+          if (treeSource && !treeSource.hasFeature(feature)) {
+            treeSource.addFeature(feature)
+          }
+        } else {
+          const layer = markerLayers[selectedLayer.value]
+          const source = layer.getSource()
+          if (source && !source.hasFeature(feature)) {
+            source.addFeature(feature)
+          }
         }
       }
     })
@@ -452,6 +584,15 @@ const hideAllMarkers = () => {
     const source = layer.getSource()
     if (source) {
       source.clear()
+    }
+  })
+  
+  // Hide all tree clusters
+  Object.values(treeClusterLayers).forEach(layer => {
+    const clusterSource = layer.getSource()
+    const treeSource = clusterSource.getSource()
+    if (treeSource) {
+      treeSource.clear()
     }
   })
 }
@@ -565,6 +706,32 @@ const handleMarkerCategoryToggled = (categoryName: string, visible: boolean) => 
           currentLayerMarkers[categoryName].forEach((feature: Feature) => {
             if (feature !== pinnedFeature) {
               source.removeFeature(feature)
+            }
+          })
+        }
+      }
+    } else if (categoryName === 'Trees') {
+      // Handle trees with clustering
+      const clusterLayer = treeClusterLayers[selectedLayer.value]
+      const clusterSource = clusterLayer.getSource()
+      const treeSource = clusterSource.getSource()
+      if (treeSource) {
+        if (visible) {
+          // Batch add for Firefox
+          if (performanceMode === 'low') {
+            treeSource.addFeatures(currentLayerMarkers[categoryName].filter(f => !treeSource.hasFeature(f)))
+          } else {
+            currentLayerMarkers[categoryName].forEach((feature: Feature) => {
+              if (!treeSource.hasFeature(feature)) {
+                treeSource.addFeature(feature)
+              }
+            })
+          }
+        } else {
+          // Don't remove pinned features even when category is hidden
+          currentLayerMarkers[categoryName].forEach((feature: Feature) => {
+            if (feature !== pinnedFeature) {
+              treeSource.removeFeature(feature)
             }
           })
         }
@@ -683,19 +850,40 @@ onMounted(() => {
       })
       
       if (clickableFeature) {
-        const name = clickableFeature.get('name')
-        if (name) {
-          const geometry = clickableFeature.get('geometry')
-          if (geometry && geometry.getType() === 'Point') {
-            const coordinates = (geometry as Point).getCoordinates()
-            showPopup(name, coordinates as [number, number])
-            
-            // Center the map on the clicked marker
-            map.getView().animate({
-              center: coordinates,
+        // Check if this is a cluster feature
+        const clusteredFeatures = clickableFeature.get('features')
+        if (clusteredFeatures && clusteredFeatures.length > 1) {
+          // This is a cluster with multiple features - zoom in to expand it
+          const extent = clickableFeature.getGeometry()?.getExtent()
+          if (extent) {
+            map.getView().fit(extent, {
               duration: 500,
-              zoom: Math.max(map.getView().getZoom() || 4, 5)
+              padding: [50, 50, 50, 50],
+              maxZoom: map.getView().getZoom() ? map.getView().getZoom()! + 2 : 6
             })
+          }
+        } else {
+          // Single feature or individual tree - show popup
+          let targetFeature = clickableFeature
+          if (clusteredFeatures && clusteredFeatures.length === 1) {
+            // Single feature in cluster
+            targetFeature = clusteredFeatures[0]
+          }
+          
+          const name = targetFeature.get('name')
+          if (name) {
+            const geometry = targetFeature.get('geometry')
+            if (geometry && geometry.getType() === 'Point') {
+              const coordinates = (geometry as Point).getCoordinates()
+              showPopup(name, coordinates as [number, number])
+              
+              // Center the map on the clicked marker
+              map.getView().animate({
+                center: coordinates,
+                duration: 500,
+                zoom: Math.max(map.getView().getZoom() || 4, 5)
+              })
+            }
           }
         }
       }
@@ -974,6 +1162,13 @@ onMounted(() => {
       }
     })
     
+    // Remove all tree cluster layers
+    Object.values(treeClusterLayers).forEach(layer => {
+      if (map.getLayers().getArray().includes(layer)) {
+        map.removeLayer(layer)
+      }
+    })
+    
     // Add the appropriate marker layer for the selected level
     const layerName =
       newLayer === overworldLayers ? 'Overworld' :
@@ -993,6 +1188,14 @@ onMounted(() => {
     const markerLayer = markerLayers[layerName]
     if (markerLayer && !map.getLayers().getArray().includes(markerLayer)) {
       map.addLayer(markerLayer)
+    }
+    
+    // Add the appropriate tree cluster layer
+    const treeClusterLayer = treeClusterLayers[layerName]
+    if (treeClusterLayer && !map.getLayers().getArray().includes(treeClusterLayer)) {
+      // Set cluster style
+      treeClusterLayer.setStyle(createClusterStyle)
+      map.addLayer(treeClusterLayer)
     }
     
     // Add the appropriate location label layer (always on top)
@@ -1520,6 +1723,21 @@ const handleHoverOptimized = (evt: any) => {
     const firstFeature = features[0]
     if ('setStyle' in firstFeature && 'get' in firstFeature && firstFeature !== pinnedFeature) {
       const feature = firstFeature as Feature
+      
+      // Check if this is a cluster
+      const clusteredFeatures = feature.get('features')
+      if (clusteredFeatures) {
+        // This is a cluster - don't change style, just show cursor
+        map.getViewport().style.cursor = 'pointer'
+        if (clusteredFeatures.length > 1) {
+          map.getViewport().title = `${clusteredFeatures.length} trees`
+        } else {
+          map.getViewport().title = clusteredFeatures[0].get('name') || ''
+        }
+        return
+      }
+      
+      // Regular feature hover handling
       const hoverStyle = feature.get('hoverStyle')
       if (hoverStyle) {
         feature.setStyle(hoverStyle)
@@ -1575,6 +1793,20 @@ const handleHoverNormal = (evt: any) => {
       // Check if it's an actual Feature (not RenderFeature) and not the pinned feature
       if ('setStyle' in featureLike && 'get' in featureLike && featureLike !== pinnedFeature) {
         const feature = featureLike as Feature
+        
+        // Check if this is a cluster
+        const clusteredFeatures = feature.get('features')
+        if (clusteredFeatures) {
+          // This is a cluster - show appropriate tooltip
+          if (clusteredFeatures.length > 1) {
+            map.getViewport().title = `${clusteredFeatures.length} trees (click to expand)`
+          } else {
+            map.getViewport().title = clusteredFeatures[0].get('name') || ''
+          }
+          return
+        }
+        
+        // Regular feature hover handling
         const hoverStyle = feature.get('hoverStyle')
         if (hoverStyle) {
           feature.setStyle(hoverStyle)
@@ -1588,13 +1820,26 @@ const handleHoverNormal = (evt: any) => {
     if (features.length > 1) {
       const featureNames = features.slice(0, 5)
         .filter(f => 'get' in f)
-        .map(f => (f as Feature).get('name'))
+        .map(f => {
+          const feature = f as Feature
+          const clusteredFeatures = feature.get('features')
+          if (clusteredFeatures && clusteredFeatures.length > 1) {
+            return `${clusteredFeatures.length} trees`
+          }
+          return feature.get('name')
+        })
         .filter(name => name)
       if (featureNames.length > 1) {
         map.getViewport().title = `Multiple items: ${featureNames.join(', ')}`
       }
     } else if ('get' in features[0]) {
-      map.getViewport().title = (features[0] as Feature).get('name') || ''
+      const feature = features[0] as Feature
+      const clusteredFeatures = feature.get('features')
+      if (clusteredFeatures && clusteredFeatures.length > 1) {
+        map.getViewport().title = `${clusteredFeatures.length} trees (click to expand)`
+      } else {
+        map.getViewport().title = feature.get('name') || ''
+      }
     }
   } else {
     map.getViewport().style.cursor = 'default'
