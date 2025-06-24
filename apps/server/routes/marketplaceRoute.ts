@@ -3,7 +3,7 @@ import { getDatabase } from '../config/database.js';
 import { requireAuth } from './auth.js';
 import { randomBytes } from 'crypto';
 import { discordNotifications } from '../services/discordNotifications.js';
-import itemDefs from '../data/itemdefs.json' assert { type: 'json' };
+import itemDefs from '../data/itemdefs.json' with { type: 'json' };
 
 const router = express.Router();
 
