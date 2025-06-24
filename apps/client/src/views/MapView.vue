@@ -5,12 +5,7 @@ const levelMarkers: Record<string, Record<string, Feature[]>> = {
   Sky: {},
 }
 
-// Separate storage for tree features to handle clustering
-const treeFeaturesStorage: Record<string, Feature[]> = {
-  Overworld: [],
-  Underworld: [],
-  Sky: []
-}
+// Removed unused treeFeaturesStorage variable
 
 // Vector layers for markers
 const markerLayers: Record<string, VectorLayer<VectorSource>> = {
@@ -82,6 +77,7 @@ import Feature from 'ol/Feature'
 import Point from 'ol/geom/Point'
 import { Style, Text, Fill, Stroke, Circle } from 'ol/style'
 import { defaults as defaultInteractions } from 'ol/interaction'
+import type { FeatureLike } from 'ol/Feature'
 
 let map: Map
 let overworldLayers: Group
@@ -203,7 +199,10 @@ const updateMarkerCounts = () => {
     // Firefox: Clear and rebuild in batches
     markerSource.clear()
     locationSource.clear()
-    treeClusterSource.getSource().clear()
+    const treeClusterSourceInner = treeClusterSource.getSource()
+    if (treeClusterSourceInner) {
+      treeClusterSourceInner.clear()
+    }
     
     // Add visible features in one go
     markerCategories.value.forEach(category => {
@@ -213,7 +212,10 @@ const updateMarkerCounts = () => {
           locationSource.addFeatures(features)
         } else if (category.name === 'Trees') {
           // Add trees to clustering source
-          treeClusterSource.getSource().addFeatures(features)
+          const treeClusterSourceInner = treeClusterSource.getSource()
+          if (treeClusterSourceInner) {
+            treeClusterSourceInner.addFeatures(features)
+          }
         } else {
           markerSource.addFeatures(features)
         }
@@ -273,7 +275,8 @@ const updateMarkerCounts = () => {
     }
     
     if (featuresToRemove.trees.length > 0) {
-      const treeSource = treeClusterLayers[selectedLayer.value].getSource().getSource()
+      const clusterSource = treeClusterLayers[selectedLayer.value].getSource()
+      const treeSource = clusterSource?.getSource()
       if (treeSource) {
         featuresToRemove.trees.forEach(feature => {
           if (treeSource.hasFeature(feature)) {
@@ -306,7 +309,8 @@ const updateMarkerCounts = () => {
     }
     
     if (featuresToAdd.trees.length > 0) {
-      const treeSource = treeClusterLayers[selectedLayer.value].getSource().getSource()
+      const clusterSource = treeClusterLayers[selectedLayer.value].getSource()
+      const treeSource = clusterSource?.getSource()
       if (treeSource) {
         const newFeatures = featuresToAdd.trees.filter(f => !treeSource.hasFeature(f))
         if (newFeatures.length > 0) {
@@ -374,7 +378,7 @@ const updatePinnedFeatureVisuals = (mapX: number, mapY: number) => {
 }
 
 // Function to create cluster style for trees
-const createClusterStyle = (feature: Feature): Style => {
+const createClusterStyle = (feature: FeatureLike): Style | Style[] => {
   const features = feature.get('features')
   const size = features.length
   
@@ -610,7 +614,7 @@ const filterMarkersBasedOnSearch = (searchQuery: string) => {
   if (featuresToAdd.trees.length > 0) {
     const clusterLayer = treeClusterLayers[selectedLayer.value]
     const clusterSource = clusterLayer.getSource()
-    const treeSource = clusterSource.getSource()
+    const treeSource = clusterSource?.getSource()
     if (treeSource) {
       const newFeatures = featuresToAdd.trees.filter(f => !treeSource.hasFeature(f))
       if (newFeatures.length > 0) {
@@ -656,7 +660,7 @@ const hideAllMarkers = () => {
   // Hide all tree clusters
   Object.values(treeClusterLayers).forEach(layer => {
     const clusterSource = layer.getSource()
-    const treeSource = clusterSource.getSource()
+    const treeSource = clusterSource?.getSource()
     if (treeSource) {
       treeSource.clear()
     }
@@ -778,7 +782,7 @@ const handleMarkerCategoryToggled = (categoryName: string, visible: boolean) => 
       // Handle trees with clustering
       const clusterLayer = treeClusterLayers[selectedLayer.value]
       const clusterSource = clusterLayer.getSource()
-      const treeSource = clusterSource.getSource()
+      const treeSource = clusterSource?.getSource()
       if (treeSource) {
         if (visible) {
           // Batch add for all browsers

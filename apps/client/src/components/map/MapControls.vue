@@ -202,12 +202,7 @@ const calculateRelevance = (item: any, query: string): number => {
   return score
 }
 
-const clearSearch = () => {
-  searchQuery.value = ''
-  searchResults.value = []
-  // Emit empty search query to clear filters
-  emit('searchQueryChanged', '')
-}
+// Removed unused clearSearch function
 
 const goToLocation = (result: any) => {
   emit('searchLocationSelected', result)

@@ -1,5 +1,5 @@
 # Simplified Docker build for production
-FROM node:18-alpine
+FROM node:22.16.0-alpine
 
 WORKDIR /app
 
@@ -24,7 +24,6 @@ COPY packages/shared ./packages/shared
 COPY apps/client ./apps/client
 COPY apps/server ./apps/server
 COPY .env ./.env
-COPY .env.production ./.env.production
 
 # Set environment variables for the build
 ENV NODE_ENV=production
