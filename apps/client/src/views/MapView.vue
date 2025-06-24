@@ -220,71 +220,110 @@ const updateMarkerCounts = () => {
       }
     })
   } else {
-    // Other browsers: Individual feature management
+    // Other browsers: Batch operations for better performance
+    // Collect features to add/remove by category
+    const featuresToAdd = {
+      locations: [] as Feature[],
+      trees: [] as Feature[],
+      regular: [] as Feature[]
+    }
+    const featuresToRemove = {
+      locations: [] as Feature[],
+      trees: [] as Feature[],
+      regular: [] as Feature[]
+    }
+    
     markerCategories.value.forEach(category => {
       const currentLayerMarkers = levelMarkers[selectedLayer.value]
       if (currentLayerMarkers[category.name]) {
-        // Handle locations separately (they use location label layers)
+        const features = currentLayerMarkers[category.name]
+        
         if (category.name === 'Locations') {
-          const layer = locationLabelLayers[selectedLayer.value]
-          const source = layer.getSource()
-          if (source) {
-            // Clear all features from this category first
-            currentLayerMarkers[category.name].forEach((feature: Feature) => {
-              if (source.hasFeature(feature)) {
-                source.removeFeature(feature)
-              }
-            })
-            
-            // Add features back only if category is visible
-            if (category.visible) {
-              currentLayerMarkers[category.name].forEach((feature: Feature) => {
-                source.addFeature(feature)
-              })
-            }
+          if (category.visible) {
+            featuresToAdd.locations.push(...features)
+          } else {
+            featuresToRemove.locations.push(...features.filter(f => f !== pinnedFeature))
           }
         } else if (category.name === 'Trees') {
-          // Handle trees with clustering
-          const clusterLayer = treeClusterLayers[selectedLayer.value]
-          const clusterSource = clusterLayer.getSource()
-          const treeSource = clusterSource.getSource()
-          if (treeSource) {
-            // Clear all tree features first
-            currentLayerMarkers[category.name].forEach((feature: Feature) => {
-              if (treeSource.hasFeature(feature)) {
-                treeSource.removeFeature(feature)
-              }
-            })
-            
-            // Add features back only if category is visible
-            if (category.visible) {
-              currentLayerMarkers[category.name].forEach((feature: Feature) => {
-                treeSource.addFeature(feature)
-              })
-            }
+          if (category.visible) {
+            featuresToAdd.trees.push(...features)
+          } else {
+            featuresToRemove.trees.push(...features.filter(f => f !== pinnedFeature))
           }
         } else {
-          // Handle other markers (they use regular marker layers)
-          const layer = markerLayers[selectedLayer.value]
-          const source = layer.getSource()
-          if (source) {
-            // Clear all features from this category first
-            currentLayerMarkers[category.name].forEach((feature: Feature) => {
-              if (source.hasFeature(feature)) {
-                source.removeFeature(feature)
-              }
-            })
-            
-            // Add features back only if category is visible
-            if (category.visible) {
-              currentLayerMarkers[category.name].forEach((feature: Feature) => {
-                source.addFeature(feature)
-              })
-            }
+          if (category.visible) {
+            featuresToAdd.regular.push(...features)
+          } else {
+            featuresToRemove.regular.push(...features.filter(f => f !== pinnedFeature))
           }
         }
       }
     })
+    
+    // Batch remove features
+    if (featuresToRemove.locations.length > 0) {
+      const source = locationLabelLayers[selectedLayer.value].getSource()
+      if (source) {
+        featuresToRemove.locations.forEach(feature => {
+          if (source.hasFeature(feature)) {
+            source.removeFeature(feature)
+          }
+        })
+      }
+    }
+    
+    if (featuresToRemove.trees.length > 0) {
+      const treeSource = treeClusterLayers[selectedLayer.value].getSource().getSource()
+      if (treeSource) {
+        featuresToRemove.trees.forEach(feature => {
+          if (treeSource.hasFeature(feature)) {
+            treeSource.removeFeature(feature)
+          }
+        })
+      }
+    }
+    
+    if (featuresToRemove.regular.length > 0) {
+      const source = markerLayers[selectedLayer.value].getSource()
+      if (source) {
+        featuresToRemove.regular.forEach(feature => {
+          if (source.hasFeature(feature)) {
+            source.removeFeature(feature)
+          }
+        })
+      }
+    }
+    
+    // Batch add features
+    if (featuresToAdd.locations.length > 0) {
+      const source = locationLabelLayers[selectedLayer.value].getSource()
+      if (source) {
+        const newFeatures = featuresToAdd.locations.filter(f => !source.hasFeature(f))
+        if (newFeatures.length > 0) {
+          source.addFeatures(newFeatures)
+        }
+      }
+    }
+    
+    if (featuresToAdd.trees.length > 0) {
+      const treeSource = treeClusterLayers[selectedLayer.value].getSource().getSource()
+      if (treeSource) {
+        const newFeatures = featuresToAdd.trees.filter(f => !treeSource.hasFeature(f))
+        if (newFeatures.length > 0) {
+          treeSource.addFeatures(newFeatures)
+        }
+      }
+    }
+    
+    if (featuresToAdd.regular.length > 0) {
+      const source = markerLayers[selectedLayer.value].getSource()
+      if (source) {
+        const newFeatures = featuresToAdd.regular.filter(f => !source.hasFeature(f))
+        if (newFeatures.length > 0) {
+          source.addFeatures(newFeatures)
+        }
+      }
+    }
   }
 }
 
@@ -517,9 +556,14 @@ const filterMarkersBasedOnSearch = (searchQuery: string) => {
   // Hide all markers first
   hideAllMarkers()
   
-  // Find matching features and show only those on the current layer
+  // Find matching features and batch them by category for efficient addition
   const matchingIds = new Set<string>()
   const categoriesWithResults = new Set<string>()
+  const featuresToAdd = {
+    locations: [] as Feature[],
+    trees: [] as Feature[],
+    regular: [] as Feature[]
+  }
   
   // Search through current layer only for visibility
   const currentLayerMarkers = levelMarkers[selectedLayer.value] || {}
@@ -536,33 +580,55 @@ const filterMarkersBasedOnSearch = (searchQuery: string) => {
         matchingIds.add(feature.getId() as string || `${feature.get('name')}-${category}`)
         categoriesWithResults.add(category)
         
-        // Show this specific feature on the current layer
+        // Batch features by type for efficient addition
         const isLocation = feature.get('isLocation')
         const isTree = feature.get('category') === 'Trees'
         
         if (isLocation) {
-          const layer = locationLabelLayers[selectedLayer.value]
-          const source = layer.getSource()
-          if (source && !source.hasFeature(feature)) {
-            source.addFeature(feature)
-          }
+          featuresToAdd.locations.push(feature)
         } else if (isTree) {
-          const clusterLayer = treeClusterLayers[selectedLayer.value]
-          const clusterSource = clusterLayer.getSource()
-          const treeSource = clusterSource.getSource()
-          if (treeSource && !treeSource.hasFeature(feature)) {
-            treeSource.addFeature(feature)
-          }
+          featuresToAdd.trees.push(feature)
         } else {
-          const layer = markerLayers[selectedLayer.value]
-          const source = layer.getSource()
-          if (source && !source.hasFeature(feature)) {
-            source.addFeature(feature)
-          }
+          featuresToAdd.regular.push(feature)
         }
       }
     })
   })
+  
+  // Batch add features to their respective layers
+  if (featuresToAdd.locations.length > 0) {
+    const layer = locationLabelLayers[selectedLayer.value]
+    const source = layer.getSource()
+    if (source) {
+      const newFeatures = featuresToAdd.locations.filter(f => !source.hasFeature(f))
+      if (newFeatures.length > 0) {
+        source.addFeatures(newFeatures)
+      }
+    }
+  }
+  
+  if (featuresToAdd.trees.length > 0) {
+    const clusterLayer = treeClusterLayers[selectedLayer.value]
+    const clusterSource = clusterLayer.getSource()
+    const treeSource = clusterSource.getSource()
+    if (treeSource) {
+      const newFeatures = featuresToAdd.trees.filter(f => !treeSource.hasFeature(f))
+      if (newFeatures.length > 0) {
+        treeSource.addFeatures(newFeatures)
+      }
+    }
+  }
+  
+  if (featuresToAdd.regular.length > 0) {
+    const layer = markerLayers[selectedLayer.value]
+    const source = layer.getSource()
+    if (source) {
+      const newFeatures = featuresToAdd.regular.filter(f => !source.hasFeature(f))
+      if (newFeatures.length > 0) {
+        source.addFeatures(newFeatures)
+      }
+    }
+  }
   
   // Update filter categories based on search results
   updateFilterCategoriesBasedOnSearch(categoriesWithResults)
@@ -685,26 +751,24 @@ const handleMarkerCategoryToggled = (categoryName: string, visible: boolean) => 
       return
     }
     
+    const features = currentLayerMarkers[categoryName]
+    const featuresToProcess = features.filter(f => f !== pinnedFeature) // Don't remove pinned features
+    
     // Handle locations separately (they use location label layers)
     if (categoryName === 'Locations') {
       const layer = locationLabelLayers[selectedLayer.value]
       const source = layer.getSource()
       if (source) {
         if (visible) {
-          // Batch add for Firefox
-          if (performanceMode === 'low') {
-            source.addFeatures(currentLayerMarkers[categoryName].filter(f => !source.hasFeature(f)))
-          } else {
-            currentLayerMarkers[categoryName].forEach((feature: Feature) => {
-              if (!source.hasFeature(feature)) {
-                source.addFeature(feature)
-              }
-            })
+          // Batch add for all browsers
+          const newFeatures = featuresToProcess.filter(f => !source.hasFeature(f))
+          if (newFeatures.length > 0) {
+            source.addFeatures(newFeatures)
           }
         } else {
-          // Don't remove pinned features even when category is hidden
-          currentLayerMarkers[categoryName].forEach((feature: Feature) => {
-            if (feature !== pinnedFeature) {
+          // Batch remove
+          featuresToProcess.forEach((feature: Feature) => {
+            if (source.hasFeature(feature)) {
               source.removeFeature(feature)
             }
           })
@@ -717,20 +781,15 @@ const handleMarkerCategoryToggled = (categoryName: string, visible: boolean) => 
       const treeSource = clusterSource.getSource()
       if (treeSource) {
         if (visible) {
-          // Batch add for Firefox
-          if (performanceMode === 'low') {
-            treeSource.addFeatures(currentLayerMarkers[categoryName].filter(f => !treeSource.hasFeature(f)))
-          } else {
-            currentLayerMarkers[categoryName].forEach((feature: Feature) => {
-              if (!treeSource.hasFeature(feature)) {
-                treeSource.addFeature(feature)
-              }
-            })
+          // Batch add for all browsers
+          const newFeatures = featuresToProcess.filter(f => !treeSource.hasFeature(f))
+          if (newFeatures.length > 0) {
+            treeSource.addFeatures(newFeatures)
           }
         } else {
-          // Don't remove pinned features even when category is hidden
-          currentLayerMarkers[categoryName].forEach((feature: Feature) => {
-            if (feature !== pinnedFeature) {
+          // Batch remove
+          featuresToProcess.forEach((feature: Feature) => {
+            if (treeSource.hasFeature(feature)) {
               treeSource.removeFeature(feature)
             }
           })
@@ -742,20 +801,15 @@ const handleMarkerCategoryToggled = (categoryName: string, visible: boolean) => 
       const source = layer.getSource()
       if (source) {
         if (visible) {
-          // Batch add for Firefox
-          if (performanceMode === 'low') {
-            source.addFeatures(currentLayerMarkers[categoryName].filter(f => !source.hasFeature(f)))
-          } else {
-            currentLayerMarkers[categoryName].forEach((feature: Feature) => {
-              if (!source.hasFeature(feature)) {
-                source.addFeature(feature)
-              }
-            })
+          // Batch add for all browsers
+          const newFeatures = featuresToProcess.filter(f => !source.hasFeature(f))
+          if (newFeatures.length > 0) {
+            source.addFeatures(newFeatures)
           }
         } else {
-          // Don't remove pinned features even when category is hidden
-          currentLayerMarkers[categoryName].forEach((feature: Feature) => {
-            if (feature !== pinnedFeature) {
+          // Batch remove
+          featuresToProcess.forEach((feature: Feature) => {
+            if (source.hasFeature(feature)) {
               source.removeFeature(feature)
             }
           })
@@ -1904,16 +1958,10 @@ const handleHoverNormal = (evt: any) => {
   position: absolute;
   top: 16px;
   right: 16px;
-  width: 260px; /* Reduced width since controls are more compact */
+    width: 300px;
+    max-width: 300px;
   max-height: calc(100vh - 120px);
   z-index: 1001;
-}
-
-/* Responsive Design */
-@media (max-width: 1200px) {
-  .map-controls-container {
-    width: 240px; /* Even more compact on medium screens */
-  }
 }
 
 @media (max-width: 768px) {
@@ -1952,8 +2000,6 @@ const handleHoverNormal = (evt: any) => {
 /* Landscape orientation on mobile */
 @media (max-width: 768px) and (orientation: landscape) {
   .map-controls-container {
-    width: 300px;
-    max-width: 300px;
     right: 8px;
     left: auto;
     max-height: calc(100vh - 60px);

@@ -479,6 +479,7 @@ onMounted(() => {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   flex: 1;
   white-space: nowrap;
+  justify-content: center;
 }
 
 .layer-btn:hover {
