@@ -1,3 +1,6 @@
+# Certificates
+*.pem
+
 # Logs
 logs
 *.log
@@ -32,3 +35,6 @@ packages/*/build
 *.sqlite
 *.sqlite3
 apps/server/database.sqlite
+
+# RSS Generator cache
+apps/rss-generator/cache/
