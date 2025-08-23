@@ -26,7 +26,7 @@
       <div v-if="showDropdown" class="dropdown-menu" @click.stop>
         <div class="dropdown-item user-details">
           <div class="user-name">{{ authStore.user?.username }}</div>
-          <div class="user-id">#{{ authStore.user?.discriminator }}</div>
+          <!-- discriminator removed -->
           <div v-if="authStore.isAdmin" class="user-role">Administrator</div>
           <div v-else-if="authStore.user?.role === 'moderator'" class="user-role">Moderator</div>
         </div>
