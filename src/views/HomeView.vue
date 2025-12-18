@@ -130,7 +130,7 @@ onMounted(() => {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('@/assets/homepageBackground.png');
+  background-image: url('../assets/homepageBackground.png');
   background-size: cover;
   background-position: center;
   z-index: -2; /* Behind the content */
